@@ -2260,15 +2260,30 @@ def export_category_members(request):
             ws.cell(row=row_num, column=16, value=user.status)
         
         # Auto-adjust column widths
+        from openpyxl.cell.cell import MergedCell
         for column in ws.columns:
             max_length = 0
-            column_letter = column[0].column_letter
+            column_letter = None
+            
+            # Find the first non-merged cell to get column letter
             for cell in column:
-                try:
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(str(cell.value))
-                except:
-                    pass
+                if not isinstance(cell, MergedCell):
+                    column_letter = cell.column_letter
+                    break
+            
+            # If we couldn't find a column letter, skip this column
+            if not column_letter:
+                continue
+            
+            # Calculate max length
+            for cell in column:
+                if not isinstance(cell, MergedCell):
+                    try:
+                        if cell.value and len(str(cell.value)) > max_length:
+                            max_length = len(str(cell.value))
+                    except:
+                        pass
+            
             adjusted_width = min(max_length + 2, 50)
             ws.column_dimensions[column_letter].width = adjusted_width
         
@@ -2436,15 +2451,30 @@ def download_registrations(request):
             ws.cell(row=row_num, column=16, value=user.status)
         
         # Auto-adjust column widths
+        from openpyxl.cell.cell import MergedCell
         for column in ws.columns:
             max_length = 0
-            column_letter = column[0].column_letter
+            column_letter = None
+            
+            # Find the first non-merged cell to get column letter
             for cell in column:
-                try:
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(str(cell.value))
-                except:
-                    pass
+                if not isinstance(cell, MergedCell):
+                    column_letter = cell.column_letter
+                    break
+            
+            # If we couldn't find a column letter, skip this column
+            if not column_letter:
+                continue
+            
+            # Calculate max length
+            for cell in column:
+                if not isinstance(cell, MergedCell):
+                    try:
+                        if cell.value and len(str(cell.value)) > max_length:
+                            max_length = len(str(cell.value))
+                    except:
+                        pass
+            
             adjusted_width = min(max_length + 2, 50)
             ws.column_dimensions[column_letter].width = adjusted_width
         

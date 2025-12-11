@@ -287,7 +287,7 @@
         <i class="bi bi-list"></i>
     </button>
     
-    <div class="l-navbar" id="navbar">
+    <div class="l-navbar" id="adminSidebar">
         <nav class="nav">
             <div>
                 <!-- <div class="nav-brand">
@@ -1021,16 +1021,16 @@
 
     // Toggle Sidebar Function
     function toggleSidebar() {
-        const navbar = document.getElementById('navbar');
+        const sidebar = document.getElementById('adminSidebar');
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const mainLayout = document.querySelector('.mainLayout');
         
-        navbar.classList.toggle('show');
+        sidebar.classList.toggle('show');
         mainLayout.classList.toggle('sidebar-open');
         
         // Change hamburger icon
         const icon = hamburgerBtn.querySelector('i');
-        if (navbar.classList.contains('show')) {
+        if (sidebar.classList.contains('show')) {
             icon.className = 'bi bi-x-lg';
         } else {
             icon.className = 'bi bi-list';
@@ -1039,15 +1039,15 @@
     
     // Close sidebar when clicking outside
     document.addEventListener('click', function(event) {
-        const navbar = document.getElementById('navbar');
+        const sidebar = document.getElementById('adminSidebar');
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         
-        if (!navbar || !hamburgerBtn) return;
+        if (!sidebar || !hamburgerBtn) return;
         
-        const isClickInsideSidebar = navbar.contains(event.target);
+        const isClickInsideSidebar = sidebar.contains(event.target);
         const isClickOnHamburger = hamburgerBtn.contains(event.target);
         
-        if (!isClickInsideSidebar && !isClickOnHamburger && navbar.classList.contains('show')) {
+        if (!isClickInsideSidebar && !isClickOnHamburger && sidebar.classList.contains('show')) {
             toggleSidebar();
         }
     });
@@ -1091,11 +1091,11 @@
             document.body.style.overflow = 'hidden';
             document.body.style.paddingRight = '0px';
             
-            // Keep navbar and other elements in place
-            const navbar = document.querySelector('.l-navbar');
+            // Keep sidebar and other elements in place
+            const sidebar = document.getElementById('adminSidebar');
             const mainLayout = document.querySelector('.mainLayout');
             
-            if (navbar) navbar.style.paddingRight = '0px';
+            if (sidebar) sidebar.style.paddingRight = '0px';
             if (mainLayout) mainLayout.style.paddingRight = '0px';
         });
         
@@ -1104,10 +1104,10 @@
             document.body.style.overflow = '';
             document.body.style.paddingRight = '';
             
-            const navbar = document.querySelector('.l-navbar');
+            const sidebar = document.getElementById('adminSidebar');
             const mainLayout = document.querySelector('.mainLayout');
             
-            if (navbar) navbar.style.paddingRight = '';
+            if (sidebar) sidebar.style.paddingRight = '';
             if (mainLayout) mainLayout.style.paddingRight = '';
         });
     });
