@@ -1,0 +1,1425 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .mainLayout {
+        min-height: 80vh;
+        /* Makes the table take up at least 80% of the viewport height */
+        padding-bottom: 50px;
+        /* Ensures space for footer */
+    }
+    
+    /* Fix modal to prevent page layout shifts */
+    .modal-dialog-scrollable .modal-body {
+        max-height: calc(90vh - 200px);
+        overflow-y: auto;
+    }
+    
+    .modal-dialog-scrollable .modal-content {
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    #emailMessage {
+        resize: vertical !important;
+        min-height: 100px;
+        max-height: 250px !important;
+        overflow-y: auto;
+    }
+    
+    #emailPreview {
+        min-height: 100px;
+        max-height: 180px !important;
+        overflow-y: auto;
+        overflow-x: hidden;
+        word-wrap: break-word;
+        line-height: 1.5;
+    }
+    
+    #emailPreview * {
+        max-width: 100%;
+    }
+    
+    #emailPreview p {
+        margin-bottom: 0.5rem;             
+    }
+    
+    #emailPreview strong {
+        font-weight: bold;
+    }
+    
+    #emailPreview br {
+        display: block;
+        content: "";
+        margin: 0.5rem 0;
+    }
+    
+    /* Prevent body scroll when modal is open */
+    body.modal-open {
+        overflow: hidden;
+        padding-right: 0 !important;
+    }
+    
+    /* Force consistent scrollbar to prevent layout shift */
+    html {
+        overflow-y: scroll !important;
+        overflow-x: hidden !important;
+        width: 100%;
+    }
+    
+    body {
+        width: 100%;
+        overflow-x: hidden !important;
+    }
+    
+    /* Prevent navbar shift when modal opens */
+    .navbar, .l-navbar, .nav, header {
+        padding-right: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    /* Hamburger Button */
+    .hamburger-btn {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1100;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .hamburger-btn:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+    
+    /* Proper sidebar and main layout alignment */
+    .l-navbar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        z-index: 1050;
+        overflow-y: auto;
+        transition: left 0.3s ease;
+        background-color: #2c3e50;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+        padding: 70px 0 20px 0;
+    }
+    
+    .l-navbar.show {
+        left: 0;
+    }
+    
+    /* Make nav items visible */
+    .l-navbar .nav {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 0;
+    }
+    
+    .l-navbar .nav-linkSidebar {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        color: #ecf0f1;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+    
+    .l-navbar .nav-linkSidebar:hover,
+    .l-navbar .nav-linkSidebar.activeSidebar {
+        background-color: #34495e;
+        color: #fff;
+    }
+    
+    .l-navbar .nav-icon {
+        font-size: 20px;
+        margin-right: 12px;
+        min-width: 20px;
+    }
+    
+    .l-navbar .nav-name {
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    /* Collapsible menu items */
+    .l-navbar .collapse {
+        cursor: pointer;
+    }
+    
+    .l-navbar .collapse-link {
+        margin-left: auto;
+        font-size: 16px;
+    }
+    
+    .l-navbar .collapse-menu {
+        list-style: none;
+        padding-left: 40px;
+        margin: 0;
+        display: none;
+    }
+    
+    .l-navbar .collapse.active .collapse-menu {
+        display: block;
+    }
+    
+    .l-navbar .collapse-sublink {
+        display: block;
+        padding: 10px 20px;
+        color: #bdc3c7;
+        text-decoration: none;
+        font-size: 13px;
+        transition: all 0.3s ease;
+    }
+    
+    .l-navbar .collapse-sublink:hover {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.1);
+        padding-left: 25px;
+    }
+    
+    .mainLayout {
+        margin-left: 0;
+        padding: 70px 20px 20px 20px;
+        padding-right: 20px !important;
+        margin-right: 0 !important;
+        min-height: 100vh;
+        transition: margin-left 0.3s ease, opacity 0.3s ease;
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+    
+    .mainLayout.sidebar-open {
+        margin-left: 280px;
+        max-width: calc(100vw - 280px);
+    }
+    
+    /* Remove overlay - no dark background needed */
+    .sidebar-overlay {
+        display: none !important;
+    }
+    
+    /* Ensure all cards fit within mainLayout */
+    .mainLayout .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+        max-width: 100%;
+    }
+    
+    .mainLayout .card {
+        width: 100%;
+        overflow-x: auto;
+    }
+    
+    /* Responsive sidebar - already using hamburger menu on all screens */
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            top: 10px;
+            left: 10px;
+            padding: 8px 12px;
+            font-size: 20px;
+        }
+        
+        .mainLayout {
+            padding: 60px 15px 15px 15px;
+        }
+    }
+    
+    /* DataTable responsive wrapper */
+    .dataTables_wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    
+    #userTable {
+        width: 100% !important;
+    }
+    
+    /* Ensure proper spacing between sections */
+    .mainLayout > .container-fluid {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Fix card header alignment */
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .card-header h5 {
+        margin: 0;
+    }
+    
+    /* Ensure modal doesn't affect page layout */
+    .modal {
+        overflow-y: auto !important;
+    }
+    
+    .modal-open .navbar,
+    .modal-open .l-navbar,
+    .modal-open header {
+        padding-right: 0 !important;
+    }
+</style>
+
+<body style="background-color: #f3f3f9;">
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+    
+    <div class="l-navbar" id="navbar">
+        <nav class="nav">
+            <div>
+                <!-- <div class="nav-brand">
+                    <ion-icon name="menu-outline" class="nav-toggle" id="nav-toggle"></ion-icon>
+                    <a href="#" class="nav-logo">CODE</a>
+                </div> -->
+
+                <div class="nav-list">
+                    <a href="#" class="nav-linkSidebar activeSidebar">
+                        <ion-icon name="home-outline" class="nav-icon"></ion-icon>
+                        <span class="nav-name">Dashboard</span>
+                    </a>
+
+                    <a href="#" class="nav-linkSidebar">
+                        <ion-icon name="chatbubbles-outline" class="nav-icon"></ion-icon>
+                        <span class="nav-name">Messenger</span>
+                    </a>
+
+                    <div href="#" class="nav-linkSidebar collapse">
+                        <ion-icon name="folder-outline" class="nav-icon"></ion-icon>
+                        <span class="nav-name">Projects</span>
+
+                        <ion-icon name="chevron-down-outline" class="collapse-link"></ion-icon>
+
+                        <ul class="collapse-menu">
+                            <a href="#" class="collapse-sublink">Data</a>
+                            <a href="#" class="collapse-sublink">Group</a>
+                            <a href="#" class="collapse-sublink">Members</a>
+                        </ul>
+                    </div>
+
+                    <a href="#" class="nav-linkSidebar">
+                        <ion-icon name="pie-chart-outline" class="nav-icon"></ion-icon>
+                        <span class="nav-name">Analytics</span>
+                    </a>
+
+                    <div href="#" class="nav-linkSidebar collapse">
+                        <ion-icon name="people-outline" class="nav-icon"></ion-icon>
+                        <span class="nav-name">Team</span>
+
+                        <ion-icon name="chevron-down-outline" class="collapse-link"></ion-icon>
+
+                        <ul class="collapse-menu">
+                            <a href="#" class="collapse-sublink">Data</a>
+                            <a href="#" class="collapse-sublink">Group</a>
+                            <a href="#" class="collapse-sublink">Members</a>
+                        </ul>
+                    </div>
+
+                    <a href="#" class="nav-linkSidebar">
+                        <ion-icon name="settings-outline" class="nav-icon"></ion-icon>
+                        <span class="nav-name">Settings</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- <a href="{% url 'logout' %}" class="nav-linkSidebar">
+                <ion-icon name="log-out-outline" class="nav-icon"></ion-icon>
+                <span class="nav-name">Logout</span>
+            </a> -->
+        </nav>
+    </div>
+    <div class="mainLayout">
+        
+        <!-- Category Change Requests Section -->
+        <div class="container-fluid mb-4 mt-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-bell"></i> Pending Category Change Requests</h5>
+                    <button class="btn btn-light btn-sm" onclick="loadCategoryRequests()">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="categoryRequestsContainer">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Reports Section -->
+        <div class="container-fluid mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-bar-graph"></i> Registration Reports</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="registrationFilter" class="form-label"><strong>Select Period:</strong></label>
+                            <select class="form-select" id="registrationFilter">
+                                <option value="">Select a period</option>
+                                <option value="this_month">This Month</option>
+                                <option value="last_month">Last Month</option>
+                                <option value="last_3_months">Last 3 Months</option>
+                                <option value="last_6_months">Last 6 Months</option>
+                                <option value="last_year">Last 1 Year</option>
+                                <option value="custom">Specific Period</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8 mb-3" id="customDateRange" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="startDate" class="form-label"><strong>Start Date:</strong></label>
+                                    <input type="date" class="form-control" id="startDate">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="endDate" class="form-label"><strong>End Date:</strong></label>
+                                    <input type="date" class="form-control" id="endDate">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-primary" id="downloadRegistrationsBtn" onclick="downloadRegistrations()" style="background-color: #007bff !important; border-color: #007bff !important; color: white !important;">
+                                <i class="bi bi-download"></i> Download Registrations
+                            </button>
+                        </div>
+                    </div>
+                    <div id="registrationCountInfo" class="alert alert-info mt-3" style="display: none;">
+                        <i class="bi bi-info-circle"></i> <span id="registrationCountText"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Management Section -->
+        <div class="container-fluid mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-funnel"></i> Category Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="categoryFilter" class="form-label"><strong>Select Category:</strong></label>
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">Select a category</option>
+                                <option value="All">All Categories</option>
+                                <option value="Student">Student</option>
+                                <option value="Graduate/Trying FMGE">Graduate/Trying FMGE</option>
+                                <option value="FMGE passed">FMGE passed</option>
+                                <option value="Working Doctor">Working Doctor (With SMC/NMC Registration)</option>
+                                <option value="PG Doctor">Working PG Doctor (With SMC/NMC Registration)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label"><strong>Actions:</strong></label>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary" onclick="viewCategoryMembers()" style="background-color: #007bff !important; border-color: #007bff !important; color: white !important;">
+                                    <i class="bi bi-eye"></i> View Members
+                                </button>
+                                <button class="btn btn-primary" id="exportBtn" onclick="exportToExcel()" style="background-color: #007bff !important; border-color: #007bff !important; color: white !important;">
+                                    <i class="bi bi-file-earmark-excel"></i> Export to Excel
+                                </button>
+                                <button class="btn btn-primary" onclick="openBulkEmailModal()" style="background-color: #007bff !important; border-color: #007bff !important; color: white !important;">
+                                    <i class="bi bi-envelope"></i> Send Bulk Email
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="categoryMembersCount" class="alert alert-info" style="display: none;">
+                        <i class="bi bi-people"></i> <span id="memberCountText"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <table id="userTable" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Gender</th>
+                    <th>Mobile Number</th>
+                    <th>District</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    <th>Generate QR</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in data.users %}
+                <tr>
+                    <th></th>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.gender }}</td>
+                    <td>{{ user.mobile_number }}</td>
+                    <td>{{ user.district }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.status }}</td>
+                    <td>
+                        <i class="view-details bi bi-eye-fill d-flex justify-content-center align-items-center rounded cursor-pointer"
+                            data-user-id="{{ user.id }}"></i>
+                    </td>
+                    <td>
+                        <a href="{% url 'generate-qr-code' user.id %}" download="qr_code.png">
+                            <i
+                                class="bi bi-download d-flex justify-content-center align-items-center rounded cursor-pointer"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'update_user' user.id %}">
+                            <i
+                                class="bi bi-arrow-clockwise d-flex justify-content-center align-items-center rounded cursor-pointer"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'delete_user' user.id %}">
+                            <i
+                                class="bi bi-trash d-flex justify-content-center align-items-center rounded cursor-pointer"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <!-- Modal -->
+    <!-- User Details Modal -->
+    <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userDetailsModalLabel">User Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="dataDetails">
+                        <div class="customInputs">
+                            <div id="userDetailsContent" class="container-fluid">
+                                <!-- User details will be dynamically populated here -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Image Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" class="img-fluid rounded" alt="Preview">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Email Modal -->
+<div class="modal fade" id="bulkEmailModal" tabindex="-1" aria-labelledby="bulkEmailModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="bulkEmailModalLabel">
+                    <i class="bi bi-envelope"></i> Send Bulk Email
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="emailFormContainer">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Emails will be sent individually to each member in the selected category.
+                    </div>
+                    <form id="bulkEmailForm">
+                        <div class="mb-3">
+                            <label for="emailCategory" class="form-label"><strong>Category:</strong> <span class="text-danger">*</span></label>
+                            <select class="form-select" id="emailCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="All">All Categories</option>
+                                <option value="Student">Student</option>
+                                <option value="Graduate/Trying FMGE">Graduate/Trying FMGE</option>
+                                <option value="FMGE passed">FMGE passed</option>
+                                <option value="Working Doctor">Working Doctor (With SMC/NMC Registration)</option>
+                                <option value="PG Doctor">Working PG Doctor (With SMC/NMC Registration)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="emailSubject" class="form-label"><strong>Subject:</strong> <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="emailSubject" required placeholder="Enter email subject">
+                        </div>
+                        <div class="mb-3">
+                            <label for="emailMessage" class="form-label"><strong>Message:</strong> <span class="text-danger">*</span></label>
+                            <div class="alert alert-warning">
+                                <i class="bi bi-lightbulb"></i> You can use HTML formatting (e.g., &lt;strong&gt;, &lt;br&gt;, &lt;p&gt;, etc.)
+                            </div>
+                            <textarea class="form-control" id="emailMessage" rows="8" required placeholder="Enter your message (HTML supported)"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Preview:</strong></label>
+                            <div id="emailPreview" class="border p-3 rounded bg-light">
+                                <em class="text-muted">Your message preview will appear here...</em>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="emailProgressContainer" style="display: none;">
+                    <div class="text-center mb-3">
+                        <h5><i class="bi bi-send"></i> Sending Emails...</h5>
+                    </div>
+                    <div class="progress mb-3" style="height: 30px;">
+                        <div id="emailProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 0%">0%</div>
+                    </div>
+                    <div id="emailProgressText" class="text-center">
+                        <p class="mb-0">Preparing to send emails...</p>
+                    </div>
+                </div>
+                <div id="emailResultContainer" style="display: none;">
+                    <div id="emailResultAlert" class="alert">
+                        <i id="emailResultIcon" class="bi"></i> <span id="emailResultText"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeEmailModal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="sendBulkEmail()" id="sendEmailBtn" style="background-color: #007bff !important; border-color: #007bff !important; color: white !important;">
+                    <i class="bi bi-send"></i> Send Emails
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    // Utility function to fetch and identify file types
+    async function loadFile(fileField, userId) {
+        try {
+            const response = await fetch(`/api/user/${userId}/file/${fileField}/`);
+            if (!response.ok) throw new Error("File not found");
+            const blob = await response.blob();
+
+            // Determine file type
+            const fileType = blob.type;
+            const url = URL.createObjectURL(blob);
+
+            return { url, type: fileType };
+        } catch {
+            return { url: "/static/images/placeholder.png", type: "image/png" }; // Placeholder for missing files
+        }
+    }
+
+
+    // Function to load user details
+    async function loadUserDetails(userId) {
+        try {
+            console.log("userID : ", userId)
+            const response = await fetch(`/api/get-user-details/${userId}/`);
+            const data = await response.json();
+
+            if (data.success) {
+                const user = data.user;
+
+                // Fetch files
+                const photo = await loadFile("photo", userId);
+                const stateNmc = await loadFile("state_nmc", userId);
+                const passport = await loadFile("passport", userId);
+                const medicalQualification = await loadFile("medical_qualification", userId);
+                const paymentProof = await loadFile("payment_transaction_proof", userId);
+
+
+                // Populate modal content
+                // const renderFile = ({ url, type }) => {
+                //     if (type === "application/pdf") {
+                //         return `<a href="${url}" target="_blank" class="btn btn-link">View PDF</a>`;
+                //     }
+                //     return `
+                //         <img 
+                //             class="w-100 mt-1 border p-2 rounded image-clickable" 
+                //             src="${url}" 
+                //             alt="File" 
+                //             onclick="viewImage('${url}')"
+                //         >
+                //     `;
+                // };
+
+                const renderFile = ({ url, type }) => {
+                    if (type === "application/pdf") {
+                        return `<a href="${url}" target="_blank" class="btn btn-link">View PDF</a>`;
+                    } else if (type.startsWith("image/")) {
+                        return `
+                            <img 
+                                class="w-100 mt-1 border p-2 rounded image-clickable" 
+                                src="${url}" 
+                                alt="File" 
+                                onclick="viewImage('${url}')"
+                            >
+                        `;
+                    } else {
+                        return `<p class="text-danger">The format "${type}" is not supported.</p>`;
+                    }
+                };
+
+                // Populate modal content
+                const modalContent = `
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Other user details -->
+                        <div class="row">
+                            <div class="col-12 col-md-3 mb-2">
+                                <label><strong>Admin Remarks:</strong></label>
+                                <textarea id="adminRemarks" class="form-control">${user.admin_remarks || ""}</textarea>
+                            </div>
+                            <div class="col-12 col-md-3 mb-2">
+                                <label><strong>Status:</strong></label>
+                                <select id="statusDropdown" class="form-control">
+                                    <option value="pending" ${user.status === "pending" ? "selected" : ""}>Pending</option>
+                                    <option value="approved" ${user.status === "approved" ? "selected" : ""}>Approved</option>
+                                    <option value="rejected" ${user.status === "rejected" ? "selected" : ""}>Rejected</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-3 mb-2">
+                                <button id="updateStatusButton" class="btn btn-primary mt-4">Update Status</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Name:</strong></label>
+                            <div class="dataValues">${user.first_name} ${user.last_name}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Email:</strong></label>
+                            <div class="dataValues">${user.email}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Gender:</strong></label>
+                            <div class="dataValues">${user.gender}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Mobile Number:</strong></label>
+                            <div class="dataValues">${user.mobile_number}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>District:</strong></label>
+                            <div class="dataValues">${user.district}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Role:</strong></label>
+                            <div class="dataValues">${user.role}</div>
+                        </div>
+
+
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>WhatsApp Number:</strong></label>
+                            <div class="dataValues">${user.whatsapp_number}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Communication Address:</strong></label>
+                            <div class="dataValues">${user.address_communication}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Permanent Address:</strong></label>
+                            <div class="dataValues">${user.address_permanent}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Father/Spouse Details:</strong></label>
+                            <div class="dataValues">${user.father_spouse_details}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Blood Group:</strong></label>
+                            <div class="dataValues">${user.blood_group}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Educational Status:</strong></label>
+                            <div class="dataValues">${user.educational_status}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Category:</strong></label>
+                            <div class="dataValues">${user.category}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>University Name:</strong></label>
+                            <div class="dataValues">${user.university_name}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>University Country:</strong></label>
+                            <div class="dataValues">${user.country_university}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Year Of Joining:</strong></label>
+                            <div class="dataValues">${user.year_of_joining}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Year Of Completion:</strong></label>
+                            <div class="dataValues">${user.year_of_completion}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Date Time Of Payment:</strong></label>
+                            <div class="dataValues">${user.date_time_of_payment}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>Willing To Be Donor:</strong></label>
+                            <div class="dataValues">${user.willing_to_be_donor}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>MID:</strong></label>
+                            <div class="dataValues">${user.mid}</div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                    <div class="col-12 col-md-3 mb-2">
+                        <label><strong>Photo:</strong></label>
+                        ${renderFile(photo)}
+                    </div>
+                    <div class="col-12 col-md-3 mb-2">
+                        <label><strong>State NMC:</strong></label>
+                        ${renderFile(stateNmc)}
+                    </div>
+                    <div class="col-12 col-md-3 mb-2">
+                        <label><strong>Passport:</strong></label>
+                        ${renderFile(passport)}
+                    </div>
+                    <div class="col-12 col-md-3 mb-2">
+                        <label><strong>Medical Qualification:</strong></label>
+                        ${renderFile(medicalQualification)}
+                    </div>
+                    <div class="col-12 col-md-3 mb-2">
+                        <label><strong>Payment Proof:</strong></label>
+                        ${renderFile(paymentProof)}
+                    </div>
+                </div>
+                
+            `;
+
+                document.getElementById("userDetailsContent").innerHTML = modalContent;
+
+                document.getElementById("updateStatusButton").addEventListener("click", () => {
+                    const newStatus = document.getElementById("statusDropdown").value;
+                    const adminRemarks = document.getElementById("adminRemarks").value;
+                    updateUserStatus(userId, newStatus, adminRemarks);
+                });
+
+                // Show the modal
+                const userDetailsModal = new bootstrap.Modal(document.getElementById("userDetailsModal"));
+                userDetailsModal.show();
+            } else {
+                alert("Failed to fetch user details.");
+            }
+        } catch (error) {
+            console.error("Error fetching user details:", error);
+        }
+    }
+
+    // Attach event listeners
+    document.addEventListener("DOMContentLoaded", () => {
+        const userDetailsModal = document.getElementById("userDetailsModal");
+
+        userDetailsModal.addEventListener('hidden.bs.modal', function () {
+            location.reload();  // Refresh the admin panel page
+        });
+
+        document.querySelectorAll(".view-details").forEach((button) => {
+            button.addEventListener("click", function () {
+                const userId = this.dataset.userId;
+                console.log(this.dataset.userId)
+                loadUserDetails(userId);
+            });
+        });
+    });
+
+    async function updateUserStatus(userId) {
+        const newStatus = document.getElementById("statusDropdown").value;
+        const adminRemarks = document.getElementById("adminRemarks").value;
+
+        try {
+            const response = await fetch(`/api/update-user-status/${userId}/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    // "X-CSRFToken": csrfToken, // Include CSRF token for security
+                },
+                body: JSON.stringify({ status: newStatus, admin_remarks: adminRemarks }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert("Status and remarks updated successfully!");
+                // Refresh user details or close the modal if needed
+            } else {
+                alert("Failed to update status: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error updating status:", error);
+            alert("An error occurred while updating the status.");
+        }
+    }
+
+    // Function to show image in modal
+    function viewImage(imageUrl) {
+        const modalImage = document.getElementById("modalImage");
+        modalImage.src = imageUrl;
+        const imageModal = new bootstrap.Modal(document.getElementById("imageModal"));
+        imageModal.show();
+    }
+
+    // Function to load category change requests
+    async function loadCategoryRequests() {
+        const container = document.getElementById("categoryRequestsContainer");
+        container.innerHTML = `
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        `;
+
+        try {
+            const response = await fetch('/api/get-category-change-requests/');
+            const data = await response.json();
+
+            if (data.success && data.requests.length > 0) {
+                let html = '<div class="table-responsive"><table class="table table-hover">';
+                html += `
+                    <thead class="table-light">
+                        <tr>
+                            <th>User</th>
+                            <th>Current Category</th>
+                            <th>Requested Category</th>
+                            <th>Request Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+
+                data.requests.forEach(request => {
+                    html += `
+                        <tr>
+                            <td>
+                                <strong>${request.first_name} ${request.last_name}</strong><br>
+                                <small class="text-muted">${request.username}</small>
+                            </td>
+                            <td><span class="badge bg-secondary">${request.current_category}</span></td>
+                            <td><span class="badge bg-primary">${request.requested_category}</span></td>
+                            <td><small>${request.request_date}</small></td>
+                            <td>
+                                <button class="btn btn-success btn-sm me-1" onclick="handleCategoryRequest(${request.id}, 'approved')">
+                                    <i class="bi bi-check-circle"></i> Approve
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="handleCategoryRequest(${request.id}, 'rejected')">
+                                    <i class="bi bi-x-circle"></i> Reject
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table></div>';
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> No pending category change requests.
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Error loading category requests:', error);
+            container.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> Error loading category change requests.
+                </div>
+            `;
+        }
+    }
+
+    // Function to handle category change request approval/rejection
+    async function handleCategoryRequest(requestId, decision) {
+        const remarks = prompt(`Please enter admin remarks for this ${decision === 'approved' ? 'approval' : 'rejection'}:`);
+        
+        if (remarks === null) {
+            return; // User cancelled
+        }
+
+        try {
+            const response = await fetch(`/api/approve-reject-category-change/${requestId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    decision: decision,
+                    admin_remarks: remarks
+                })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                alert(`Category change request ${decision} successfully!`);
+                loadCategoryRequests(); // Reload the requests
+            } else {
+                alert('Error: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
+    }
+
+    // Toggle Sidebar Function
+    function toggleSidebar() {
+        const navbar = document.getElementById('navbar');
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mainLayout = document.querySelector('.mainLayout');
+        
+        navbar.classList.toggle('show');
+        mainLayout.classList.toggle('sidebar-open');
+        
+        // Change hamburger icon
+        const icon = hamburgerBtn.querySelector('i');
+        if (navbar.classList.contains('show')) {
+            icon.className = 'bi bi-x-lg';
+        } else {
+            icon.className = 'bi bi-list';
+        }
+    }
+    
+    // Close sidebar when clicking outside
+    document.addEventListener('click', function(event) {
+        const navbar = document.getElementById('navbar');
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        
+        if (!navbar || !hamburgerBtn) return;
+        
+        const isClickInsideSidebar = navbar.contains(event.target);
+        const isClickOnHamburger = hamburgerBtn.contains(event.target);
+        
+        if (!isClickInsideSidebar && !isClickOnHamburger && navbar.classList.contains('show')) {
+            toggleSidebar();
+        }
+    });
+
+    // Load category requests when page loads
+    document.addEventListener("DOMContentLoaded", () => {
+        loadCategoryRequests();
+        
+        // Handle registration filter change
+        document.getElementById('registrationFilter').addEventListener('change', function() {
+            const customDateRange = document.getElementById('customDateRange');
+            if (this.value === 'custom') {
+                customDateRange.style.display = 'block';
+            } else {
+                customDateRange.style.display = 'none';
+            }
+        });
+        
+        // Add event listener for email message preview
+        document.getElementById('emailMessage').addEventListener('input', function() {
+            const previewDiv = document.getElementById('emailPreview');
+            if (this.value.trim() === '') {
+                previewDiv.innerHTML = '<em class="text-muted">Your message preview will appear here...</em>';
+            } else {
+                // Create a wrapper to safely render HTML
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = this.value;
+                previewDiv.innerHTML = '';
+                previewDiv.appendChild(wrapper);
+            }
+        });
+        
+        // Fix for preventing navbar shift when modal opens
+        const bulkEmailModal = document.getElementById('bulkEmailModal');
+        
+        bulkEmailModal.addEventListener('show.bs.modal', function () {
+            // Get current scrollbar width
+            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+            
+            // Prevent body shift
+            document.body.style.overflow = 'hidden';
+            document.body.style.paddingRight = '0px';
+            
+            // Keep navbar and other elements in place
+            const navbar = document.querySelector('.l-navbar');
+            const mainLayout = document.querySelector('.mainLayout');
+            
+            if (navbar) navbar.style.paddingRight = '0px';
+            if (mainLayout) mainLayout.style.paddingRight = '0px';
+        });
+        
+        bulkEmailModal.addEventListener('hidden.bs.modal', function () {
+            // Restore normal scrolling
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            
+            const navbar = document.querySelector('.l-navbar');
+            const mainLayout = document.querySelector('.mainLayout');
+            
+            if (navbar) navbar.style.paddingRight = '';
+            if (mainLayout) mainLayout.style.paddingRight = '';
+        });
+    });
+
+    // Function to download registrations
+    async function downloadRegistrations() {
+        const period = document.getElementById('registrationFilter').value;
+        const downloadBtn = document.getElementById('downloadRegistrationsBtn');
+        
+        if (!period) {
+            alert('Please select a period first');
+            return;
+        }
+        
+        // Validate custom date range
+        if (period === 'custom') {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+            
+            if (new Date(startDate) > new Date(endDate)) {
+                alert('Start date cannot be after end date');
+                return;
+            }
+        }
+
+        try {
+            // Show loading state
+            const originalHTML = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Downloading...';
+            downloadBtn.disabled = true;
+
+            // Build URL with parameters
+            let url = `/api/download-registrations/?period=${encodeURIComponent(period)}`;
+            
+            if (period === 'custom') {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                url += `&start_date=${startDate}&end_date=${endDate}`;
+            }
+
+            const response = await fetch(url);
+            
+            if (response.ok) {
+                // Get the blob from response
+                const blob = await response.blob();
+                
+                // Create download link
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                
+                // Generate filename
+                const periodLabel = period === 'custom' 
+                    ? `${document.getElementById('startDate').value}_to_${document.getElementById('endDate').value}`
+                    : period;
+                a.download = `registrations_${periodLabel}_${new Date().toISOString().split('T')[0]}.xlsx`;
+                
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(downloadUrl);
+                document.body.removeChild(a);
+                
+                // Show success message
+                document.getElementById('registrationCountText').textContent = 'Registrations downloaded successfully!';
+                document.getElementById('registrationCountInfo').className = 'alert alert-success mt-3';
+                document.getElementById('registrationCountInfo').style.display = 'block';
+                
+                setTimeout(() => {
+                    document.getElementById('registrationCountInfo').style.display = 'none';
+                }, 3000);
+            } else {
+                const data = await response.json();
+                alert('Error: ' + (data.message || 'Failed to download'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while downloading.');
+        } finally {
+            // Reset button state
+            downloadBtn.innerHTML = '<i class="bi bi-download"></i> Download Registrations';
+            downloadBtn.disabled = false;
+        }
+    }
+
+    // Function to view category members count
+    async function viewCategoryMembers() {
+        const category = document.getElementById('categoryFilter').value;
+        const countContainer = document.getElementById('categoryMembersCount');
+        const countText = document.getElementById('memberCountText');
+        
+        if (!category) {
+            alert('Please select a category first');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/get-category-members/?category=${encodeURIComponent(category)}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                const count = data.count;
+                const categoryText = category === 'All' ? 'all categories' : `"${category}" category`;
+                
+                if (count === 0) {
+                    countContainer.className = 'alert alert-warning';
+                    countText.innerHTML = `<i class="bi bi-exclamation-triangle"></i> No members available in ${categoryText}`;
+                } else {
+                    countContainer.className = 'alert alert-info';
+                    countText.innerHTML = `Found ${count} member${count !== 1 ? 's' : ''} in ${categoryText}`;
+                }
+                countContainer.style.display = 'block';
+            } else {
+                alert('Error: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while fetching members.');
+        }
+    }
+
+    // Function to export category members to Excel
+    async function exportToExcel() {
+        const category = document.getElementById('categoryFilter').value;
+        const exportBtn = document.getElementById('exportBtn');
+        
+        if (!category) {
+            alert('Please select a category first');
+            return;
+        }
+
+        try {
+            // Create a loading indicator
+            const originalHTML = exportBtn.innerHTML;
+            exportBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Exporting...';
+            exportBtn.disabled = true;
+
+            const response = await fetch(`/api/export-category-members/?category=${encodeURIComponent(category)}`);
+            
+            if (response.ok) {
+                // Get the blob from response
+                const blob = await response.blob();
+                
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const filename = category === 'All' ? 'all_members' : `members_${category.replace(/\s+/g, '_')}`;
+                a.download = `${filename}_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                alert('Excel file downloaded successfully!');
+            } else {
+                const data = await response.json();
+                alert('Error: ' + (data.message || 'Failed to export'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while exporting.');
+        } finally {
+            // Reset button state
+            exportBtn.innerHTML = '<i class="bi bi-file-earmark-excel"></i> Export to Excel';
+            exportBtn.disabled = false;
+        }
+    }
+
+    // Function to open bulk email modal
+    function openBulkEmailModal() {
+        const category = document.getElementById('categoryFilter').value;
+        
+        // Reset form completely
+        document.getElementById('bulkEmailForm').reset();
+        
+        // Clear all fields explicitly
+        document.getElementById('emailSubject').value = '';
+        document.getElementById('emailMessage').value = '';
+        document.getElementById('emailPreview').innerHTML = '<em class="text-muted">Your message preview will appear here...</em>';
+        
+        // Set category if selected
+        if (category) {
+            document.getElementById('emailCategory').value = category;
+        } else {
+            document.getElementById('emailCategory').value = '';
+        }
+        
+        // Reset visibility
+        document.getElementById('emailFormContainer').style.display = 'block';
+        document.getElementById('emailProgressContainer').style.display = 'none';
+        document.getElementById('emailResultContainer').style.display = 'none';
+        document.getElementById('sendEmailBtn').style.display = 'inline-block';
+        
+        const modal = new bootstrap.Modal(document.getElementById('bulkEmailModal'));
+        modal.show();
+    }
+
+    // Function to send bulk email
+    async function sendBulkEmail() {
+        const category = document.getElementById('emailCategory').value;
+        const subject = document.getElementById('emailSubject').value;
+        const message = document.getElementById('emailMessage').value;
+        
+        if (!category || !subject || !message) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
+        // Confirm before sending
+        const categoryText = category === 'All' ? 'ALL approved members' : `all members in "${category}" category`;
+        if (!confirm(`Are you sure you want to send this email to ${categoryText}?`)) {
+            return;
+        }
+
+        // Hide form and show progress
+        document.getElementById('emailFormContainer').style.display = 'none';
+        document.getElementById('emailProgressContainer').style.display = 'block';
+        document.getElementById('sendEmailBtn').style.display = 'none';
+        document.getElementById('closeEmailModal').disabled = true;
+
+        try {
+            const response = await fetch('/api/send-bulk-email/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    category: category,
+                    subject: subject,
+                    message: message
+                })
+            });
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            while (true) {
+                const { done, value } = await reader.read();
+                
+                if (done) break;
+                
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n');
+                
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const data = JSON.parse(line.substring(6));
+                        
+                        if (data.progress !== undefined) {
+                            const progressBar = document.getElementById('emailProgressBar');
+                            progressBar.style.width = data.progress + '%';
+                            progressBar.textContent = Math.round(data.progress) + '%';
+                            
+                            document.getElementById('emailProgressText').innerHTML = 
+                                `<p class="mb-0">${data.message}</p>`;
+                        }
+                        
+                        if (data.complete) {
+                            document.getElementById('emailProgressContainer').style.display = 'none';
+                            document.getElementById('emailResultContainer').style.display = 'block';
+                            
+                            // Set success styling
+                            const resultAlert = document.getElementById('emailResultAlert');
+                            const resultIcon = document.getElementById('emailResultIcon');
+                            const resultText = document.getElementById('emailResultText');
+                            
+                            resultAlert.className = 'alert alert-success';
+                            resultAlert.style.fontSize = '1.1rem';
+                            resultIcon.className = 'bi bi-check-circle-fill me-2';
+                            resultIcon.style.fontSize = '1.5rem';
+                            resultText.innerHTML = '<strong>Emails Sent Successfully!</strong><br>' + data.message;
+                            
+                            document.getElementById('closeEmailModal').disabled = false;
+                            
+                            // Show a browser notification if supported
+                            if ("Notification" in window && Notification.permission === "granted") {
+                                new Notification("ADAMS Admin", {
+                                    body: "Bulk emails sent successfully!",
+                                    icon: "/static/assets/images/logo.png"
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('emailProgressContainer').style.display = 'none';
+            document.getElementById('emailResultContainer').style.display = 'block';
+            
+            // Set error styling
+            const resultAlert = document.getElementById('emailResultAlert');
+            const resultIcon = document.getElementById('emailResultIcon');
+            const resultText = document.getElementById('emailResultText');
+            
+            resultAlert.className = 'alert alert-danger';
+            resultIcon.className = 'bi bi-exclamation-triangle-fill';
+            resultText.textContent = 'Error sending emails: ' + error.message;
+            
+            document.getElementById('closeEmailModal').disabled = false;
+        }
+    }
+
+</script>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+
+{% endblock content %}

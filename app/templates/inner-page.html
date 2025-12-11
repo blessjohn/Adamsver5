@@ -1,0 +1,43 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .maintenance-icon {
+        text-align: center;
+    }
+
+    .maintenance-icon i {
+        font-size: 300px;
+        /* Adjust the size of the icon as needed */
+        color: #555;
+        /* Adjust the color of the icon as needed */
+    }
+
+    .maintenance-icon p {
+        font-size: 24px;
+        /* Adjust the font size of the text as needed */
+        color: #555;
+        /* Adjust the color of the text as needed */
+        margin-top: 20px;
+        /* Adjust the spacing between the icon and text */
+    }
+</style>
+
+
+<main id="main" style="height: 80vh;">
+
+    <section>
+
+        <div class="maintenance-icon">
+            <!-- Use an appropriate tool icon, e.g., from Font Awesome or another icon library -->
+            <!-- Replace the placeholder icon with your preferred icon -->
+            <i class="bi bi-tools"></i>
+            <p>Under Development</p>
+        </div>
+    </section>
+
+</main><!-- End #main -->
+
+{% endblock content %}

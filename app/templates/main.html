@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+
+<style>
+  .welcome-message {
+    font-size: 12px;
+    /* Small and unobtrusive */
+    color: #333;
+    /* Neutral text color */
+    padding: 4px;
+    /* Minimal padding */
+    margin: 4px 0;
+    /* Small margin for separation */
+    line-height: 1.4;
+    /* Slightly increased line spacing for readability */
+  }
+
+  .welcome-message small {
+    display: block;
+    /* Moves tag to a new line */
+    color: #555;
+    /* Slightly lighter color for distinction */
+    font-size: 10px;
+    /* Smaller size for the tag */
+  }
+
+  .messages-container {
+    position: absolute;
+    /* Position it relative to the viewport */
+    top: 10px;
+    /* Distance from the top */
+    right: 10px;
+    /* Distance from the right */
+    z-index: 1000;
+    /* Ensure it appears above other elements */
+    width: auto;
+    /* Adjust width as needed */
+    max-width: 300px;
+    /* Optional: Limit width to prevent excessive size */
+  }
+
+  .messages-container .alert {
+    margin-bottom: 10px;
+    /* Add spacing between alerts */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Optional: subtle shadow for better visibility */
+  }
+</style>
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>ADAMS</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Dosis:300,400,500,,600,700,700i|Lato:300,300i,400,400i,700,700i"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.0/bootstrap-table.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="">
+    <div class="container d-flex align-items-center justify-content-between">
+
+      <div class="d-flex">
+        <a href="{% url 'home' %}" class="logo"><img src="{% static 'assets/img/client-img/adam_logo.png' %}" alt=""
+            class="img-fluid"></a>
+        <div>
+          <div>
+            <a href="{% url 'home' %}" style="text-decoration: none; color: #243c71;"><span class="d-none d-md-inline"
+              style="font-weight: 600;">Association Of Doctors And Medical Students</span></a>
+          </div>
+          <div class=""><span class="d-none d-md-inline" style="font-size: small;">TVM/TC/16/2024</span></div>
+        </div>
+      </div>
+
+      <nav id="" class="d-flex">
+        <div class="welcome-message">
+          {% if user.is_authenticated %}
+          <span>Welcome, {{ data.user.username }}</span>
+          <small>Tag: {{ data.user.category }}</small>
+          {% endif %}
+        </div>
+      </nav>
+      <!-- .navbar -->
+
+    </div>
+  </header><!-- End Header -->
+
+  <nav id="navbar" class="navbar">
+    <div class="d-flex justify-content-center w-100">
+      <ul>
+        <li><a class="nav-link scrollto active" href="{% url 'home' %}">Home</a></li>
+        <li><a class="nav-link" href="{% url 'registration' %}">Registration</a></li>
+        <li><a class="nav-link scrollto" href="{% url 'about_us' %}">About</a></li>
+        <!-- <li><a class="nav-link scrollto" href="/#services">Services</a></li> -->
+        <li><a class="nav-link" href="{% url 'gallery' %}">Gallery</a></li>
+        <!-- <li><a class="nav-link" href="{% url 'under-development' %}">information desk</a></li> -->
+        <li><a class="nav-link scrollto" href="{% url 'contact_us' %}">Contact</a></li>
+        {% if user.is_authenticated and user.role == 'admin' %}
+        <li><a class="nav-link scrollto" href="{% url 'get-scanner' %}">Validate Member</a></li>
+        <li><a class="nav-link scrollto" href="{% url 'admin_panel' %}">Admin Panel</a></li>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'generate-qr-code' user.id %}" download="qr_code.png">
+            Download QR Code
+        </a>
+        <li><a href="{% url 'user_profile' %}">
+            Profile
+          </a>
+        </li>
+        <li><a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a></li>
+        {% endif %}
+      </ul>
+      <i class="bi bi-list mobile-nav-toggle"></i>
+    </div>
+
+  </nav><!-- .navbar -->
+
+  <!-- {% if messages %}
+  <div class="container mt-3">
+      {% for message in messages %}
+      <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" role="alert">
+          {{ message }}
+      </div>
+      {% endfor %}
+  </div>
+  {% endif %} -->
+
+  {% if messages %}
+  <div class="messages-container">
+    <div class="container mt-3">
+      {% for message in messages %}
+      <div class="alert {% if 'success' in message.tags %}alert-success{% else %}alert-info{% endif %}" role="alert">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+
+
+  <!-- Logout Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to log out?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end of Logout Modal -->
+
+
+
+  {% block content %}
+
+
+  {% endblock content %}
+
+
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-12 col-md-12 footer-links w-100 text-center">
+            <h4>Our Social Networks</h4>
+            <div class="social-links mt-3">
+              <a href="https://x.com/adams_org?t=pBX7ZBff1ScaviNayWuedQ&s=09" target="_blank" class="twitter"><i
+                  class="bx bxl-twitter"></i></a>
+              <a href="https://www.facebook.com/profile.php?id=61555904773126&mibextid=ZbWKwL" target="_blank"
+                class="facebook"><i class="bx bxl-facebook"></i></a>
+              <a href="https://www.instagram.com/adams_org?igsh=YzljYTk1ODg3Zg==" target="_blank" class="instagram"><i
+                  class="bx bxl-instagram"></i></a>
+              <a href="https://chat.whatsapp.com/IKcS3AUTPFJ4lp8WWYCgoq" target="_blank" class="whatsapp"><i
+                  class="bx bxl-whatsapp"></i></a>
+              <!-- <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a> -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container py-4">
+      <div class="copyright">
+        &copy; Copyright <strong><span>ADAMS</span></strong>. All Rights Reserved
+      </div>
+    </div>
+  </footer>
+  <!-- End Footer -->
+
+
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+  <!-- Vendor JS Files -->
+  <!-- <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+  <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'assets/js/main.js' %}"></script>
+
+  <script>
+    // Set a timeout to hide the messages after 5 seconds
+    setTimeout(function () {
+      var messages = document.querySelectorAll('.alert');
+      messages.forEach(function (message) {
+        message.style.transition = "opacity 1s";
+        message.style.opacity = 0;  // Fade out the message
+        setTimeout(function () {
+          message.style.display = 'none'; // Remove from view after fading out
+        }, 1000); // Wait 1 second for the fade-out to complete
+      });
+    }, 5000); // 5 seconds delay
+
+    console.log($.fn.DataTable);
+  </script>
+
+</body>
+
+</html>

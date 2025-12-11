@@ -1,0 +1,132 @@
+{% extends 'main.html' %} 
+{% load static %} 
+{% block content %} 
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h1 class="text-center mb-4">Update Profile</h1>
+        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            {% csrf_token %}
+
+            <div class="row">
+                <!-- First Column -->
+                <div class="col-md-6">
+                    {% for field in form %}
+                        {% if field.name not in "photo,state_nmc,passport,medical_qualification,payment_transaction_proof" %}
+                            {% if forloop.counter|divisibleby:2 %}
+                                <div class="mb-3">
+                                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <div class="text-danger small">{{ field.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Second Column -->
+                <div class="col-md-6">
+                    {% for field in form %}
+                        {% if field.name not in "photo,state_nmc,passport,medical_qualification,payment_transaction_proof" %}
+                            {% if not forloop.counter|divisibleby:2 %}
+                                <div class="mb-3">
+                                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <div class="text-danger small">{{ field.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Custom Fields for File Uploads -->
+            <h4 class="mt-4">File Uploads</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="photo" class="form-label">Photo</label>
+                        <input type="file" class="form-control" id="photo" name="photo">
+                        {% if form.photo.value %}
+                            <div class="form-text">Current photo: <a href="">View Photo</a></div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="passport" class="form-label">Passport</label>
+                        <input type="file" class="form-control" id="passport" name="passport">
+                        {% if form.passport.value %}
+                            <div class="form-text">Current file: <a href="">View File</a></div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="state_nmc" class="form-label">State NMC</label>
+                        <input type="file" class="form-control" id="state_nmc" name="state_nmc">
+                        {% if form.state_nmc.value %}
+                            <div class="form-text">Current file: <a href="">View File</a></div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="medical_qualification" class="form-label">Medical Qualification</label>
+                        <input type="file" class="form-control" id="medical_qualification" name="medical_qualification">
+                        {% if form.medical_qualification.value %}
+                            <div class="form-text">Current file: <a href="">View File</a></div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="payment_transaction_proof" class="form-label">Payment Transaction Proof</label>
+                        <input type="file" class="form-control" id="payment_transaction_proof" name="payment_transaction_proof">
+                        {% if form.payment_transaction_proof.value %}
+                            <div class="form-text">Current file: <a href="">View File</a></div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <div class="text-center mt-4 mx-2">
+                    <a href="{% url 'admin_panel' %}" class="btn btn-secondary ">Cancel</a>
+                    <!-- <button type="submit" class="btn btn-primary btn-lg">Update</button> -->
+                </div>
+    
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success ">Save Changes</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<script>
+    const districtSelect = document.getElementById('id_district');
+    const customDistrictContainer = document.getElementById('custom-district-container');
+    const customDistrictInput = document.getElementById('custom_district');
+
+    districtSelect.addEventListener('change', function () {
+        if (this.value === 'Others') {
+            customDistrictContainer.style.display = 'block';
+            customDistrictInput.required = true;
+        } else {
+            customDistrictContainer.style.display = 'none';
+            customDistrictInput.required = false;
+        }
+    });
+
+    // Trigger on page load to handle existing values
+    districtSelect.dispatchEvent(new Event('change'));
+</script>
+
+
+
+{% endblock content %}

@@ -1,0 +1,113 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .otp-input-container {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .otp-cell {
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        font-size: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .otp-cell:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    .otp-form {
+        text-align: center;
+    }
+</style>
+
+
+<form method="post" class="otp-form">
+    {% csrf_token %}
+    <label for="otp_code" class="form-label">Enter OTP:</label>
+    <div class="otp-input-container">
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-cell" name="otp_code[]" required autofocus>
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-cell" name="otp_code[]" required>
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-cell" name="otp_code[]" required>
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-cell" name="otp_code[]" required>
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-cell" name="otp_code[]" required>
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-cell" name="otp_code[]" required>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Verify OTP</button>
+    <div type="button" id="resendOtpBtn" style="font-size: small;" onclick="resendOtp()" class="mt-3">Click here to resend OTP</div>
+</form>
+
+<!-- Message for resend success -->
+<div id="otpStatus" class="mt-2"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const otpCells = document.querySelectorAll(".otp-cell");
+
+        otpCells.forEach((cell, index) => {
+            cell.addEventListener("input", (e) => {
+                if (e.target.value.length === 1 && index < otpCells.length - 1) {
+                    otpCells[index + 1].focus();
+                }
+            });
+
+            cell.addEventListener("keydown", (e) => {
+                if (e.key === "Backspace" && index > 0 && !cell.value) {
+                    otpCells[index - 1].focus();
+                }
+            });
+        });
+    });
+</script>
+
+
+<script>
+    function resendOtp() {
+        var btn = document.getElementById('resendOtpBtn');
+        btn.disabled = true;
+        btn.innerText = 'Resending...';
+
+        // Send a JSON payload with an 'action' field
+        fetch("{% url 'resend_otp' %}", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify({ action: 'resend' })  // Ensure the body is serialized correctly
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('otpStatus').innerHTML = "<div class='alert alert-success'>OTP resent successfully!</div>";
+                    setTimeout(function () {
+                        document.getElementById('otpStatus').innerHTML = "";
+                    }, 5000);
+                } else {
+                    document.getElementById('otpStatus').innerHTML = `<div class='alert alert-danger'>${data.message || 'Failed to resend OTP.'}</div>`;
+                }
+                btn.disabled = false;
+                btn.innerText = 'Resend OTP';
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('otpStatus').innerHTML = "<div class='alert alert-danger'>An error occurred. Please try again later.</div>";
+                btn.disabled = false;
+                btn.innerText = 'Resend OTP';
+            });
+    }
+</script>
+
+
+{% endblock content %}

@@ -1,0 +1,279 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- this is new banner -->
+<section class="newBannerHome position-relative">
+  <div class="AdminLoginPortal p-3 d-none d-lg-block">
+    <div class="adminLoginMain ">
+      <!-- <h1 class="text-center">LOGIN</h1> -->
+      <h3 class="text-center fw-semibold mt-2">Association Of Doctors and <br> Medical Students </h3>
+      <div class="loginMiddle">
+        <p class="">ADAMS, Association of Doctors And Medical Students is a registered association (non-profit), dedicated for serving Doctors and Medical Students who are abroad trained, Indian nationals. It operates as a part of All Kerala Foreign Medical Association-AKFMA, with the aim of bringing together all FMGs.</p>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="{% url 'registration' %}">Register</a>
+        <a href="{% url 'login' %}">Login</a>
+      </div>
+    </div>
+
+  </div>
+    <div class="container h-100">
+      <div class="align-items-center h-100 justify-content-between row">
+        <div class="col-12 col-lg-4 d-flex justify-content-center my-3">
+          <div class="AdminLoginPortal p-3 d-lg-none">
+            <div class="adminLoginMain ">
+              <h3 class="text-center fw-semibold">Association Of Doctors and <br> Medical Students </h3>
+              <div class="loginMiddle">
+                <p>ADAMS, Association of Doctors And Medical Students is a registered association (non-profit), dedicated for serving Doctors and Medical Students who are abroad trained, Indian nationals. It operates as a part of All Kerala Foreign Medical Association-AKFMA, with the aim of bringing together all FMGs.</p>
+              </div>
+              <div class="d-flex gap-2">
+                <a href="{% url 'registration' %}">Register</a>
+                <a href="{% url 'login' %}">Login</a>
+              </div>
+            </div>
+          
+          </div>
+          
+        </div>
+        <div class="col-12 col-lg-4">
+          <div id="hero" class="newsHead" style="background-color: #243c71; overflow: hidden;">
+            <div class="d-flex justify-content-between align-items-center py-2 px-3 newsBoxMain">
+              <h2 class="text-center" style="margin: 0; color: white;">What's New</h2>
+              {% if user.is_authenticated and user.role == 'admin' %}
+              <i data-bs-toggle="modal" data-bs-target="#announcementModal"
+                class="bi bi-plus fs-3 d-flex justify-content-center align-items-center rounded "></i>
+              {% endif %}
+              <!-- <i data-bs-toggle="modal" data-bs-target="#exampleModal"
+                class="bi bi-plus fs-3 d-flex justify-content-center align-items-center rounded "></i> -->
+            </div>
+            <div class="ticker-container h-100">
+              <ul class="ticker-list mt-0">
+
+                {% for announcement in data.announcements %}
+                <li class="ticker-item">
+                  <div class="notification d-flex justify-content-between align-items-center">
+                    <span >
+                      <span class="badge rounded-pill bg-danger ms-1">New</span>
+                      <!-- <span class="notification-date">{{ announcement.id }}</span> -->
+                      <span class="notification-date badge m-0 fw-light">{{ announcement.date }}|</span>
+                      <span style="margin: 0;" class="notification-content fw-semibold">{{ announcement.announcement }}</span>
+                      {% if user.is_authenticated and user.status == 'approved' %}
+                      <span><a href="{{ announcement.hyper_link }}" target="_blank">click here</a></span>
+                      {% endif %}
+                    </span>
+                    {% if user.is_authenticated and user.role == 'admin' %}
+                    <form method="POST" action="{% url 'delete_announcement' announcement.aid %}" class="m-0 p-0">
+                      {% csrf_token %}
+                      <button type="submit" style="color: red;" class="btn bi bi-trash d-flex justify-content-center align-items-center rounded cursor-pointer"></button>
+                    </form>
+                    {% endif %}
+                  </div>
+                </li>
+                {% endfor %}
+
+              
+
+
+                <!-- <li class="ticker-item">Notice for General Body Meeting of ADAMS <span
+                    class="badge rounded-pill bg-danger ms-1">New</span>
+                  <a href="static/docs/Public Notice ADAMS GBM.pdf" download="Public Notice ADAMS GBM.pdf"
+                    class="badge rounded-pill bg-danger ms-1">Download PDF</a>
+                </li>
+                <li class="ticker-item">15/11/2024 Inviting application for the post of J S . <span
+                    class="badge rounded-pill bg-danger ms-1">New</span></li>
+                <li class="ticker-item">04/04/2024 Request for urgent intervention in the modification of Clerkship Programme.
+                </li>
+                <li class="ticker-item">15/05/2024 Regarding Permanent Registration Of Foreign Medical Graduates (FMGs) at Kerala
+                  State Medical Council (KSMC </li>
+                <li class="ticker-item">30/05/2024 Issues faced by Medical students and Doctors.-NMC Mental health stakeholders
+                  meeting
+                </li>
+                <li class="ticker-item">14/06/2024 Proposal for a program for online graduates/ missed practical classes in
+                  offline mode. </li>
+                <li class="ticker-item">05/08/2024 Public Notice-Thank note ksmc status visibility </li>
+                <li class="ticker-item">05/08/2024 Regarding hefty charges levied upon FMGs registrar KSMC </li>
+                <li class="ticker-item">08/03/2024 Regarding change of institution for 2nd year of internship (FMGs) </li>
+                <li class="ticker-item">15/08/2024 GMCH Calicut-Boycotting duties in view of Kolkata incident and demand for a
+                  safe work environment. </li>
+                <li class="ticker-item">14/06/2024 Proposal for a program for online graduates/ missed practical classes in
+                  offline mode. </li> -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+</section>
+
+<main id="main" class="d-none">
+
+
+  <!-- ======= Counts Section ======= -->
+  <section id="marq" class="services marq counts p-0 m-0 mt-1" style="height: 3rem;">
+    <div class="container h-100 d-flex align-items-center">
+
+      <div class="d-flex justify-content-around gap-3 counters position-relative">
+
+        <div class="title badge rounded-pill text-bg-warning py-1 px-3"><strong><a
+              href="{% url 'registration' %}">Register Now..</a></strong></div>
+        <div class="title badge rounded-pill text-bg-warning py-1 px-3"><strong><a
+              href="{% url 'registration' %}">Register Now..</a></strong></div>
+        <div class="title badge rounded-pill text-bg-warning py-1 px-3"><strong><a
+              href="{% url 'registration' %}">Register Now..</a></strong></div>
+        <div class="title badge rounded-pill text-bg-warning py-1 px-3"><strong><a
+              href="{% url 'registration' %}">Register Now..</a></strong></div>
+        <div class="title badge rounded-pill text-bg-warning py-1 px-3"><strong><a
+              href="{% url 'registration' %}">Register Now..</a></strong></div>
+        <div class="title badge rounded-pill text-bg-warning py-1 px-3"><strong><a
+              href="{% url 'registration' %}">Register Now..</a></strong></div>
+
+      </div>
+  </section><!-- End Counts Section -->
+
+  <!-- ======= About Section ======= -->
+  <section id="about" class="about">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-xl-5 col-lg-6 d-flex justify-content-center video-box align-items-stretch position-relative">
+          <a href="#" class="glightbox play-btn mb-4"></a>
+        </div>
+
+        <div
+          class="col-xl-7 col-lg-6 px-lg-5 pt-2 icon-boxes d-flex flex-column align-items-stretch justify-content-center ">
+          <h3>Association Of Doctors and Medical Students </h3>
+          <p>ADAMS, Association of Doctors And Medical Students is a registered association (non-profit), dedicated for
+            serving Doctors and Medical Students who are abroad trained, Indian nationals. It operates as a part of All
+            Kerala Foreign Medical Association-AKFMA, with the aim of bringing together all FMGs.
+
+            According to Dr.Renjith, the founder of ADAMS, the formation of this association was driven by the need for
+            an organization that advocates for the rights of every foreign medicos in the country, including doctors and
+            medical students. The association is committed to being non-profit, ensuring that its focus remains solely
+            on the welfare and protection of foreign medicos.
+
+            ADAMS works relentlessly towards safeguarding the rights of our community in all aspects. It provides
+            valuable guidance and support to its members through the expertise of senior doctors.
+
+            Membership in ADAMS is open to all Indian nationals who are abroad trained doctors & medical students.
+
+            ADAMS cordially extends an invitation to all abroad trained doctors and medical students from India to join
+            us, the community which advocates for our rights.</p>
+        </div>
+      </div>
+
+    </div>
+  </section><!-- End About Section -->
+
+  <!-- ======= Services Section ======= -->
+  <section id="services" class="services section-bg">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-6">
+          <div class="icon-box">
+            <div class="icon"><i class="bi bi-prescription2" style="color: #ff689b;"></i></div>
+            <h4 class="title"><a href="{% url 'login' %}">DOCTOR LOGIN</a></h4>
+            <p class="description">
+            </p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="icon-box">
+            <div class="icon"><i class="bi bi-pencil-square" style="color: #e9bf06;"></i></div>
+            <h4 class="title"><a href="{% url 'under-development' %}">COMPLAINTS</a></h4>
+            <p class="description">
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6" data-wow-delay="0.1s">
+          <div class="icon-box">
+            <div class="icon"><i class="bi bi-backpack4" style="color: #3fcdc7;"></i></div>
+            <h4 class="title"><a href="{% url 'login' %}">STUDENT LOGIN</a></h4>
+            <p class="description">
+            </p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6" data-wow-delay="0.1s">
+          <div class="icon-box">
+            <div class="icon"><i class="bi bi-box-arrow-in-left" style="color:#41cf2e;"></i></div>
+            <h4 class="title"><a href="{% url 'login' %}">OFFICIAL LOGIN</a></h4>
+            <p class="description">
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6" data-wow-delay="0.2s">
+          <div class="icon-box">
+            <div class="icon"><i class="bi bi-door-open" style="color: #d6ff22;"></i></div>
+            <h4 class="title"><a href="{% url 'under-development' %}">ALLOTMENTS</a></h4>
+            <p class="description"></p>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6" data-wow-delay="0.2s">
+          <div class="icon-box">
+            <div class="icon"><i class="bi bi-clock" style="color: #4680ff;"></i></div>
+            <h4 class="title"><a href="{% url 'under-development' %}">ENQUIRY STATUS</a></h4>
+            <p class="description"></p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section><!-- End Services Section -->
+
+  
+
+
+
+
+  <!-- Popup message container
+<div id="popupMessage" class="popup-message">
+  <p id="popupText"></p>
+</div> -->
+
+</main><!-- End #main -->
+
+<!-- Modal -->
+<div class="modal fade" id="announcementModal" tabindex="-1" aria-labelledby="announcementModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <form method="post" class="w-100" action="{% url 'add_announcement' %}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="announcementModalLabel">Add New Announcement</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="customInputs">
+            <div class="row">
+              <div class="col-12">
+
+                {% csrf_token %}
+                <label for="">News Field</label>
+                <textarea id="comments" name="announcement" class="form-control mb-2" rows="3"
+                  placeholder="Enter your announcement here"></textarea>
+
+                <textarea id="hyper_link" name="announcement_link" class="form-control mb-2" rows="3"
+                  placeholder="Enter a hyperlink (optional)"></textarea>
+                <!-- <button type="submit" class="btn btn-primary">Add Notification</button> -->
+
+                <!-- <label for="">News Field</label> -->
+                <!-- <textarea id="comments" name="comments"  placeholder="Enter News"></textarea> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary secondaryBtn" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary primaryBtn">Submit</button>
+        </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+{% endblock content %}

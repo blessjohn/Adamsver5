@@ -1,0 +1,144 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<main id="main" style="height: 100%;">
+    <div class="section-title mt-3 pb-0">
+        <h2>Registrations</h2>
+        <p style="font-size: large; font-weight: 700;">REGISTER NOW FOR MEMBERSHIP WITH EARLY BIRD OFFER</p>
+        <p style="font-size: x-large; font-weight: 800;" class="mt-2">Flat 2500 INR For All Candidates</p>
+    </div>
+
+    <section id="" class="about">
+        <div class="container">
+            <div
+                class="card col-xl-12 col-lg-12 px-lg-5 pt-2 px-3 icon-boxes d-flex flex-column align-items-stretch justify-content-center  bg-info-subtle">
+                <div class="my-4">
+                    <h3 style="width: 100%; font-size: 50px;" class="align-items-center">INSTRUCTIONS</h3>
+                    <ol class="" style="font-size: 1.25rem; font-weight: 600; text-transform: capitalize; padding-left: 1.5rem; line-height: 1.9;">
+                        <li>Choose any given payment methods and pay 2500₹ (Early Bird Offer) and take a screenshot/save the receipt with the transaction ID.</li>
+                        <li>Click on the sign-up button and fill in your details.</li>
+                        <li>On the payments section, upload the screenshot/transaction receipt and submit the form.</li>
+                        <li>Our team will get back to you from <span style="font-weight: 800;">+91 6238 668 068</span>.</li>
+                    </ol>
+                </div>
+                <!-- <p style="font-size: x-large; font-weight: 600; text-transform: capitalize;"><span>1.</span>Choose any given payment
+                    methods and pay 2500₹ (Early Bird Offer) and take a screenshot/save the reciept with the transaction
+                    ID</p>
+                <p style="font-size: x-large; font-weight: 600; text-transform: capitalize;"><span>2.</span>Click on the sign-up
+                    button and fill your details</p>
+                <P style="font-size: x-large; font-weight: 600; text-transform: capitalize;"><span>3.</span>On the payments section
+                    upload the screenshot/transaction reciept and submit the form.</p>
+                <P style="font-size: x-large; font-weight: 600; text-transform: capitalize;"><span>4.</span>Our team will get back to
+                    you from <span style="font-weight: 800;">+91 6238 668 068.</span></p> -->
+            </div>
+        </div>
+    </section>
+
+    <section id="" class="about">
+        <div class="container">
+
+            <div class="row d-flex align-items-center">
+                <div
+                    class="col-xl-7 col-lg-6 px-lg-5 pt-2 icon-boxes  flex-column align-items-stretch justify-content-center ">
+                    <h3 style="width: 100%; font-size: 50px;" class="align-items-center">USE THIS UPI ID OR BANK ACCOUNT
+                        FOR</h3>
+                    <h3 style="width: 100%; font-size: 85px;" class="d-inline">PAYMENT</h3>
+                    <!-- <p class="mt-3">UPI ID - <span style="font-weight: 700;">adams24&#64;fbl</span> (Verify Before Paying)</p> -->
+                </div>
+                <!-- <div class="col-xl-5 col-lg-8 d-flex justify-content-center align-items-stretch position-relative">
+                    <img src="./assets/img/client-img/payment_qr-1.png" style="width: 100%;" alt="">
+                    <a href="#" class="glightbox mb-4"></a>
+                </div> -->
+                <div
+                    class="col-xl-5 col-lg-6 px-lg-5 pt-2 mt-3 icon-boxes  flex-column align-items-stretch justify-content-center bg-info-subtle">
+                    <h3 style="width: 100%; font-size: 60px;" class="align-items-center">adams24&#64;fbl</h3>
+                    <!-- <h3 style="width: 100%; font-size: 85px;" class="d-inline">adams24&#64;fbl</h3> -->
+                    <p class="mt-3"> (Verify Before Paying)</p>
+
+                    <p class="p-0 m-0"><span style="font-weight: 800;">A/C Details</span></p>
+                    <p class="p-0 m-0">IFSC: FDRL0001598</p>
+                    <p class="p-0 m-0">BRANCH: FEDERAL BANK MELATTUR</p>
+                    <p class="p-0 mb-3">A/c No. 15980200004287</p>
+                </div>
+            </div>
+
+        </div>
+    </section><!-- End About Section -->
+
+
+    <section id="counts" class="counts">
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="p-3" style="max-width: 100%;">
+                <div class="w-100">
+                    <div class=" d-flex justify-content-center w-100">
+                        <div style="width: 100%;">
+                            <div class="d-flex justify-content-center">
+                                <h3 style=" font-weight: 600; font-size: 40px;" class="text-white">Join Our Network of
+                                    Trusted Doctors Today!</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="d-flex justify-content-center">
+                        <h3 style="text-transform: capitalize; font-size: 17px; font-weight: 500;" class="mb-2 text-white">membership form for adams</h3>
+                    </div> -->
+                    <div class="d-flex justify-content-center">
+                        <a href="{% url 'register' %}" class="newsletter-button">SIGNUP</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="" class="about">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-xl-5 col-lg-8 d-flex justify-content-center align-items-stretch position-relative">
+                    <div style="height: 100%;">
+                        <img src="{% static 'assets/img/client-img/whatsapp_qr.jpeg' %}"
+                            style="width: 100%; height: 100%; object-fit: cover;" alt="">
+                        <a href="#" class="glightbox mb-4"></a>
+                    </div>
+                </div>
+                <div
+                    class="col-xl-7 col-lg-4 px-lg-5 mt-3 icon-boxes flex-column d-flex align-items-stretch justify-content-center ">
+                    <div style="height: 100%;" class="d-flex align-items-center">
+                        <div>
+                            <div class="d-flex justify-content-center w-100">
+                                <h3 style="width: 100%; font-size: 30px;" class="align-items-center">After
+                                    submitting the form, please do request to join our verification group. After
+                                    reviewing your application, your request will be accepted.</h3>
+                            </div>
+                            <!-- <h3 style="width: 100%; font-size: 85px;" class="d-inline">PAYMENT</h3>
+                            <p>UPI ID adams24&#64;fbl(Verify Before Paying)</p> -->
+                            <div class="d-flex justify-content-center w-100 mt-3">
+                                <a href="https://chat.whatsapp.com/BoCxxjhsMY39uyqm8hSFpo" target="_blank"
+                                    class="btn btn-lg btn-outline-success shadow mb-4"
+                                    style="font-size: medium; font-weight: 800;">CONNECT-VERIFICATION TEAM</a>
+                            </div>
+
+                            <div class="d-flex justify-content-center w-100 mt-3">
+                                <p class="d-block" style="text-transform: capitalize;">you'll be contacted from the
+                                    following number for Enq</p>
+                            </div>
+
+                            <div class="d-flex justify-content-center w-100 mt-0">
+                                <p class="p-0 m-0" style="font-size: large; font-weight: 600;">+91 6238 668 068</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section><!-- End About Section -->
+
+</main><!-- End #main -->
+
+
+{% endblock content %}

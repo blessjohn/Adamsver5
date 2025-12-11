@@ -1,0 +1,76 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="login-container">
+    <h1>Sign in to Your Account</h1>
+    <div class="customInputs">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="">
+                <label for="id_username">Username</label>
+                <input type="text" id="id_username" name="username" required>
+                {% if data.form.username.errors %}
+                <p style="color: red;">{{ form.username.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="">
+                <label for="id_password">Password</label>
+                <input type="password" id="id_password" name="password" required>
+                {% if data.form.password.errors %}
+                <p style="color: red;">{{ form.password.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="d-grid mt-3">
+                <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+            </div>
+        </form>
+    </div>
+    <div class="form-text mt-3">
+        New to our platform? <a href="{% url 'registration' %}">Create an account</a>
+    </div>
+    <div class="form-text mt-3">
+        <!-- <i data-bs-toggle="modal" data-bs-target="#exampleModal" class="bi bi-plus fs-3 d-flex justify-content-center align-items-center rounded "></i> -->
+        Forgot password? <a href="" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Create a new
+            password</a>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <form method="post" class="w-100" action="{% url 'forgot_password' %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Forgot Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="customInputs">
+                        <div class="row">
+                            <div class="col-12">
+
+
+                                <label for="email">Enter your registered email address:</label>
+                                <input type="email" name="email" id="email" class="form-control mb-2"
+                                    placeholder="Enter your email here" required>
+
+                                <!-- <button type="submit" class="btn btn-primary">Add Notification</button> -->
+
+                                <!-- <label for="">News Field</label> -->
+                                <!-- <textarea id="comments" name="comments"  placeholder="Enter News"></textarea> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary secondaryBtn" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary primaryBtn">Submit</button>
+                </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

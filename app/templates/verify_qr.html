@@ -1,0 +1,307 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<style>
+    /* Basic Reset */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    #qr_block {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        padding: 20px;
+    }
+
+    /* h1 {
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 20px;
+    } */
+
+    #reader {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #result {
+        font-size: 1.2rem;
+        color: #333;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .result-success {
+        color: #28a745;
+    }
+
+    .result-fail {
+        color: #dc3545;
+    }
+
+    /* .btn {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 30px;
+        transition: background-color 0.3s ease;
+    } */
+
+    /* .btn:hover {
+        background-color: #0056b3;
+    } */
+
+    .loading {
+        font-size: 1.2rem;
+        color: #007bff;
+        font-weight: bold;
+    }
+
+
+
+    
+</style>
+
+
+<style>
+    .user-photo img {
+        max-width: 150px;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .result {
+        font-size: 1.2rem;
+        color: #333;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .result-success {
+        color: #28a745;
+    }
+
+    .result-fail {
+        color: #dc3545;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+
+<body>
+    <section id="qr_block" class="d-flex flex-column align-items-center justify-content-center vh-100 bg-light">
+        <h1 class="mb-4">Scan QR Code</h1>
+        <div id="qr-reader" class="mb-4"></div>
+        <div>
+            <button id="scan-btn" class="btn btn-outline-success me-2 mb-4">Scan</button>
+            <button id="stop-btn" class="btn btn-outline-secondary mb-4" disabled>Stop Scan</button>
+        </div>
+        <div id="result" class="result loading"></div>
+    </section>
+    
+    <!-- Container for the user details -->
+    <div id="user-details" class="container mt-4">
+        
+        <!-- User data will be injected here dynamically -->
+    </div>
+    <script>
+        const ScanButton = document.getElementById("scan-btn");
+        const StopButton = document.getElementById("stop-btn");
+        const resultDiv = document.getElementById("result");
+        const QRReaderDivId = "qr-reader";
+
+        const html5QrcodeScanner = new Html5Qrcode(QRReaderDivId);
+
+        async function stopScan() {
+            await html5QrcodeScanner.stop();
+            StopButton.disabled = true;
+            StopButton.classList.remove('btn-outline-secondary');
+            ScanButton.disabled = false;
+            ScanButton.classList.add('btn-outline-secondary');
+        }
+
+        // Function to get the CSRF token from cookies
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (const cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') {
+                    return value;
+                }
+            }
+            return null;
+        }
+
+        // Success callback for QR code scanning
+        function onScanSuccess(decodedText, decodedResult) {
+    console.log("Scan successful:", decodedText);
+    stopScan();
+    // Get CSRF token
+    const csrfToken = getCSRFToken();
+    resultDiv.innerText = `Validating user data...`
+
+    // Send the scanned data to the server
+    fetch('/validate-qr/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken, // Include CSRF token in the headers
+        },
+        body: JSON.stringify(decodedText),
+    })
+        .then(response => response.json())
+        .then(data => {
+            const resultDiv = document.getElementById('result');
+            const userDetailsDiv = document.getElementById('user-details');
+
+            if (data.status === 'success') {
+                const user = data.user;
+                let userDetails = `
+                    <div class="card shadow-sm p-3 mb-4 bg-white rounded">
+                        <div class="card-body">
+                            <h5 class="card-title text-center mb-4">User Details</h5>
+                            <div class="row">
+                                <div class="col-12 col-md-6 mb-3">
+                                    <strong>Username:</strong> ${user.username}
+                                </div>
+                                <div class="col-12 col-md-6 mb-3">
+                                    <strong>First Name:</strong> ${user.first_name}
+                                </div>
+                                <div class="col-12 col-md-6 mb-3">
+                                    <strong>Last Name:</strong> ${user.last_name}
+                                </div>
+                                <div class="col-12 col-md-6 mb-3">
+                                    <strong>Email:</strong> ${user.email}
+                                </div>
+                                <div class="col-12 col-md-6 mb-3">
+                                    <strong>Gender:</strong> ${user.gender}
+                                </div>
+                                <div class="col-12 col-md-6 mb-3">
+                                    <strong>Mobile Number:</strong> ${user.mobile_number}
+                                </div>
+                                <div class="col-12 col-md-6 mb-3">
+                                    <strong>Address:</strong> ${user.address_communication}
+                                </div>
+                                <div class="col-12 col-md-6 mb-3">
+                                    <strong>District:</strong> ${user.district}
+                                </div>
+                                <div class="col-12 col-md-6 mb-3">
+                                    <strong>Blood Group:</strong> ${user.blood_group}
+                                </div>
+                                <div class="col-12 col-md-6 mb-3">
+                                    <strong>Role:</strong> ${user.role}
+                                </div>
+                            </div>
+                `;
+                
+                // Handle photo display if available
+                if (data.photo) {
+                    const photoUrl = `data:image/jpeg;base64,${data.photo}`;
+                    userDetails += `
+                        <div class="card d-flex justify-content-center mb-3 w-100">
+                            <img src="${photoUrl}" alt="User Photo" class="user-photo"/>
+                        </div>
+                    `;
+                }
+
+                userDetails += `
+            </div>
+        </div>
+        `;
+        
+        userDetailsDiv.innerHTML = userDetails;
+
+        // Enhanced Success Message
+        resultDiv.innerHTML = `
+            <div style="padding: 15px; border: 1px solid #dcdcdc; background-color: #f9f9f9; text-align: center;">
+                <h4 style="margin: 0; font-size: 18px; font-weight: bold;">Success!</h4>
+                <p style="margin: 5px 0; font-size: 14px;"><strong>${user.username}</strong> has been successfully validated.</p>
+                <hr style="margin: 10px 0; border-top: 1px solid #dcdcdc;">
+                <p style="margin: 5px 0; font-size: 14px;">You can now view their full profile below.</p>
+            </div>
+
+        `;
+        resultDiv.classList.remove('loading');
+    } else {
+        resultDiv.innerHTML = `
+            <div style="padding: 15px; border: 1px solid #e6b0b0; background-color: #f9f9f9; text-align: center;">
+                <h4 style="margin: 0; font-size: 18px; font-weight: bold; color: #e74c3c;">Validation Failed</h4>
+                <p style="margin: 5px 0; font-size: 14px; color: #333;">${data.message}</p>
+            </div>
+
+        `;
+        resultDiv.classList.add('result-fail');
+    }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred while validating the QR code.");
+        });
+}
+
+        function main() {
+            StopButton.disabled = true;
+
+            ScanButton.addEventListener("click", async () => {
+                try {
+                    // Clear previous data
+                    resultDiv.innerHTML = '';
+                    resultDiv.classList.add('loading');
+                    // resultDiv.innerText = 'Initializing scanner...';
+                    const userDetailsDiv = document.getElementById('user-details');
+                    userDetailsDiv.innerHTML = '';
+
+                    ScanButton.disabled = true;
+                    ScanButton.classList.remove('btn-outline-secondary');
+
+                    await html5QrcodeScanner.start(
+                        { facingMode: "environment" },
+                        { fps: 10, qrbox: { width: 250, height: 250 } },
+                        onScanSuccess,
+                    );
+                    StopButton.disabled = false;
+                    StopButton.classList.add('btn-outline-secondary');
+                } catch (e) {
+                    console.error("Error getting camera :", e);
+                    alert(
+                        "Error accessing camera device! \n Kindly, make sure it's accessible and try again!",
+                    );
+                    ScanButton.disabled = false;
+                    StopButton.classList.add('btn-outline-secondary');
+                }
+            });
+
+            StopButton.addEventListener("click", stopScan);
+        }
+
+        window.addEventListener("load", main);
+        window.addEventListener("unload", stopScan);
+
+
+        
+    </script>
+
+</body>
+
+</html>
+
+
+{% endblock content %}

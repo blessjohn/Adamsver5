@@ -1,0 +1,371 @@
+{% extends 'main.html' %} 
+{% load static %} 
+
+{% block content %} 
+
+<div class="register-container">
+    <form method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+    {% csrf_token %}
+    <h1>Create a New Account</h1>
+    <div class="customInputs">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <label for="id_username">Username *</label>
+                <input type="text" id="id_username" name="username"  required>
+                {% if form.username.errors %}
+                    <p style="color: red;">{{ form.username.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_first_name">First Name *</label>
+                
+                <input type="text" id="id_first_name" name="first_name" required>
+                {% if form.first_name.errors %}
+                    <p style="color: red;">{{ form.first_name.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_middle_name">Middle Name</label>
+                <input type="text" id="id_middle_name" name="middle_name" >
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_last_name">Last Name *</label>
+                <input type="text" id="id_last_name" name="last_name" required>
+                {% if form.last_name.errors %}
+                    <p style="color: red;">{{ form.last_name.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_gender">Gender *</label>
+                <select id="id_gender" name="gender" required>
+                    <option value="" disabled selected>-- Select Gender --</option>
+                    {% for choice in form.gender.field.choices %}
+                        <option value="{{ choice.0 }}" {% if choice.0 == form.gender.value %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+                {% if form.gender.errors %}
+                    <p style="color: red;">{{ form.gender.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_email">E-mail *</label>
+                <input type="email" id="id_email" name="email" required>
+                {% if form.email.errors %}
+                    <p style="color: red;">{{ form.email.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_whatsapp_number">WhatsApp Number *</label>
+                <input type="tel" id="id_whatsapp_number" name="whatsapp_number" required pattern="^\+?[1-9]\d{1,14}$">
+                {% if form.whatsapp_number.errors %}
+                    <p style="color: red;">{{ form.whatsapp_number.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_mobile_number">Mobile Number *</label>
+                <input type="tel" id="id_mobile_number" name="mobile_number" required pattern="^\+?[1-9]\d{1,14}$">
+                {% if form.mobile_number.errors %}
+                    <p style="color: red;">{{ form.mobile_number.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_password1">Password *</label>
+                <input type="password" id="id_password1" name="password1" required minlength="8">
+                {% if form.password1.errors %}
+                    <p style="color: red;">{{ form.password1.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_password2">Confirm Password *</label>
+                <input type="password" id="id_password2" name="password2" required minlength="8" oninput="checkPasswordMatch()">
+                <p id="password-error" style="color: red; display: none;">Passwords are not matching</p>
+                {% if form.password2.errors %}
+                    <p style="color: red;">{{ form.password2.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="d-flex flex-column">
+                    <label for="">District</label>
+                    <!-- <label for="id_district">District *</label> -->
+                    <select id="id_district" name="district" required>
+                        <option value="" disabled selected>-- Select District --</option>
+                        <!-- {% for choice in form.district.field.choices %}
+                            <option value="{{ choice.0 }}" {% if choice.0 == form.district.value %}selected{% endif %}>{{ choice.1 }}</option>
+                        {% endfor %} -->
+                        {% for key, value in form.fields.district.choices %}
+                            <option value="{{ key }}" {% if form.district.value == key %}selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.district.errors %}
+                        <p style="color: red;">{{ form.district.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-12 col-md-6" id="custom-district-container" style="display: none;">
+                <label for="custom_district">Specify District *</label>
+                <input type="text" id="custom_district" name="custom_district"  minlength="2">
+                {% if form.custom_district.errors %}
+                    <p style="color: red;">{{ form.custom_district.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_address_communication">Address for Communication *</label>
+                <textarea id="id_address_communication" name="address_communication" required></textarea>
+                {% if form.address_communication.errors %}
+                    <p style="color: red;">{{ form.address_communication.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_address_permanent">Permanent Address *</label>
+                <textarea id="id_address_permanent" name="address_permanent" required></textarea>
+                {% if form.address_permanent.errors %}
+                    <p style="color: red;">{{ form.address_permanent.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_father_spouse_details">Father/Spouse Name & Occupation *</label>
+                <textarea id="id_father_spouse_details" name="father_spouse_details" required></textarea>
+                {% if form.father_spouse_details.errors %}
+                    <p style="color: red;">{{ form.father_spouse_details.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="id_blood_group">Blood Group *</label>
+                <select id="id_blood_group" name="blood_group" required>
+                    <option value="" disabled selected>-- Select Blood Group --</option>
+                    {% for choice in form.blood_group.field.choices %}
+                        <option value="{{ choice.0 }}" {% if choice.0 == form.blood_group.value %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+                {% if form.blood_group.errors %}
+                    <p style="color: red;">{{ form.blood_group.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <!-- <div class="col-12 col-md-6">
+                <label for="id_role">Role *</label>
+                <select id="id_role" name="role" required>
+                    <option value="" disabled selected>-- Select role --</option>
+                    {% for choice in form.role.field.choices %}
+                        <option value="{{ choice.0 }}" {% if choice.0 == form.role.value %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+                {% if form.role.errors %}
+                    <p style="color: red;">{{ form.role.errors.0 }}</p>
+                {% endif %}
+            </div> -->
+
+            <div class="col-12 col-md-6">
+                <label for="id_educational_status">Educational Status *</label>
+                <select id="id_educational_status" name="educational_status" required>
+                    <option value="" disabled selected>-- Select Educational Status --</option>
+                    {% for choice in form.educational_status.field.choices %}
+                        <option value="{{ choice.0 }}" {% if choice.0 == form.educational_status.value %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+                {% if form.educational_status.errors %}
+                    <p style="color: red;">{{ form.educational_status.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="id_category">Category You Belong To For Membership *</label>
+                <select id="id_category" name="category" required>
+                    <option value="" disabled selected>-- Select Category --</option>
+                    {% for choice in form.category.field.choices %}
+                        <option value="{{ choice.0 }}" {% if choice.0 == form.category.value %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+                {% if form.category.errors %}
+                    <p style="color: red;">{{ form.category.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="id_university_name">University Name *</label>
+                <textarea id="id_university_name" name="university_name" required></textarea>
+                {% if form.university_name.errors %}
+                    <p style="color: red;">{{ form.university_name.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="col-12 col-md-6">
+                <label for="id_country_university">Country Where University is situated *</label>
+                <textarea id="id_country_university" name="country_university" required></textarea>
+                {% if form.country_university.errors %}
+                    <p style="color: red;">{{ form.country_university.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="col-12 col-md-6">
+                <label for="id_year_of_joining">Year of Joining Medical Education *</label>
+                <input type="date" id="id_year_of_joining" name="year_of_joining" required></input>
+                {% if form.year_of_joining.errors %}
+                    <p style="color: red;">{{ form.year_of_joining.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="id_year_of_completion">Year of Completion/Expected Completion of course *</label>
+                <input type="date" id="id_year_of_completion" name="year_of_completion" required></input>
+                {% if form.year_of_completion.errors %}
+                    <p style="color: red;">{{ form.year_of_completion.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="id_photo">Passport Size Photo *</label>
+                <input type="file" id="id_photo" name="photo" required></input>
+                {% if form.photo.errors %}
+                    <p style="color: red;">{{ form.photo.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="col-12 col-md-6">
+                <label for="id_state_nmc">State/NMC registeration certificate For registered doctors</label>
+                <input type="file" id="id_state_nmc" name="state_nmc"></input>
+                {% if form.state_nmc.errors %}
+                    <p style="color: red;">{{ form.state_nmc.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="id_passport">Passport (Front and Back) *</label>
+                <input type="file" id="id_passport" name="passport" required></input>
+                {% if form.passport.errors %}
+                    <p style="color: red;">{{ form.passport.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="id_medical_qualification">Upload Medical qualification. (Provisional/Permanent)Degree/ Diploma Certificate/ Student ID Card 
+                    *</label>
+                <input type="file" id="id_medical_qualification" name="medical_qualification" required></input>
+                {% if form.medical_qualification.errors %}
+                    <p style="color: red;">{{ form.medical_qualification.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div id="payment-section" class="my-3" style="padding: 30px; border: 1px solid #e0e0e0; border-radius: 10px; background: linear-gradient(135deg, #f5f7fa, #e4e5e9); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); font-family: 'Arial', sans-serif;">
+                <h2 style="text-align: center; color: #333; font-size: 24px; margin-bottom: 20px;">Payment Section</h2>
+                <ol style="margin-left: 20px; color: #555; font-size: 16px; line-height: 1.6;">
+                  <li style="margin-bottom: 10px;">Refer to the website to select a membership.</li>
+                  <li style="margin-bottom: 10px;">Make payment using the QR code provided on the website and download/save or take a screenshot of the payment transaction number/ID.</li>
+                  <li>Upload the screenshot or slip containing the transaction number of the payment in this section.</li>
+                </ol>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="id_date_time_of_payment">Date and time of Payment (Transaction) *</label>
+                <input type="date" id="id_date_time_of_payment" name="date_time_of_payment" required></input>
+                {% if form.date_time_of_payment.errors %}
+                    <p style="color: red;">{{ form.date_time_of_payment.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="id_payment_transaction_proof">Upload Payment Transaction Proof/screenshot *</label>
+                <input type="file" id="id_payment_transaction_proof" name="payment_transaction_proof" required></input>
+                {% if form.payment_transaction_proof.errors %}
+                    <p style="color: red;">{{ form.payment_transaction_proof.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div id="membership-info" class="my-3" style="padding: 30px; border: 1px solid #e0e0e0; border-radius: 10px; background: linear-gradient(135deg, #f5f7fa, #e4e5e9); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); font-family: 'Arial', sans-serif;">
+                <h3 style="text-align: center; color: #333; font-size: 20px; margin-bottom: 15px;">Membership Processing Information</h3>
+                <p style="color: #555; font-size: 16px; line-height: 1.6; text-align: justify;">
+                  After submitting the form, while the form is processed, you will be contacted back by our officially notified team or member. Upon successful verification of the application (following rules and regulations of the <strong>ADAMS</strong>) by the committee, your membership will be granted.
+                </p>
+
+                <p>If you have attended online class or took transfer do fill this <a href="https://forms.gle/szHZFvNfcxsSbgUn7" target="_blank">form</a> along with the membership form</p>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="id_willing_to_be_donor">Willing to be a blood donor?</label>
+                <input type="checkbox" id="id_willing_to_be_donor" name="willing_to_be_donor" value="false">
+                {% if form.willing_to_be_donor.errors %}
+                    <p style="color: red;">{{ form.willing_to_be_donor.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="id_agreement">Agreement for Joining Association of Doctors And Medical Students (ADAMS) *</label>
+                <input type="checkbox" id="id_agreement" name="agreement" value="true" required ></input>
+                {% if form.agreement.errors %}
+                    <p style="color: red;">{{ form.agreement.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="id_mid">Are you in any district group of AKFMA.If yes mention your MID.</label>
+                <input type="text" id="id_mid" name="mid"></input>
+                {% if form.mid.errors %}
+                    <p style="color: red;">{{ form.mid.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="id_application">I agree to the terms and conditions of the association and I hereby submit my application for membership in ADAMS *</label>
+                <input type="checkbox" id="id_application" name="application" value="true" required></input>
+                {% if form.application.errors %}
+                    <p style="color: red;">{{ form.application.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+    <div class="d-grid mt-3">
+        <button type="submit" class="btn btn-primary btn-block">Register</button>
+    </div>
+    <div class="form-text mt-3">
+        Already have an account? <a href="{% url 'login' %}">Sign in</a>
+    </div>
+</form>
+</div>
+
+<script>
+    function validateForm() {
+        var password1 = document.getElementById('id_password1').value;
+        var password2 = document.getElementById('id_password2').value;
+        
+        // Check if passwords match
+        if (password1 !== password2) {
+            document.getElementById('password-error').style.display = 'block';
+            return false;
+        }
+        return true;
+    }
+
+    function checkPasswordMatch() {
+        var password1 = document.getElementById('id_password1').value;
+        var password2 = document.getElementById('id_password2').value;
+        
+        if (password1 !== password2) {
+            document.getElementById('password-error').style.display = 'block';
+        } else {
+            document.getElementById('password-error').style.display = 'none';
+        }
+    }
+
+</script>
+
+<script>
+    const districtSelect = document.getElementById('id_district');
+    const customDistrictContainer = document.getElementById('custom-district-container');
+    const customDistrictInput = document.getElementById('custom_district');
+
+    districtSelect.addEventListener('change', function () {
+        if (this.value === 'Others') {
+            customDistrictContainer.style.display = 'block';
+            customDistrictInput.required = true;
+        } else {
+            customDistrictContainer.style.display = 'none';
+            customDistrictInput.required = false;
+        }
+    });
+
+    // Trigger on page load to handle existing values
+    districtSelect.dispatchEvent(new Event('change'));
+</script>
+
+
+{% endblock content %}

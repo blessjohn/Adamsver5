@@ -1,0 +1,484 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    /* Profile Card Styles */
+    .profile-card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-bottom: 20px;
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .profile-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #007bff;
+        margin-bottom: 15px;
+    }
+
+    .profile-name {
+        font-size: 2rem;
+        color: #007bff;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .profile-role {
+        font-size: 1.1rem;
+        color: #666;
+        text-transform: uppercase;
+    }
+
+    .profile-section {
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        color: #007bff;
+        font-weight: 600;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 8px;
+    }
+
+    .profile-field {
+        display: flex;
+        margin-bottom: 12px;
+        padding: 8px 0;
+    }
+
+    .field-label {
+        font-weight: 600;
+        color: #495057;
+        min-width: 200px;
+    }
+
+    .field-value {
+        color: #212529;
+        flex: 1;
+    }
+
+    .badge-status {
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .badge-approved {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .badge-pending {
+        background-color: #ffc107;
+        color: #000;
+    }
+
+    .badge-rejected {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-category-change {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 5px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-category-change:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-category-change:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+    }
+
+    .pending-request-alert {
+        background-color: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .pending-request-alert h5 {
+        color: #856404;
+        margin-bottom: 10px;
+    }
+
+    .pending-request-alert p {
+        color: #856404;
+        margin: 5px 0;
+    }
+
+    .document-link {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .document-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Modal Styles */
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    .modal-header {
+        background-color: #007bff;
+        color: white;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .form-select {
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+    }
+
+    /* Responsive Layout */
+    @media (max-width: 767px) {
+        .profile-card {
+            padding: 20px;
+        }
+
+        .field-label {
+            min-width: 120px;
+            font-size: 0.9rem;
+        }
+
+        .field-value {
+            font-size: 0.9rem;
+        }
+
+        .profile-field {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    {% if data.user %}
+    <div class="row">
+        <div class="col-12">
+            <!-- Profile Header -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    {% if data.user.photo %}
+                    <img src="{% url 'serve_user_image' data.user.id 'photo' %}" 
+                         alt="{{ data.user.first_name }}'s Photo" 
+                         class="profile-photo">
+                    {% else %}
+                    <div class="profile-photo d-flex align-items-center justify-content-center" 
+                         style="background-color: #e9ecef;">
+                        <i class="bi bi-person-fill" style="font-size: 4rem; color: #6c757d;"></i>
+                    </div>
+                    {% endif %}
+                    <h2 class="profile-name">{{ data.user.first_name }} {{ data.user.middle_name }} {{ data.user.last_name }}</h2>
+                    <p class="profile-role">{{ data.user.get_role_display }}</p>
+                    <span class="badge-status {% if data.user.status == 'approved' %}badge-approved{% elif data.user.status == 'pending' %}badge-pending{% else %}badge-rejected{% endif %}">
+                        {{ data.user.get_status_display }}
+                    </span>
+                </div>
+
+                <!-- Pending Category Change Request Alert -->
+                {% if data.pending_category_request %}
+                <div class="pending-request-alert">
+                    <h5><i class="bi bi-clock-history"></i> Category Change Request Pending</h5>
+                    <p><strong>Current Category:</strong> {{ data.pending_category_request.current_category }}</p>
+                    <p><strong>Requested Category:</strong> {{ data.pending_category_request.requested_category }}</p>
+                    <p><strong>Request Date:</strong> {{ data.pending_category_request.request_date|date:"M d, Y H:i" }}</p>
+                    <p class="text-muted"><em>Your request is awaiting admin approval. You will be notified once a decision is made.</em></p>
+                </div>
+                {% endif %}
+
+                <!-- Personal Information -->
+                <div class="profile-section">
+                    <h3 class="section-title"><i class="bi bi-person-badge"></i> Personal Information</h3>
+                    <div class="profile-field">
+                        <span class="field-label">Username:</span>
+                        <span class="field-value">{{ data.user.username }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Email:</span>
+                        <span class="field-value">{{ data.user.email }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Gender:</span>
+                        <span class="field-value">{{ data.user.gender }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Mobile Number:</span>
+                        <span class="field-value">{{ data.user.mobile_number }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">WhatsApp Number:</span>
+                        <span class="field-value">{{ data.user.whatsapp_number }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Blood Group:</span>
+                        <span class="field-value">{{ data.user.blood_group }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">District:</span>
+                        <span class="field-value">{{ data.user.district }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Father/Spouse Details:</span>
+                        <span class="field-value">{{ data.user.father_spouse_details }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Communication Address:</span>
+                        <span class="field-value">{{ data.user.address_communication }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Permanent Address:</span>
+                        <span class="field-value">{{ data.user.address_permanent }}</span>
+                    </div>
+                </div>
+
+                <!-- Educational Information -->
+                <div class="profile-section">
+                    <h3 class="section-title"><i class="bi bi-mortarboard"></i> Educational Information</h3>
+                    <div class="profile-field">
+                        <span class="field-label">Educational Status:</span>
+                        <span class="field-value">{{ data.user.educational_status }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Category:</span>
+                        <span class="field-value">
+                            <strong>{{ data.user.category }}</strong>
+                            {% if not data.pending_category_request %}
+                            <button class="btn btn-sm btn-category-change ms-2" onclick="openCategoryChangeModal()">
+                                <i class="bi bi-pencil-square"></i> Change Category
+                            </button>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">University Name:</span>
+                        <span class="field-value">{{ data.user.university_name }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Country:</span>
+                        <span class="field-value">{{ data.user.country_university }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Year of Joining:</span>
+                        <span class="field-value">{{ data.user.year_of_joining }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Year of Completion:</span>
+                        <span class="field-value">{{ data.user.year_of_completion }}</span>
+                    </div>
+                </div>
+
+                <!-- Documents -->
+                <div class="profile-section">
+                    <h3 class="section-title"><i class="bi bi-file-earmark-text"></i> Documents</h3>
+                    {% if data.user.passport %}
+                    <div class="profile-field">
+                        <span class="field-label">Passport:</span>
+                        <span class="field-value">
+                            <a href="{% url 'serve_user_image' data.user.id 'passport' %}" 
+                               class="document-link" target="_blank">
+                                <i class="bi bi-file-pdf"></i> View Passport
+                            </a>
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if data.user.medical_qualification %}
+                    <div class="profile-field">
+                        <span class="field-label">Medical Qualification:</span>
+                        <span class="field-value">
+                            <a href="{% url 'serve_user_image' data.user.id 'medical_qualification' %}" 
+                               class="document-link" target="_blank">
+                                <i class="bi bi-file-pdf"></i> View Medical Qualification
+                            </a>
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if data.user.state_nmc %}
+                    <div class="profile-field">
+                        <span class="field-label">State/NMC Registration:</span>
+                        <span class="field-value">
+                            <a href="{% url 'serve_user_image' data.user.id 'state_nmc' %}" 
+                               class="document-link" target="_blank">
+                                <i class="bi bi-file-pdf"></i> View State/NMC Certificate
+                            </a>
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if data.user.payment_transaction_proof %}
+                    <div class="profile-field">
+                        <span class="field-label">Payment Proof:</span>
+                        <span class="field-value">
+                            <a href="{% url 'serve_user_image' data.user.id 'payment_transaction_proof' %}" 
+                               class="document-link" target="_blank">
+                                <i class="bi bi-file-pdf"></i> View Payment Proof
+                            </a>
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Additional Information -->
+                <div class="profile-section">
+                    <h3 class="section-title"><i class="bi bi-info-circle"></i> Additional Information</h3>
+                    <div class="profile-field">
+                        <span class="field-label">Payment Date & Time:</span>
+                        <span class="field-value">{{ data.user.date_time_of_payment }}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Willing to be Blood Donor:</span>
+                        <span class="field-value">{{ data.user.willing_to_be_donor|yesno:"Yes,No" }}</span>
+                    </div>
+                    {% if data.user.mid %}
+                    <div class="profile-field">
+                        <span class="field-label">MID:</span>
+                        <span class="field-value">{{ data.user.mid }}</span>
+                    </div>
+                    {% endif %}
+                    {% if data.user.admin_remarks %}
+                    <div class="profile-field">
+                        <span class="field-label">Admin Remarks:</span>
+                        <span class="field-value">{{ data.user.admin_remarks }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Actions -->
+                <div class="profile-section">
+                    <h3 class="section-title"><i class="bi bi-gear"></i> Account Actions</h3>
+                    <div class="d-flex gap-3">
+                        <a href="{% url 'reset_password' %}" class="btn btn-primary">
+                            <i class="bi bi-key"></i> Change Password
+                        </a>
+                        <a href="{% url 'generate-qr-code' data.user.id %}" class="btn btn-success">
+                            <i class="bi bi-qr-code"></i> Download QR Code
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <h4>No user data available</h4>
+        <p>Please <a href="{% url 'login' %}">login</a> to view your profile.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Category Change Modal -->
+<div class="modal fade" id="categoryChangeModal" tabindex="-1" aria-labelledby="categoryChangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryChangeModalLabel">Request Category Change</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryChangeForm">
+                    <div class="mb-3">
+                        <label for="currentCategory" class="form-label">Current Category</label>
+                        <input type="text" class="form-control" id="currentCategory" value="{{ data.user.category }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newCategory" class="form-label">New Category <span class="text-danger">*</span></label>
+                        <select class="form-select" id="newCategory" required>
+                            <option value="">Select New Category</option>
+                            <option value="Student">Student</option>
+                            <option value="Graduate/Trying FMGE">Graduate/Trying FMGE</option>
+                            <option value="FMGE passed">FMGE passed</option>
+                            <option value="Working Doctor">Working Doctor (With SMC/NMC Registration)</option>
+                            <option value="PG Doctor">Working PG Doctor (With SMC/NMC Registration)</option>
+                        </select>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Your request will be reviewed by an admin. You will be notified once a decision is made.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitCategoryChange()">Submit Request</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openCategoryChangeModal() {
+        const modal = new bootstrap.Modal(document.getElementById('categoryChangeModal'));
+        modal.show();
+    }
+
+    function submitCategoryChange() {
+        const newCategory = document.getElementById('newCategory').value;
+        
+        if (!newCategory) {
+            alert('Please select a new category');
+            return;
+        }
+
+        // Disable submit button to prevent double submission
+        const submitBtn = event.target;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+
+        fetch("{% url 'request_category_change' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                new_category: newCategory
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Category change request submitted successfully! Awaiting admin approval.');
+                location.reload();
+            } else {
+                alert('Error: ' + data.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Request';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Request';
+        });
+    }
+</script>
+
+{% endblock content %}

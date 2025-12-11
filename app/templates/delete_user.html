@@ -1,0 +1,20 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <h2 class="text-center text-danger">Confirm User Deletion</h2>
+            <p class="text-center mt-3">Are you sure you want to delete the user <strong>{{ user.username }}</strong>?</p>
+            <div class="d-flex justify-content-center mt-4">
+                <form method="POST" class="d-inline-block me-2">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger px-4">Delete User</button>
+                </form>
+                <a href="{% url 'admin_panel' %}" class="btn btn-secondary px-4">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
