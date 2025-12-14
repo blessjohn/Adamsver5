@@ -17,11 +17,11 @@ services:
     image: minio/minio
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-your_username}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-your_pasword}
-    # ports:
-    #   - "9000:9000"
-    #   - "9001:9001"
+      MINIO_ROOT_USER: fire_user
+      MINIO_ROOT_PASSWORD: fire_pasword
+    ports:
+      - "9000:9000"
+      - "9001:9001"
     volumes:
       - minio_data:/data
     networks:
@@ -40,9 +40,9 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-'adams_!@#0005==~@'}
       DB_HOST: db
       DB_PORT: 5432
-      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-your_username}
-      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-your_pasword}
-      MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:-test}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-fire_user}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-fire_pasword}
+      MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:-adams}
       MINIO_URL: "minio:9000"
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-'django-insecure-tayrv=r+_8@ze@3(6k1hfxfo)7=q(12q6$d*!_-18*-%@*7%ht'}
       EMAIL_HOST_USER: ${EMAIL_HOST_USER:-testadams08@gmail.com}

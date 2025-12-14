@@ -4,6 +4,7 @@ import base64
 import json
 import time
 from io import BytesIO
+from datetime import timedelta
 
 # Django imports
 from django.conf import settings
@@ -494,8 +495,20 @@ def home_page_view(request):
     else:
         logger.debug("No username found in session")
 
-    # Fetch all announcements
-    announcements = Announcement.objects.all()
+    # Fetch announcements based on user authentication
+    try:
+        if user:
+            # Logged-in users see all announcements
+            announcements = Announcement.objects.all()
+        else:
+            # Public visitors only see public announcements
+            # Handle cases where visibility field might not exist yet
+            announcements = Announcement.objects.filter(visibility='public') | Announcement.objects.filter(visibility__isnull=True)
+    except Exception as e:
+        # Fallback if visibility field doesn't exist
+        logger.warning(f"Error filtering by visibility: {str(e)}")
+        announcements = Announcement.objects.all()
+    
     logger.debug(f"Retrieved {len(announcements)} announcements")
 
     # Prepare context data
@@ -702,7 +715,7 @@ def serve_image(request, image_name):
 @admin_required
 def upload_image_view(request):
     """
-    Handle image upload to MinIO storage.
+    Handle image upload to MinIO storage and save metadata to database.
 
     This view processes image file uploads from admin users and stores them in MinIO.
     It performs validation on the file type and logs the upload process.
@@ -719,7 +732,11 @@ def upload_image_view(request):
         - Error: When upload fails
     """
     if request.method == "POST" and request.FILES.get("image"):
+        from .models import GalleryImage
+        
         image = request.FILES["image"]
+        title = request.POST.get("title", "").strip()
+        description = request.POST.get("description", "").strip()
         file_name = image.name
         file_size = image.size
         file_type = image.content_type
@@ -733,13 +750,23 @@ def upload_image_view(request):
             success = upload_image_to_minio(image, file_name)
 
             if success:
-                messages.success(request, f"Image '{file_name}' uploaded successfully.")
-                logger.info(f"Image '{file_name}' uploaded to MinIO.")
-                # return redirect("gallery")
+                # Save to database
+                try:
+                    user = request.user if request.user.is_authenticated else None
+                    GalleryImage.objects.create(
+                        image_name=file_name,
+                        title=title,
+                        description=description,
+                        uploaded_by=user
+                    )
+                    messages.success(request, f"Image '{file_name}' uploaded successfully.")
+                    logger.info(f"Image '{file_name}' uploaded to MinIO and saved to database.")
+                except Exception as e:
+                    logger.error(f"Error saving image to database: {str(e)}")
+                    messages.success(request, f"Image uploaded but metadata not saved.")
             else:
                 messages.error(request, "Failed to upload the image. Please try again.")
                 logger.error(f"Failed to upload image '{file_name}' to MinIO.")
-                # return redirect("gallery")
         else:
             messages.error(request, "Invalid file type. Please upload a valid image.")
             logger.warning(
@@ -756,7 +783,7 @@ def delete_image_view(request, image_name):
     Handle deletion of images from MinIO storage by admin users.
 
     This view processes image deletion requests from admin users. It validates the request
-    and attempts to delete the specified image from MinIO storage.
+    and attempts to delete the specified image from MinIO storage and database.
 
     Args:
         request: HttpRequest object containing session info and POST data
@@ -773,11 +800,19 @@ def delete_image_view(request, image_name):
     logger.debug(f"Processing delete request for image: {image_name}")
 
     if request.method == "POST":
+        from .models import GalleryImage
+        
         # Attempt to delete the image from MinIO
         success = delete_image_from_minio(image_name)
         if success:
-            messages.success(request, f"Image '{image_name}' deleted successfully.")
-            logger.info(f"Image '{image_name}' deleted from MinIO.")
+            # Also delete from database
+            try:
+                GalleryImage.objects.filter(image_name=image_name).delete()
+                messages.success(request, f"Image '{image_name}' deleted successfully.")
+                logger.info(f"Image '{image_name}' deleted from MinIO and database.")
+            except Exception as e:
+                logger.error(f"Error deleting image from database: {str(e)}")
+                messages.success(request, f"Image deleted from storage but not from database.")
         else:
             messages.error(
                 request, f"Failed to delete image '{image_name}'. Please try again."
@@ -785,6 +820,40 @@ def delete_image_view(request, image_name):
             logger.error(f"Failed to delete image '{image_name}' from MinIO.")
 
     logger.debug("Redirecting to gallery page")
+    return redirect("gallery")
+
+
+@login_required(login_url="/login/")
+@admin_required
+def edit_image_view(request, image_id):
+    """
+    Handle editing of image metadata (title and description) by admin users.
+
+    Args:
+        request: HttpRequest object containing POST data
+        image_id (int): ID of the GalleryImage to edit
+
+    Returns:
+        HttpResponseRedirect: Redirect to gallery page after edit attempt
+    """
+    if request.method == "POST":
+        from .models import GalleryImage
+        
+        try:
+            image = GalleryImage.objects.get(id=image_id)
+            image.title = request.POST.get("title", "").strip()
+            image.description = request.POST.get("description", "").strip()
+            image.save()
+            
+            messages.success(request, "Image details updated successfully.")
+            logger.info(f"Image ID {image_id} details updated.")
+        except GalleryImage.DoesNotExist:
+            messages.error(request, "Image not found.")
+            logger.error(f"Image ID {image_id} not found for editing.")
+        except Exception as e:
+            messages.error(request, "Failed to update image details.")
+            logger.error(f"Error updating image ID {image_id}: {str(e)}")
+    
     return redirect("gallery")
 
 
@@ -1285,10 +1354,11 @@ def resend_otp(request):
 
 def contact_view(request):
     """
-    Handle contact form submissions and send email notifications.
+    Handle contact form submissions, save to database, and send email notifications.
 
     This view processes contact form submissions by:
     - Validating required form fields
+    - Saving message to database
     - Formatting and sending notification email
     - Handling validation and email sending errors
 
@@ -1325,6 +1395,20 @@ def contact_view(request):
             return JsonResponse(
                 {"status": "error", "message": "All fields are required."}, status=400
             )
+
+        # Save message to database
+        try:
+            from .models import ContactMessage
+            contact_msg = ContactMessage.objects.create(
+                name=name,
+                email=email,
+                subject=subject,
+                message=message,
+                status='new'
+            )
+            logger.info(f"Saved contact message to database - ID: {contact_msg.id}")
+        except Exception as e:
+            logger.error(f"Error saving contact message to database: {str(e)}")
 
         # Create a well-formatted email body
         email_message = f"""
@@ -1365,18 +1449,19 @@ def contact_view(request):
 @admin_required
 def admin_panel(request):
     """
-    Render the admin panel with user management interface.
+    Render the admin panel with user management interface and statistics.
 
     This view handles displaying the admin panel by:
     - Retrieving the current admin user from session
     - Fetching all users from the database
-    - Rendering the admin panel template with user data
+    - Calculating category statistics
+    - Rendering the admin panel template with user data and statistics
 
     Args:
         request: HttpRequest object containing session and other metadata
 
     Returns:
-        HttpResponse: Rendered admin_panel.html template with user data
+        HttpResponse: Rendered admin_panel.html template with user data and statistics
 
     Logs:
         - Info: When admin user accesses the panel
@@ -1400,8 +1485,35 @@ def admin_panel(request):
 
     users = User.objects.all()
     logger.debug(f"Retrieved {len(users)} users from database")
+    
+    # Calculate statistics
+    from django.db.models import Count
+    
+    total_users = users.count()
+    stats_by_category = {}
+    
+    # Count users by category
+    category_counts = users.values('category').annotate(count=Count('id'))
+    for item in category_counts:
+        category = item['category'] or 'Not Specified'
+        stats_by_category[category] = item['count']
+    
+    # Count by status
+    status_counts = {
+        'approved': users.filter(status='approved').count(),
+        'pending': users.filter(status='pending').count(),
+        'rejected': users.filter(status='rejected').count(),
+    }
+    
+    statistics = {
+        'total_users': total_users,
+        'by_category': stats_by_category,
+        'by_status': status_counts,
+    }
+    
+    logger.debug(f"Statistics calculated: {statistics}")
 
-    data = {"user": user, "users": users}
+    data = {"user": user, "users": users, "statistics": statistics}
     logger.debug("Rendering admin panel")
     return render(request, "admin_panel.html", {"data": data})
 
@@ -2599,3 +2711,867 @@ def send_bulk_email(request):
     response['Cache-Control'] = 'no-cache'
     response['X-Accel-Buffering'] = 'no'
     return response
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.core.mail import send_mail
+from django.conf import settings
+from loguru import logger
+import json
+
+from .models import User
+
+
+@csrf_exempt
+@require_POST
+def approve_member(request, user_id):
+    """
+    Approve a member and send welcome email.
+    """
+    logger.debug(f"Approving member with ID: {user_id}")
+    
+    try:
+        user = User.objects.get(id=user_id)
+        
+        # Update user status
+        user.status = 'approved'
+        user.admin_remarks = f"Approved on {user.date_joined.strftime('%Y-%m-%d %H:%M:%S')}"
+        user.save()
+        
+        # Send welcome email
+        try:
+            subject = "Welcome to ADAMS - Application Approved!"
+            message = f"""
+Dear {user.first_name} {user.last_name},
+
+Congratulations! Your application to join the Association of Doctors and Medical Students (ADAMS) has been approved!
+
+We are delighted to welcome you to our community. You now have full access to all member benefits and resources.
+
+Login Details:
+- Website: {request.build_absolute_uri('/')}
+- Username: {user.username}
+
+If you have any questions or need assistance, please don't hesitate to contact us.
+
+Welcome aboard!
+
+Best regards,
+ADAMS Team
+            """
+            
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+            logger.info(f"Welcome email sent to {user.email}")
+        except Exception as email_error:
+            logger.error(f"Failed to send welcome email: {str(email_error)}")
+        
+        logger.info(f"Member {user.username} approved successfully")
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Member approved successfully'
+        })
+        
+    except User.DoesNotExist:
+        logger.error(f"User with ID {user_id} not found")
+        return JsonResponse({
+            'success': False,
+            'message': 'User not found'
+        }, status=404)
+    except Exception as e:
+        logger.exception(f"Error approving member: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=500)
+
+
+@csrf_exempt
+@require_POST
+def reject_member(request, user_id):
+    """
+    Reject a member with rejection note and send notification email.
+    """
+    logger.debug(f"Rejecting member with ID: {user_id}")
+    
+    try:
+        data = json.loads(request.body)
+        rejection_note = data.get('rejection_note', '').strip()
+        
+        if not rejection_note:
+            return JsonResponse({
+                'success': False,
+                'message': 'Rejection note is required'
+            }, status=400)
+        
+        user = User.objects.get(id=user_id)
+        
+        # Update user status
+        user.status = 'rejected'
+        user.admin_remarks = f"Rejected: {rejection_note}"
+        user.save()
+        
+        # Send rejection email
+        try:
+            subject = "ADAMS Membership Application Status"
+            message = f"""
+Dear {user.first_name} {user.last_name},
+
+Thank you for your interest in joining the Association of Doctors and Medical Students (ADAMS).
+
+After careful review, we regret to inform you that your membership application has not been approved at this time.
+
+Reason: {rejection_note}
+
+If you believe this decision was made in error or if you would like to discuss this further, please feel free to contact us.
+
+We appreciate your interest in ADAMS and wish you all the best in your endeavors.
+
+Best regards,
+ADAMS Team
+            """
+            
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+            logger.info(f"Rejection email sent to {user.email}")
+        except Exception as email_error:
+            logger.error(f"Failed to send rejection email: {str(email_error)}")
+        
+        logger.info(f"Member {user.username} rejected successfully")
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Member rejected successfully'
+        })
+        
+    except User.DoesNotExist:
+        logger.error(f"User with ID {user_id} not found")
+        return JsonResponse({
+            'success': False,
+            'message': 'User not found'
+        }, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        logger.exception(f"Error rejecting member: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=500)
+
+
+
+@csrf_exempt
+@require_POST
+def change_member_status(request, user_id):
+    """
+    Change member status with admin note.
+    """
+    logger.debug(f"Changing status for member ID: {user_id}")
+    
+    try:
+        data = json.loads(request.body)
+        new_status = data.get('status', '').strip()
+        note = data.get('note', '').strip()
+        
+        if not new_status or new_status not in ['pending', 'approved', 'rejected']:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid status'
+            }, status=400)
+        
+        user = User.objects.get(id=user_id)
+        old_status = user.status
+        
+        # Update user status
+        user.status = new_status
+        if note:
+            user.admin_remarks = f"Status changed from {old_status} to {new_status}: {note}"
+        else:
+            user.admin_remarks = f"Status changed from {old_status} to {new_status}"
+        user.save()
+        
+        logger.info(f"Member {user.username} status changed from {old_status} to {new_status}")
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Status updated successfully'
+        })
+        
+    except User.DoesNotExist:
+        logger.error(f"User with ID {user_id} not found")
+        return JsonResponse({
+            'success': False,
+            'message': 'User not found'
+        }, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        logger.exception(f"Error changing status: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=500)
+
+
+def get_notices(request):
+    """
+    Get all notices for display.
+    """
+    try:
+        from .models import Announcement
+        
+        # Check if user is authenticated
+        is_authenticated = request.user.is_authenticated
+        
+        # Filter notices based on user authentication
+        if is_authenticated:
+            # Logged-in users see all notices
+            notices = Announcement.objects.all()[:20]
+        else:
+            # Public users only see public notices
+            notices = Announcement.objects.filter(visibility='public')[:20]
+        
+        notices_data = [{
+            'aid': notice.aid,
+            'announcement': notice.announcement,
+            'hyper_link': notice.hyper_link,
+            'visibility': notice.visibility if hasattr(notice, 'visibility') else 'public',
+            'date_time': notice.date_time.isoformat() if notice.date_time else notice.date.isoformat()
+        } for notice in notices]
+        
+        return JsonResponse({'success': True, 'notices': notices_data})
+    except Exception as e:
+        logger.error(f"Error fetching notices: {str(e)}")
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+
+@csrf_exempt
+@require_POST
+def add_notice(request):
+    """
+    Add a new notice to the board.
+    """
+    try:
+        from .models import Announcement
+        data = json.loads(request.body)
+        announcement_text = data.get('announcement', '').strip()
+        hyper_link = data.get('hyper_link', '').strip()
+        visibility = data.get('visibility', 'public').strip()
+        
+        if not announcement_text:
+            return JsonResponse({
+                'success': False,
+                'message': 'Notice message is required'
+            }, status=400)
+        
+        # Get the admin user from request
+        user = request.user if request.user.is_authenticated else User.objects.filter(role='admin').first()
+        
+        notice = Announcement.objects.create(
+            uid=user,
+            announcement=announcement_text,
+            hyper_link=hyper_link if hyper_link else None,
+            visibility=visibility
+        )
+        
+        logger.info(f"Notice added by admin: {announcement_text[:50]} (Visibility: {visibility})")
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Notice added successfully',
+            'notice_id': notice.aid
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        logger.exception(f"Error adding notice: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=500)
+
+
+@csrf_exempt
+@require_POST
+def update_notice(request, notice_id):
+    """
+    Update an existing notice.
+    """
+    try:
+        from .models import Announcement
+        data = json.loads(request.body)
+        announcement_text = data.get('announcement', '').strip()
+        hyper_link = data.get('hyper_link', '').strip()
+        visibility = data.get('visibility', 'public').strip()
+        
+        if not announcement_text:
+            return JsonResponse({
+                'success': False,
+                'message': 'Notice message is required'
+            }, status=400)
+        
+        notice = Announcement.objects.get(aid=notice_id)
+        notice.announcement = announcement_text
+        notice.hyper_link = hyper_link if hyper_link else None
+        notice.visibility = visibility
+        notice.save()
+        
+        logger.info(f"Notice {notice_id} updated (Visibility: {visibility})")
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Notice updated successfully'
+        })
+        
+    except Announcement.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'Notice not found'
+        }, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        logger.exception(f"Error updating notice: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=500)
+
+
+@csrf_exempt
+@require_POST
+def delete_notice(request, notice_id):
+    """
+    Delete a notice from the board.
+    """
+    try:
+        from .models import Announcement
+        notice = Announcement.objects.get(aid=notice_id)
+        notice.delete()
+        
+        logger.info(f"Notice {notice_id} deleted")
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Notice deleted successfully'
+        })
+        
+    except Announcement.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'Notice not found'
+        }, status=404)
+    except Exception as e:
+        logger.exception(f"Error deleting notice: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=500)
+
+
+
+@login_required(login_url="/login/")
+def notice_board_view(request):
+    """
+    Render the notice board page for logged-in users.
+    
+    This view displays all announcements/notices to logged-in users.
+    """
+    logger.debug("Processing notice board page request")
+    
+    uname = request.session.get("username")
+    user = None
+    
+    if uname:
+        try:
+            user = User.objects.get(username=uname)
+            logger.info(f"User {uname} accessed the notice board")
+        except User.DoesNotExist:
+            logger.warning(f"User {uname} from session not found in database")
+            user = None
+    else:
+        logger.debug("No username found in session")
+    
+    data = {"user": user}
+    logger.debug("Rendering notice board page")
+    return render(request, "notice_board.html", {"data": data})
+
+
+
+def get_messages(request):
+    """Get all contact messages with optional filtering."""
+    try:
+        from .models import ContactMessage
+        filter_type = request.GET.get('filter', 'all')
+        
+        if filter_type == 'all':
+            messages = ContactMessage.objects.all()[:50]
+        else:
+            messages = ContactMessage.objects.filter(status=filter_type)[:50]
+        
+        messages_data = [{
+            'id': msg.id,
+            'name': msg.name,
+            'email': msg.email,
+            'subject': msg.subject,
+            'message': msg.message,
+            'status': msg.status,
+            'created_at': msg.created_at.isoformat()
+        } for msg in messages]
+        
+        return JsonResponse({'success': True, 'messages': messages_data})
+    except Exception as e:
+        logger.error(f"Error fetching messages: {str(e)}")
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+def get_message(request, message_id):
+    """Get a single contact message by ID."""
+    try:
+        from .models import ContactMessage
+        message = ContactMessage.objects.get(id=message_id)
+        
+        message_data = {
+            'id': message.id,
+            'name': message.name,
+            'email': message.email,
+            'subject': message.subject,
+            'message': message.message,
+            'status': message.status,
+            'reply': message.reply,
+            'created_at': message.created_at.isoformat(),
+            'replied_at': message.replied_at.isoformat() if message.replied_at else None
+        }
+        
+        return JsonResponse({'success': True, 'message': message_data})
+    except ContactMessage.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Message not found'}, status=404)
+    except Exception as e:
+        logger.error(f"Error fetching message: {str(e)}")
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_POST
+def mark_message_read(request, message_id):
+    """Mark a contact message as read."""
+    try:
+        from .models import ContactMessage
+        message = ContactMessage.objects.get(id=message_id)
+        if message.status == 'new':
+            message.status = 'read'
+            message.save()
+        
+        return JsonResponse({'success': True})
+    except ContactMessage.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Message not found'}, status=404)
+    except Exception as e:
+        logger.error(f"Error marking message as read: {str(e)}")
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_POST
+def reply_message(request, message_id):
+    """Send a reply to a contact message via email."""
+    try:
+        from .models import ContactMessage
+        from django.utils import timezone
+        
+        data = json.loads(request.body)
+        reply_text = data.get('reply', '').strip()
+        
+        if not reply_text:
+            return JsonResponse({'success': False, 'message': 'Reply text is required'}, status=400)
+        
+        message = ContactMessage.objects.get(id=message_id)
+        
+        # Save reply to database
+        message.reply = reply_text
+        message.status = 'replied'
+        message.replied_at = timezone.now()
+        message.replied_by = request.user if request.user.is_authenticated else None
+        message.save()
+        
+        # Send email reply
+        email_subject = f"Re: {message.subject}"
+        email_body = f"""
+Dear {message.name},
+
+Thank you for contacting us. Here is our response to your message:
+
+{reply_text}
+
+---
+Your Original Message:
+{message.message}
+
+---
+Best regards,
+Association Of Doctors And Medical Students (ADAMS)
+"""
+        
+        try:
+            send_mail(
+                subject=email_subject,
+                message=email_body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[message.email],
+                fail_silently=False
+            )
+            logger.info(f"Reply sent to {message.email} for message ID {message_id}")
+        except Exception as email_error:
+            logger.error(f"Error sending reply email: {str(email_error)}")
+            return JsonResponse({
+                'success': False,
+                'message': f'Reply saved but email failed to send: {str(email_error)}'
+            }, status=500)
+        
+        return JsonResponse({'success': True, 'message': 'Reply sent successfully'})
+        
+    except ContactMessage.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Message not found'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'message': 'Invalid JSON data'}, status=400)
+    except Exception as e:
+        logger.exception(f"Error replying to message: {str(e)}")
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_POST
+def delete_message(request, message_id):
+    """Delete a contact message."""
+    try:
+        from .models import ContactMessage
+        message = ContactMessage.objects.get(id=message_id)
+        message.delete()
+        
+        logger.info(f"Message {message_id} deleted")
+        return JsonResponse({'success': True, 'message': 'Message deleted successfully'})
+        
+    except ContactMessage.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Message not found'}, status=404)
+    except Exception as e:
+        logger.exception(f"Error deleting message: {str(e)}")
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+
+@login_required(login_url="/login/")
+def rulebook_viewer(request):
+    """Render the rulebook viewer page for logged-in users."""
+    logger.debug("Processing rulebook viewer request")
+    
+    uname = request.session.get("username")
+    user = None
+    
+    if uname:
+        try:
+            user = User.objects.get(username=uname)
+            logger.info(f"User {uname} accessed the rulebook viewer")
+        except User.DoesNotExist:
+            logger.warning(f"User {uname} from session not found in database")
+            user = None
+    else:
+        logger.debug("No username found in session")
+    
+    data = {"user": user}
+    logger.debug("Rendering rulebook viewer page")
+    return render(request, "rulebook_viewer.html", {"data": data})
+
+
+def get_rulebooks(request):
+    """Get all rulebooks for admin management."""
+    try:
+        from .models import Rulebook
+        rulebooks = Rulebook.objects.all()[:10]
+        
+        rulebooks_data = [{
+            'id': rb.id,
+            'title': rb.title,
+            'description': rb.description,
+            'pdf_file': rb.pdf_file,
+            'is_active': rb.is_active,
+            'uploaded_at': rb.uploaded_at.isoformat(),
+            'uploaded_by': rb.uploaded_by.username if rb.uploaded_by else 'Admin'
+        } for rb in rulebooks]
+        
+        return JsonResponse({'success': True, 'rulebooks': rulebooks_data})
+    except Exception as e:
+        logger.error(f"Error fetching rulebooks: {str(e)}")
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+def get_active_rulebook(request):
+    """Get the active rulebook for viewing."""
+    try:
+        from .models import Rulebook
+        rulebook = Rulebook.objects.filter(is_active=True).first()
+        
+        if rulebook:
+            try:
+                from .utils import minio_client
+                
+                # Generate MinIO presigned URL
+                pdf_url = minio_client.presigned_get_object(
+                    "test",
+                    rulebook.pdf_file,
+                    expires=timedelta(hours=1)
+                )
+                
+                # Replace internal Docker hostname with accessible URL
+                # For local: use localhost or the host from request
+                # For deployment: use the actual domain
+                host = request.get_host().split(':')[0]  # Get hostname without port
+                
+                # Replace minio:9000 with the accessible host
+                if 'minio:9000' in pdf_url:
+                    pdf_url = pdf_url.replace('minio:9000', f'{host}:9000')
+                
+                return JsonResponse({
+                    'success': True,
+                    'rulebook': {
+                        'id': rulebook.id,
+                        'title': rulebook.title,
+                        'description': rulebook.description,
+                        'pdf_url': pdf_url
+                    }
+                })
+            except Exception as e:
+                logger.error(f"Error generating presigned URL: {str(e)}")
+                return JsonResponse({'success': False, 'message': 'Error accessing PDF file'}, status=500)
+        else:
+            return JsonResponse({'success': False, 'message': 'No active rulebook found'}, status=404)
+    except Exception as e:
+        logger.error(f"Error fetching active rulebook: {str(e)}")
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_POST
+def upload_rulebook(request):
+    """Upload a new rulebook PDF."""
+    try:
+        from .models import Rulebook
+        from .utils import minio_client
+        import uuid
+        
+        title = request.POST.get('title', 'ADAMS Rulebook')
+        description = request.POST.get('description', '')
+        is_active = request.POST.get('is_active', 'false').lower() == 'true'
+        pdf_file = request.FILES.get('pdf_file')
+        
+        if not pdf_file:
+            return JsonResponse({'success': False, 'message': 'No PDF file provided'}, status=400)
+        
+        if not pdf_file.name.endswith('.pdf'):
+            return JsonResponse({'success': False, 'message': 'File must be a PDF'}, status=400)
+        
+        # Upload to MinIO
+        file_name = f"rulebooks/{uuid.uuid4()}_{pdf_file.name}"
+        
+        try:
+            minio_client.put_object(
+                "test",
+                file_name,
+                pdf_file,
+                length=pdf_file.size,
+                content_type='application/pdf'
+            )
+            logger.info(f"Uploaded rulebook PDF to MinIO: {file_name}")
+        except Exception as e:
+            logger.error(f"Error uploading to MinIO: {str(e)}")
+            return JsonResponse({'success': False, 'message': 'Error uploading file'}, status=500)
+        
+        # If setting as active, deactivate all other rulebooks
+        if is_active:
+            Rulebook.objects.all().update(is_active=False)
+        
+        # Create rulebook record
+        user = request.user if request.user.is_authenticated else None
+        rulebook = Rulebook.objects.create(
+            title=title,
+            description=description,
+            pdf_file=file_name,
+            is_active=is_active,
+            uploaded_by=user
+        )
+        
+        logger.info(f"Created rulebook: {title}")
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Rulebook uploaded successfully',
+            'rulebook_id': rulebook.id
+        })
+        
+    except Exception as e:
+        logger.exception(f"Error uploading rulebook: {str(e)}")
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_POST
+def toggle_rulebook(request, rulebook_id):
+    """Toggle rulebook active status."""
+    try:
+        from .models import Rulebook
+        data = json.loads(request.body)
+        is_active = data.get('is_active', False)
+        
+        rulebook = Rulebook.objects.get(id=rulebook_id)
+        
+        # If activating, deactivate all others
+        if is_active:
+            Rulebook.objects.all().update(is_active=False)
+        
+        rulebook.is_active = is_active
+        rulebook.save()
+        
+        logger.info(f"Rulebook {rulebook_id} {'activated' if is_active else 'deactivated'}")
+        
+        return JsonResponse({'success': True})
+        
+    except Rulebook.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Rulebook not found'}, status=404)
+    except Exception as e:
+        logger.exception(f"Error toggling rulebook: {str(e)}")
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_POST
+def delete_rulebook(request, rulebook_id):
+    """Delete a rulebook."""
+    try:
+        from .models import Rulebook
+        from .utils import minio_client
+        
+        rulebook = Rulebook.objects.get(id=rulebook_id)
+        
+        # Delete from MinIO
+        try:
+            minio_client.remove_object("test", rulebook.pdf_file)
+            logger.info(f"Deleted rulebook PDF from MinIO: {rulebook.pdf_file}")
+        except Exception as e:
+            logger.warning(f"Error deleting from MinIO: {str(e)}")
+        
+        # Delete from database
+        rulebook.delete()
+        logger.info(f"Deleted rulebook {rulebook_id}")
+        
+        return JsonResponse({'success': True, 'message': 'Rulebook deleted successfully'})
+        
+    except Rulebook.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Rulebook not found'}, status=404)
+    except Exception as e:
+        logger.exception(f"Error deleting rulebook: {str(e)}")
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+
+def serve_rulebook_pdf(request):
+    """Serve the active rulebook PDF through Django as a proxy."""
+    try:
+        from .models import Rulebook
+        from .utils import minio_client
+        from django.http import HttpResponse
+        import io
+        
+        rulebook = Rulebook.objects.filter(is_active=True).first()
+        
+        if not rulebook:
+            return HttpResponse('No active rulebook found', status=404)
+        
+        try:
+            # Get PDF from MinIO
+            response = minio_client.get_object("test", rulebook.pdf_file)
+            pdf_data = response.read()
+            response.close()
+            response.release_conn()
+            
+            # Return PDF
+            http_response = HttpResponse(pdf_data, content_type='application/pdf')
+            http_response['Content-Disposition'] = f'inline; filename="{rulebook.title}.pdf"'
+            http_response['Access-Control-Allow-Origin'] = '*'
+            
+            return http_response
+            
+        except Exception as e:
+            logger.error(f"Error serving PDF: {str(e)}")
+            return HttpResponse('Error loading PDF', status=500)
+            
+    except Exception as e:
+        logger.exception(f"Error in serve_rulebook_pdf: {str(e)}")
+        return HttpResponse('Server error', status=500)
+
+
+
+def privacy_policy(request):
+    """Render the privacy policy page."""
+    uname = request.session.get("username")
+    user = None
+    if uname:
+        try:
+            user = User.objects.get(username=uname)
+        except User.DoesNotExist:
+            user = None
+    
+    data = {"user": user}
+    return render(request, "privacy_policy.html", {"data": data})
+
+
+def terms_conditions(request):
+    """Render the terms and conditions page."""
+    uname = request.session.get("username")
+    user = None
+    if uname:
+        try:
+            user = User.objects.get(username=uname)
+        except User.DoesNotExist:
+            user = None
+    
+    data = {"user": user}
+    return render(request, "terms_conditions.html", {"data": data})
+
+
+def refund_policy(request):
+    """Render the refund and cancellation policy page."""
+    uname = request.session.get("username")
+    user = None
+    if uname:
+        try:
+            user = User.objects.get(username=uname)
+        except User.DoesNotExist:
+            user = None
+    
+    data = {"user": user}
+    return render(request, "refund_policy.html", {"data": data})
+

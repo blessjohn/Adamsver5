@@ -31,13 +31,13 @@ DEBUG = os.getenv("DEBUG_MODE", "false") == "true"
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",  # Localhost access
     "http://web",  # Internal Docker service
-    "http://13.201.38.17",
-    "https://13.201.38.17",
+    "http://13.126.176.168",
+    "https://13.126.176.168",
     "http://adams.org.in",
     "https://adams.org.in",
 ]
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "web", "adams.org.in", "13.201.38.17"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "web", "adams.org.in", "13.126.176.168"]
 SECURE_PROXY_SSL_HEADER = (
     "HTTP_X_FORWARDED_PROTO",
     "https",

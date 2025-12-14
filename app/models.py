@@ -159,15 +159,76 @@ class Complaints(models.Model):
         ordering = ['-cid']
 
 class Announcement(models.Model):
+    VISIBILITY_CHOICES = [
+        ('public', 'Public (Everyone)'),
+        ('members', 'Members Only'),
+    ]
+    
     aid = models.AutoField(primary_key=True)
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
     announcement = models.TextField()
     date = models.DateField(auto_now_add=True)
     date_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     hyper_link = models.CharField(max_length=100, blank=True, null=True)
+    visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='public')
 
     class Meta:
         ordering = ['-date_time']
+
+
+class ContactMessage(models.Model):
+    STATUS_CHOICES = [
+        ('new', 'New'),
+        ('read', 'Read'),
+        ('replied', 'Replied'),
+    ]
+    
+    name = models.CharField(max_length=200)
+    email = models.EmailField()
+    subject = models.CharField(max_length=500)
+    message = models.TextField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='new')
+    reply = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    replied_at = models.DateTimeField(blank=True, null=True)
+    replied_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='contact_replies')
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.name} - {self.subject}"
+
+
+class Rulebook(models.Model):
+    title = models.CharField(max_length=200, default='ADAMS Rulebook')
+    description = models.TextField(blank=True, null=True)
+    pdf_file = models.CharField(max_length=500)  # MinIO path
+    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    
+    class Meta:
+        ordering = ['-uploaded_at']
+    
+    def __str__(self):
+        return self.title
+
+
+class GalleryImage(models.Model):
+    image_name = models.CharField(max_length=500, unique=True)  # MinIO object name
+    title = models.CharField(max_length=200, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-uploaded_at']
+    
+    def __str__(self):
+        return self.title or self.image_name
+
 
 class OTP(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

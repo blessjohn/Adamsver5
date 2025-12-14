@@ -37,33 +37,35 @@ except S3Error as e:
 
 def get_gallery_images():
     """
-    Fetch gallery images from MinIO and generate object names for each image.
+    Fetch gallery images from database with descriptions.
 
     Returns:
-        list: A list of dictionaries containing image object names.
-              Each dictionary has a 'name' key with the object name as value.
+        list: A list of dictionaries containing image data including name and description.
               Returns empty list if there is an error.
 
     Example:
         >>> get_gallery_images()
-        [{'name': 'image1.jpg'}, {'name': 'image2.png'}]
+        [{'name': 'image1.jpg', 'title': 'Event 2024', 'description': 'Annual meet'}, ...]
     """
     try:
-        # List objects in the bucket
-        logger.info(f"Fetching gallery images from bucket {settings.MINIO_BUCKET_NAME}")
-        objects = minio_client.list_objects(settings.MINIO_BUCKET_NAME)
+        from .models import GalleryImage
+        
+        logger.info(f"Fetching gallery images from database")
+        gallery_images = GalleryImage.objects.all()
+        
         images = []
-
-        for obj in objects:
-            if obj.object_name.startswith("users/"):
-                logger.debug(f"Skipping user image: {obj.object_name}")
-                continue  # Skip images in the 'users/' folder
-            images.append({"name": obj.object_name})  # Store object names for later use
-
+        for img in gallery_images:
+            images.append({
+                "name": img.image_name,
+                "title": img.title or "",
+                "description": img.description or "",
+                "id": img.id
+            })
+        
         logger.info(f"Successfully fetched {len(images)} gallery images")
         return images
-    except S3Error as e:
-        logger.error(f"Error fetching images: {e}")
+    except Exception as e:
+        logger.error(f"Error fetching gallery images: {e}")
         return []
 
 

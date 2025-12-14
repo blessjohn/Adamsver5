@@ -52,16 +52,18 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta name="description" content="Association of Doctors and Medical Students - ADAMS">
+  <meta name="keywords" content="ADAMS, doctors, medical students, association">
+  <meta name="theme-color" content="#243c71">
 
-  <title>ADAMS</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+  <title>ADAMS - Association Of Doctors And Medical Students</title>
 
-  <!-- Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Dosis:300,400,500,,600,700,700i|Lato:300,300i,400,400i,700,700i"
-    rel="stylesheet">
+  <!-- Google Fonts - Modern -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
   <!-- Vendor CSS Files -->
@@ -71,72 +73,103 @@
   <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
   <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.0/bootstrap-table.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 
-  <!-- Template Main CSS File -->
+  <!-- Original Theme CSS -->
   <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+  
+  <!-- Modern Theme CSS - NEW -->
+  <link href="{% static 'assets/css/modern-theme.css' %}" rel="stylesheet">
+  
+  <style>
+    /* Enhanced inline styles for quick visual improvements */
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    main {
+      flex: 1;
+    }
+    
+    /* Smooth scroll */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Loading optimization */
+    img {
+      loading: lazy;
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- ======= Header ======= -->
+  <!-- ======= Modern Header ======= -->
   <header id="header" class="">
-    <div class="container d-flex align-items-center justify-content-between">
-
-      <div class="d-flex">
-        <a href="{% url 'home' %}" class="logo"><img src="{% static 'assets/img/client-img/adam_logo.png' %}" alt=""
-            class="img-fluid"></a>
-        <div>
-          <div>
-            <a href="{% url 'home' %}" style="text-decoration: none; color: #243c71;"><span class="d-none d-md-inline"
-              style="font-weight: 600;">Association Of Doctors And Medical Students</span></a>
+    <div class="container">
+      <div class="row align-items-center justify-content-between py-3">
+        <div class="col-auto d-flex align-items-center">
+          <a href="{% url 'home' %}" class="logo me-3">
+            <img src="{% static 'assets/img/client-img/adam_logo.png' %}" alt="ADAMS Logo" class="img-fluid" style="max-height: 60px;">
+          </a>
+          <div class="d-none d-lg-block">
+            <a href="{% url 'home' %}" class="text-decoration-none">
+              <h1 class="mb-0" style="font-size: 1.25rem; font-weight: 700; color: var(--primary-blue); line-height: 1.2;">
+                Association Of Doctors And<br>Medical Students
+              </h1>
+            </a>
+            <p class="mb-0 mt-1" style="font-size: 0.875rem; color: var(--text-light);">TVM/TC/16/2024</p>
           </div>
-          <div class=""><span class="d-none d-md-inline" style="font-size: small;">TVM/TC/16/2024</span></div>
         </div>
-      </div>
-
-      <nav id="" class="d-flex">
-        <div class="welcome-message">
+        
+        <div class="col-auto">
           {% if user.is_authenticated %}
-          <span>Welcome, {{ data.user.username }}</span>
-          <small>Tag: {{ data.user.category }}</small>
+          <div class="d-flex align-items-center gap-3">
+            <div class="d-none d-md-flex align-items-center gap-2 px-3 py-2" style="background: var(--light-blue); border-radius: 8px;">
+              <i class="bi bi-person-circle" style="font-size: 1.5rem; color: var(--primary-blue);"></i>
+              <div>
+                <div style="font-weight: 600; color: var(--primary-blue); font-size: 0.9rem;">{{ user.username }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-light);">{{ user.category|default:"Member" }}</div>
+              </div>
+            </div>
+          </div>
           {% endif %}
         </div>
-      </nav>
-      <!-- .navbar -->
-
+      </div>
     </div>
   </header><!-- End Header -->
 
+  <!-- ======= Modern Navigation ======= -->
   <nav id="navbar" class="navbar">
-    <div class="d-flex justify-content-center w-100">
-      <ul>
-        <li><a class="nav-link scrollto active" href="{% url 'home' %}">Home</a></li>
-        <li><a class="nav-link" href="{% url 'registration' %}">Registration</a></li>
-        <li><a class="nav-link scrollto" href="{% url 'about_us' %}">About</a></li>
-        <!-- <li><a class="nav-link scrollto" href="/#services">Services</a></li> -->
-        <li><a class="nav-link" href="{% url 'gallery' %}">Gallery</a></li>
-        <!-- <li><a class="nav-link" href="{% url 'under-development' %}">information desk</a></li> -->
-        <li><a class="nav-link scrollto" href="{% url 'contact_us' %}">Contact</a></li>
-        {% if user.is_authenticated and user.role == 'admin' %}
-        <li><a class="nav-link scrollto" href="{% url 'get-scanner' %}">Validate Member</a></li>
-        <li><a class="nav-link scrollto" href="{% url 'admin_panel' %}">Admin Panel</a></li>
+    <div class="container">
+      <ul id="nav-menu">
+        <li><a class="nav-link active" href="{% url 'home' %}"><i class="bi bi-house-door me-2"></i>Home</a></li>
+        {% if not user.is_authenticated %}
+        <li><a class="nav-link" href="{% url 'registration' %}"><i class="bi bi-person-plus me-2"></i>Registration</a></li>
         {% endif %}
+        <li><a class="nav-link" href="{% url 'about_us' %}"><i class="bi bi-info-circle me-2"></i>About</a></li>
+        <li><a class="nav-link" href="{% url 'gallery' %}"><i class="bi bi-images me-2"></i>Gallery</a></li>
+        <li><a class="nav-link" href="{% url 'contact_us' %}"><i class="bi bi-envelope me-2"></i>Contact</a></li>
+        
+        {% if user.is_authenticated and user.role == 'admin' %}
+        <li><a class="nav-link" href="{% url 'get-scanner' %}"><i class="bi bi-qr-code-scan me-2"></i>Validate</a></li>
+        <li><a class="nav-link" href="{% url 'admin_panel' %}"><i class="bi bi-shield-lock me-2"></i>Admin</a></li>
+        {% endif %}
+        
         {% if user.is_authenticated %}
-        <li><a href="{% url 'generate-qr-code' user.id %}" download="qr_code.png">
-            Download QR Code
-        </a>
-        <li><a href="{% url 'user_profile' %}">
-            Profile
-          </a>
-        </li>
-        <li><a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a></li>
+        <li><a class="nav-link" href="{% url 'notice_board' %}"><i class="bi bi-megaphone me-2"></i>Notices</a></li>
+        <li><a class="nav-link" href="{% url 'rulebook_viewer' %}"><i class="bi bi-book me-2"></i>Rulebook</a></li>
+        <li><a class="nav-link" href="{% url 'user_profile' %}"><i class="bi bi-person me-2"></i>Profile</a></li>
+        <li><a class="nav-link" href="{% url 'generate-qr-code' user.id %}" download="qr_code.png"><i class="bi bi-download me-2"></i>QR Code</a></li>
+        <li><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
         {% endif %}
       </ul>
-      <i class="bi bi-list mobile-nav-toggle"></i>
+      <i class="bi bi-list mobile-nav-toggle" onclick="toggleMobileNav()"></i>
     </div>
-
   </nav><!-- .navbar -->
 
   <!-- {% if messages %}
@@ -193,37 +226,51 @@
 
 
   <!-- ======= Footer ======= -->
+  <!-- ======= Modern Footer ======= -->
   <footer id="footer">
-
     <div class="footer-top">
       <div class="container">
-        <div class="row">
-
-          <div class="col-lg-12 col-md-12 footer-links w-100 text-center">
-            <h4>Our Social Networks</h4>
-            <div class="social-links mt-3">
-              <a href="https://x.com/adams_org?t=pBX7ZBff1ScaviNayWuedQ&s=09" target="_blank" class="twitter"><i
-                  class="bx bxl-twitter"></i></a>
+        <div class="row justify-content-center">
+          <div class="col-lg-8 col-md-10 text-center">
+            <h4 class="mb-4" style="color: var(--white); font-weight: 600;">Connect With Us</h4>
+            <div class="social-links d-flex justify-content-center gap-3 mb-4">
+              <a href="https://x.com/adams_org?t=pBX7ZBff1ScaviNayWuedQ&s=09" target="_blank" 
+                 class="social-icon" title="Twitter" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.1); transition: var(--transition);">
+                <i class="bx bxl-twitter" style="font-size: 1.5rem; color: var(--white);"></i>
+              </a>
               <a href="https://www.facebook.com/profile.php?id=61555904773126&mibextid=ZbWKwL" target="_blank"
-                class="facebook"><i class="bx bxl-facebook"></i></a>
-              <a href="https://www.instagram.com/adams_org?igsh=YzljYTk1ODg3Zg==" target="_blank" class="instagram"><i
-                  class="bx bxl-instagram"></i></a>
-              <a href="https://chat.whatsapp.com/IKcS3AUTPFJ4lp8WWYCgoq" target="_blank" class="whatsapp"><i
-                  class="bx bxl-whatsapp"></i></a>
-              <!-- <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a> -->
+                 class="social-icon" title="Facebook" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.1); transition: var(--transition);">
+                <i class="bx bxl-facebook" style="font-size: 1.5rem; color: var(--white);"></i>
+              </a>
+              <a href="https://www.instagram.com/adams_org?igsh=YzljYTk1ODg3Zg==" target="_blank"
+                 class="social-icon" title="Instagram" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.1); transition: var(--transition);">
+                <i class="bx bxl-instagram" style="font-size: 1.5rem; color: var(--white);"></i>
+              </a>
+              <a href="https://chat.whatsapp.com/IKcS3AUTPFJ4lp8WWYCgoq" target="_blank"
+                 class="social-icon" title="WhatsApp" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.1); transition: var(--transition);">
+                <i class="bx bxl-whatsapp" style="font-size: 1.5rem; color: var(--white);"></i>
+              </a>
             </div>
           </div>
-
         </div>
       </div>
     </div>
 
-    <div class="container py-4">
-      <div class="copyright">
-        &copy; Copyright <strong><span>ADAMS</span></strong>. All Rights Reserved
+    <div class="footer-bottom">
+      <div class="container py-4">
+        <div class="text-center" style="color: rgba(255,255,255,0.9);">
+          <p class="mb-2">&copy; {{ current_year|default:"2024" }} <strong>ADAMS</strong>. All Rights Reserved</p>
+          <div class="footer-links d-flex justify-content-center flex-wrap gap-3" style="font-size: 0.9rem;">
+            <a href="{% url 'privacy_policy' %}" style="color: var(--accent-blue);">Privacy Policy</a>
+            <span style="color: rgba(255,255,255,0.5);">|</span>
+            <a href="{% url 'terms_conditions' %}" style="color: var(--accent-blue);">Terms & Conditions</a>
+            <span style="color: rgba(255,255,255,0.5);">|</span>
+            <a href="{% url 'refund_policy' %}" style="color: var(--accent-blue);">Refund & Cancellation Policy</a>
+          </div>
+        </div>
       </div>
     </div>
-  </footer>
+  </footer><!-- End Footer -->
   <!-- End Footer -->
 
 
@@ -246,17 +293,43 @@
   <script src="{% static 'assets/js/main.js' %}"></script>
 
   <script>
-    // Set a timeout to hide the messages after 5 seconds
+    // Modern Mobile Navigation Toggle
+    function toggleMobileNav() {
+      const navMenu = document.getElementById('nav-menu');
+      const mobileToggle = document.querySelector('.mobile-nav-toggle');
+      
+      navMenu.classList.toggle('mobile-nav-active');
+      
+      if (navMenu.classList.contains('mobile-nav-active')) {
+        mobileToggle.classList.remove('bi-list');
+        mobileToggle.classList.add('bi-x-lg');
+      } else {
+        mobileToggle.classList.remove('bi-x-lg');
+        mobileToggle.classList.add('bi-list');
+      }
+    }
+
+    // Header scroll effect
+    window.addEventListener('scroll', function() {
+      const header = document.getElementById('header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Alert auto-hide
     setTimeout(function () {
       var messages = document.querySelectorAll('.alert');
       messages.forEach(function (message) {
         message.style.transition = "opacity 1s";
-        message.style.opacity = 0;  // Fade out the message
+        message.style.opacity = 0;
         setTimeout(function () {
-          message.style.display = 'none'; // Remove from view after fading out
-        }, 1000); // Wait 1 second for the fade-out to complete
+          message.style.display = 'none';
+        }, 1000);
       });
-    }, 5000); // 5 seconds delay
+    }, 5000);
 
     console.log($.fn.DataTable);
   </script>

@@ -129,16 +129,33 @@
           {% for image in data.images %}
           <div class="col-lg-4 col-md-6">
             {% if user.is_authenticated and user.role == 'admin' %}
-            <!-- Add Delete button -->
-            <form action="{% url 'delete_image' image.name %}" method="post" style="display: inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn bi bi-trash d-flex justify-content-center align-items-center rounded cursor-pointer"></button>
-            </form>
+            <!-- Add Edit and Delete buttons -->
+            <div class="d-flex gap-2 mb-2">
+              <button type="button" class="btn btn-sm btn-primary" onclick="editImage('{{ image.id }}', '{{ image.title }}', '{{ image.description|escapejs }}')">
+                <i class="bi bi-pencil"></i> Edit
+              </button>
+              <form action="{% url 'delete_image' image.name %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this image?')">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+              </form>
+            </div>
             {% endif %}
             <div class="gallery-item">
-              <a href="{% url 'serve_image' image.name %}" class="glightbox" data-glightbox="image" data-title="{{ image.name }}">
-                <img src="{% url 'serve_image' image.name %}" alt="{{ image.name }}">
+              <a href="{% url 'serve_image' image.name %}" class="glightbox" data-glightbox="image" data-title="{{ image.title|default:image.name }}" data-description="{{ image.description }}">
+                <img src="{% url 'serve_image' image.name %}" alt="{{ image.title|default:image.name }}">
               </a>
+              {% if image.title or image.description %}
+              <div class="image-info" style="padding: 10px; background: white;">
+                {% if image.title %}
+                <h6 class="mb-1">{{ image.title }}</h6>
+                {% endif %}
+                {% if image.description %}
+                <p class="mb-0 text-muted" style="font-size: 0.85rem;">{{ image.description|truncatewords:15 }}</p>
+                {% endif %}
+              </div>
+              {% endif %}
             </div>
           </div>
         {% endfor %}
@@ -164,8 +181,16 @@
               <div class="row">
                 <div class="col-12">
                   <div class="mb-3">
-                    <label for="formFile" class="form-label">Upload an Image</label>
-                    <input class="form-control" type="file" id="formFile" name="image" accept="image/*">
+                    <label for="imageTitle" class="form-label">Image Title</label>
+                    <input type="text" class="form-control" id="imageTitle" name="title" placeholder="Enter image title">
+                  </div>
+                  <div class="mb-3">
+                    <label for="imageDescription" class="form-label">Description</label>
+                    <textarea class="form-control" id="imageDescription" name="description" rows="3" placeholder="Enter image description"></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label for="formFile" class="form-label">Upload an Image <span class="text-danger">*</span></label>
+                    <input class="form-control" type="file" id="formFile" name="image" accept="image/*" required>
                   </div>
                   <div class="preview mt-3">
                     <img id="imagePreview" class="img-thumbnail" style="display: none; max-width: 100%; height: auto;"
@@ -184,6 +209,36 @@
     </div>
   </div>
 
+  <!-- Edit Image Modal -->
+  <div class="modal fade" id="editImageModal" tabindex="-1" aria-labelledby="editImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <form id="editImageForm" method="POST">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title" id="editImageModalLabel">Edit Image Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="editImageId" name="image_id">
+            <div class="mb-3">
+              <label for="editImageTitle" class="form-label">Image Title</label>
+              <input type="text" class="form-control" id="editImageTitle" name="title" placeholder="Enter image title">
+            </div>
+            <div class="mb-3">
+              <label for="editImageDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="editImageDescription" name="description" rows="3" placeholder="Enter image description"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary secondaryBtn" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary primaryBtn">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <!-- Template Main JS File -->
@@ -192,6 +247,16 @@
   const lightbox = GLightbox({
     selector: '.glightbox'
   });
+
+  function editImage(id, title, description) {
+    document.getElementById('editImageId').value = id;
+    document.getElementById('editImageTitle').value = title;
+    document.getElementById('editImageDescription').value = description;
+    document.getElementById('editImageForm').action = `/gallery/edit/${id}/`;
+    
+    var editModal = new bootstrap.Modal(document.getElementById('editImageModal'));
+    editModal.show();
+  }
 </script>
 
 

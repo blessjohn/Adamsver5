@@ -5,9 +5,10 @@
 
 <!-- this is new banner -->
 <section class="newBannerHome position-relative">
+  {% if not user.is_authenticated %}
+  <!-- For Non-Logged In Users -->
   <div class="AdminLoginPortal p-3 d-none d-lg-block">
     <div class="adminLoginMain ">
-      <!-- <h1 class="text-center">LOGIN</h1> -->
       <h3 class="text-center fw-semibold mt-2">Association Of Doctors and <br> Medical Students </h3>
       <div class="loginMiddle">
         <p class="">ADAMS, Association of Doctors And Medical Students is a registered association (non-profit), dedicated for serving Doctors and Medical Students who are abroad trained, Indian nationals. It operates as a part of All Kerala Foreign Medical Association-AKFMA, with the aim of bringing together all FMGs.</p>
@@ -17,11 +18,43 @@
         <a href="{% url 'login' %}">Login</a>
       </div>
     </div>
-
   </div>
+  {% else %}
+  <!-- For Logged In Users -->
+  <div class="AdminLoginPortal p-3 d-none d-lg-block">
+    <div class="adminLoginMain ">
+      <h3 class="text-center fw-semibold mt-2">Welcome Back, {{ user.first_name }}!</h3>
+      <div class="loginMiddle">
+        <p class="text-center"><strong>Membership Status: </strong>
+          {% if user.status == 'approved' %}
+          <span class="badge bg-success">✓ Verified</span>
+          {% elif user.status == 'pending' %}
+          <span class="badge bg-warning">⏳ Pending Approval</span>
+          {% else %}
+          <span class="badge bg-danger">✗ Rejected</span>
+          {% endif %}
+        </p>
+        {% if user.status == 'approved' and user.mid %}
+        <p class="text-center"><strong>Member ID:</strong> <span class="badge bg-primary">{{ user.mid }}</span></p>
+        {% endif %}
+        <p class="text-center mt-3">Access all your member benefits through the navigation menu above.</p>
+      </div>
+      <div class="d-flex gap-2 justify-content-center">
+        <a href="{% url 'user_profile' %}" class="btn btn-primary">My Profile</a>
+        <a href="{% url 'notice_board' %}" class="btn btn-info">Notice Board</a>
+        {% if user.status == 'approved' %}
+        <a href="{% url 'rulebook_viewer' %}" class="btn btn-success">Rulebook</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  
     <div class="container h-100">
       <div class="align-items-center h-100 justify-content-between row">
         <div class="col-12 col-lg-4 d-flex justify-content-center my-3">
+          {% if not user.is_authenticated %}
+          <!-- For Non-Logged In Users (Mobile) -->
           <div class="AdminLoginPortal p-3 d-lg-none">
             <div class="adminLoginMain ">
               <h3 class="text-center fw-semibold">Association Of Doctors and <br> Medical Students </h3>
@@ -33,8 +66,36 @@
                 <a href="{% url 'login' %}">Login</a>
               </div>
             </div>
-          
           </div>
+          {% else %}
+          <!-- For Logged In Users (Mobile) -->
+          <div class="AdminLoginPortal p-3 d-lg-none">
+            <div class="adminLoginMain ">
+              <h3 class="text-center fw-semibold">Welcome, {{ user.first_name }}!</h3>
+              <div class="loginMiddle">
+                <p class="text-center"><strong>Status: </strong>
+                  {% if user.status == 'approved' %}
+                  <span class="badge bg-success">✓ Verified</span>
+                  {% elif user.status == 'pending' %}
+                  <span class="badge bg-warning">⏳ Pending</span>
+                  {% else %}
+                  <span class="badge bg-danger">✗ Rejected</span>
+                  {% endif %}
+                </p>
+                {% if user.status == 'approved' and user.mid %}
+                <p class="text-center"><strong>MID:</strong> {{ user.mid }}</p>
+                {% endif %}
+              </div>
+              <div class="d-flex gap-2 flex-wrap justify-content-center">
+                <a href="{% url 'user_profile' %}" class="btn btn-primary btn-sm">Profile</a>
+                <a href="{% url 'notice_board' %}" class="btn btn-info btn-sm">Notices</a>
+                {% if user.status == 'approved' %}
+                <a href="{% url 'rulebook_viewer' %}" class="btn btn-success btn-sm">Rulebook</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endif %}
           
         </div>
         <div class="col-12 col-lg-4">

@@ -3,142 +3,277 @@
 
 {% block content %}
 
+<style>
+    .registration-hero {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+        color: white;
+        padding: 4rem 0 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .registration-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)" /></svg>');
+        opacity: 0.1;
+    }
+    
+    .instruction-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        transition: all 0.3s ease;
+        border: 1px solid #e0e6ed;
+    }
+    
+    .instruction-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+    }
+    
+    .instruction-item {
+        display: flex;
+        align-items: start;
+        gap: 1.5rem;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border-left: 4px solid var(--accent-blue);
+    }
+    
+    .instruction-item:hover {
+        background: var(--light-blue);
+        border-left-color: var(--secondary-blue);
+        transform: translateX(8px);
+    }
+    
+    .instruction-number {
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(36, 60, 113, 0.3);
+    }
+    
+    .instruction-text {
+        flex: 1;
+        font-size: 1.1rem;
+        color: var(--text-dark);
+        line-height: 1.6;
+        padding-top: 0.5rem;
+    }
+    
+    .signup-btn {
+        background: linear-gradient(135deg, var(--secondary-blue), var(--accent-blue));
+        color: white;
+        padding: 1rem 3rem;
+        border-radius: 50px;
+        font-size: 1.25rem;
+        font-weight: 600;
+        border: none;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        transition: all 0.3s ease;
+    }
+    
+    .signup-btn:hover {
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: 0 12px 28px rgba(52, 152, 219, 0.5);
+        color: white;
+    }
+    
+    .signup-btn i {
+        font-size: 1.5rem;
+    }
+    
+    .feature-icon {
+        font-size: 2rem;
+        color: var(--secondary-blue);
+        margin-bottom: 1rem;
+    }
+    
+    .benefit-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .benefit-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+</style>
 
-<main id="main" style="height: 100%;">
-    <div class="section-title mt-3 pb-0">
-        <h2>Registrations</h2>
-        <p style="font-size: large; font-weight: 700;">REGISTER NOW FOR MEMBERSHIP WITH EARLY BIRD OFFER</p>
-        <p style="font-size: x-large; font-weight: 800;" class="mt-2">Flat 2500 INR For All Candidates</p>
+<!-- Hero Section -->
+<div class="registration-hero">
+    <div class="container position-relative">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">Join ADAMS Community</h1>
+                <p class="lead mb-4">Become a part of the Association of Doctors and Medical Students</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <span class="badge bg-light text-primary px-4 py-2" style="font-size: 1rem;">
+                        <i class="bi bi-shield-check me-2"></i>Verified Members
+                    </span>
+                    <span class="badge bg-light text-primary px-4 py-2" style="font-size: 1rem;">
+                        <i class="bi bi-people me-2"></i>Growing Community
+                    </span>
+                    <span class="badge bg-light text-primary px-4 py-2" style="font-size: 1rem;">
+                        <i class="bi bi-award me-2"></i>Professional Network
+                    </span>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <section id="" class="about">
-        <div class="container">
-            <div
-                class="card col-xl-12 col-lg-12 px-lg-5 pt-2 px-3 icon-boxes d-flex flex-column align-items-stretch justify-content-center  bg-info-subtle">
-                <div class="my-4">
-                    <h3 style="width: 100%; font-size: 50px;" class="align-items-center">INSTRUCTIONS</h3>
-                    <ol class="" style="font-size: 1.25rem; font-weight: 600; text-transform: capitalize; padding-left: 1.5rem; line-height: 1.9;">
-                        <li>Choose any given payment methods and pay 2500₹ (Early Bird Offer) and take a screenshot/save the receipt with the transaction ID.</li>
-                        <li>Click on the sign-up button and fill in your details.</li>
-                        <li>On the payments section, upload the screenshot/transaction receipt and submit the form.</li>
-                        <li>Our team will get back to you from <span style="font-weight: 800;">+91 6238 668 068</span>.</li>
-                    </ol>
+<main id="main" class="py-5" style="background: #f8f9fa;">
+    <div class="container">
+        <!-- Why Join Section -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10">
+                <div class="text-center mb-5">
+                    <h2 class="display-5 fw-bold mb-3" style="color: var(--primary-blue);">Why Join ADAMS?</h2>
+                    <p class="lead text-muted">Experience the benefits of being part of a professional medical community</p>
                 </div>
-                <!-- <p style="font-size: x-large; font-weight: 600; text-transform: capitalize;"><span>1.</span>Choose any given payment
-                    methods and pay 2500₹ (Early Bird Offer) and take a screenshot/save the reciept with the transaction
-                    ID</p>
-                <p style="font-size: x-large; font-weight: 600; text-transform: capitalize;"><span>2.</span>Click on the sign-up
-                    button and fill your details</p>
-                <P style="font-size: x-large; font-weight: 600; text-transform: capitalize;"><span>3.</span>On the payments section
-                    upload the screenshot/transaction reciept and submit the form.</p>
-                <P style="font-size: x-large; font-weight: 600; text-transform: capitalize;"><span>4.</span>Our team will get back to
-                    you from <span style="font-weight: 800;">+91 6238 668 068.</span></p> -->
-            </div>
-        </div>
-    </section>
-
-    <section id="" class="about">
-        <div class="container">
-
-            <div class="row d-flex align-items-center">
-                <div
-                    class="col-xl-7 col-lg-6 px-lg-5 pt-2 icon-boxes  flex-column align-items-stretch justify-content-center ">
-                    <h3 style="width: 100%; font-size: 50px;" class="align-items-center">USE THIS UPI ID OR BANK ACCOUNT
-                        FOR</h3>
-                    <h3 style="width: 100%; font-size: 85px;" class="d-inline">PAYMENT</h3>
-                    <!-- <p class="mt-3">UPI ID - <span style="font-weight: 700;">adams24&#64;fbl</span> (Verify Before Paying)</p> -->
-                </div>
-                <!-- <div class="col-xl-5 col-lg-8 d-flex justify-content-center align-items-stretch position-relative">
-                    <img src="./assets/img/client-img/payment_qr-1.png" style="width: 100%;" alt="">
-                    <a href="#" class="glightbox mb-4"></a>
-                </div> -->
-                <div
-                    class="col-xl-5 col-lg-6 px-lg-5 pt-2 mt-3 icon-boxes  flex-column align-items-stretch justify-content-center bg-info-subtle">
-                    <h3 style="width: 100%; font-size: 60px;" class="align-items-center">adams24&#64;fbl</h3>
-                    <!-- <h3 style="width: 100%; font-size: 85px;" class="d-inline">adams24&#64;fbl</h3> -->
-                    <p class="mt-3"> (Verify Before Paying)</p>
-
-                    <p class="p-0 m-0"><span style="font-weight: 800;">A/C Details</span></p>
-                    <p class="p-0 m-0">IFSC: FDRL0001598</p>
-                    <p class="p-0 m-0">BRANCH: FEDERAL BANK MELATTUR</p>
-                    <p class="p-0 mb-3">A/c No. 15980200004287</p>
-                </div>
-            </div>
-
-        </div>
-    </section><!-- End About Section -->
-
-
-    <section id="counts" class="counts">
-        <div class="d-flex justify-content-center align-items-center">
-            <div class="p-3" style="max-width: 100%;">
-                <div class="w-100">
-                    <div class=" d-flex justify-content-center w-100">
-                        <div style="width: 100%;">
-                            <div class="d-flex justify-content-center">
-                                <h3 style=" font-weight: 600; font-size: 40px;" class="text-white">Join Our Network of
-                                    Trusted Doctors Today!</h3>
+                
+                <div class="row g-4 mb-5">
+                    <div class="col-md-4">
+                        <div class="benefit-card">
+                            <div class="feature-icon">
+                                <i class="bi bi-people-fill"></i>
                             </div>
+                            <h5 class="fw-bold mb-3">Network & Collaborate</h5>
+                            <p class="text-muted">Connect with fellow doctors and medical students from across the country</p>
                         </div>
                     </div>
-                    <!-- <div class="d-flex justify-content-center">
-                        <h3 style="text-transform: capitalize; font-size: 17px; font-weight: 500;" class="mb-2 text-white">membership form for adams</h3>
-                    </div> -->
-                    <div class="d-flex justify-content-center">
-                        <a href="{% url 'register' %}" class="newsletter-button">SIGNUP</a>
+                    <div class="col-md-4">
+                        <div class="benefit-card">
+                            <div class="feature-icon">
+                                <i class="bi bi-book-fill"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Access Resources</h5>
+                            <p class="text-muted">Get exclusive access to guidelines, rulebooks, and professional resources</p>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="" class="about">
-        <div class="container">
-
-            <div class="row">
-                <div class="col-xl-5 col-lg-8 d-flex justify-content-center align-items-stretch position-relative">
-                    <div style="height: 100%;">
-                        <img src="{% static 'assets/img/client-img/whatsapp_qr.jpeg' %}"
-                            style="width: 100%; height: 100%; object-fit: cover;" alt="">
-                        <a href="#" class="glightbox mb-4"></a>
-                    </div>
-                </div>
-                <div
-                    class="col-xl-7 col-lg-4 px-lg-5 mt-3 icon-boxes flex-column d-flex align-items-stretch justify-content-center ">
-                    <div style="height: 100%;" class="d-flex align-items-center">
-                        <div>
-                            <div class="d-flex justify-content-center w-100">
-                                <h3 style="width: 100%; font-size: 30px;" class="align-items-center">After
-                                    submitting the form, please do request to join our verification group. After
-                                    reviewing your application, your request will be accepted.</h3>
+                    <div class="col-md-4">
+                        <div class="benefit-card">
+                            <div class="feature-icon">
+                                <i class="bi bi-megaphone-fill"></i>
                             </div>
-                            <!-- <h3 style="width: 100%; font-size: 85px;" class="d-inline">PAYMENT</h3>
-                            <p>UPI ID adams24&#64;fbl(Verify Before Paying)</p> -->
-                            <div class="d-flex justify-content-center w-100 mt-3">
-                                <a href="https://chat.whatsapp.com/BoCxxjhsMY39uyqm8hSFpo" target="_blank"
-                                    class="btn btn-lg btn-outline-success shadow mb-4"
-                                    style="font-size: medium; font-weight: 800;">CONNECT-VERIFICATION TEAM</a>
-                            </div>
-
-                            <div class="d-flex justify-content-center w-100 mt-3">
-                                <p class="d-block" style="text-transform: capitalize;">you'll be contacted from the
-                                    following number for Enq</p>
-                            </div>
-
-                            <div class="d-flex justify-content-center w-100 mt-0">
-                                <p class="p-0 m-0" style="font-size: large; font-weight: 600;">+91 6238 668 068</p>
-                            </div>
-
+                            <h5 class="fw-bold mb-3">Stay Updated</h5>
+                            <p class="text-muted">Receive timely updates on policies, events, and opportunities</p>
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
-    </section><!-- End About Section -->
-
-</main><!-- End #main -->
-
+        
+        <!-- Registration Instructions -->
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="instruction-card">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold mb-3" style="color: var(--primary-blue);">
+                            <i class="bi bi-clipboard-check me-2"></i>Registration Process
+                        </h2>
+                        <p class="lead text-muted">Follow these simple steps to complete your registration</p>
+                    </div>
+                    
+                    <div class="instructions-list">
+                        <div class="instruction-item fade-in-up">
+                            <div class="instruction-number">1</div>
+                            <div class="instruction-text">
+                                <strong>Click on the Sign Up button</strong> below to begin your registration journey
+                            </div>
+                        </div>
+                        
+                        <div class="instruction-item fade-in-up" style="animation-delay: 0.1s;">
+                            <div class="instruction-number">2</div>
+                            <div class="instruction-text">
+                                <strong>Fill in your required details</strong> - Provide accurate information for verification
+                            </div>
+                        </div>
+                        
+                        <div class="instruction-item fade-in-up" style="animation-delay: 0.2s;">
+                            <div class="instruction-number">3</div>
+                            <div class="instruction-text">
+                                <strong>Complete the payment process</strong> - Secure and quick online payment
+                            </div>
+                        </div>
+                        
+                        <div class="instruction-item fade-in-up" style="animation-delay: 0.3s;">
+                            <div class="instruction-number">4</div>
+                            <div class="instruction-text">
+                                <strong>Your ID will be created</strong> and will remain pending approval by our admin team
+                            </div>
+                        </div>
+                        
+                        <div class="instruction-item fade-in-up" style="animation-delay: 0.4s;">
+                            <div class="instruction-number">5</div>
+                            <div class="instruction-text">
+                                <strong>Get notified via email</strong> once your registration is approved
+                            </div>
+                        </div>
+                        
+                        <div class="instruction-item fade-in-up" style="animation-delay: 0.5s;">
+                            <div class="instruction-number">6</div>
+                            <div class="instruction-text">
+                                <strong>Login and access member benefits</strong> using your credentials
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-5 pt-4 border-top">
+                        <a href="{% url 'register' %}" class="signup-btn">
+                            <i class="bi bi-person-plus-fill"></i>
+                            <span>SIGN UP NOW</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <p class="text-muted mt-3 mb-0">
+                            <i class="bi bi-shield-lock me-2"></i>
+                            Your data is secure and will be handled with confidentiality
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Call to Action -->
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-10">
+                <div class="text-center p-4 rounded" style="background: linear-gradient(135deg, rgba(36, 60, 113, 0.1), rgba(52, 152, 219, 0.1)); border: 2px solid var(--accent-blue);">
+                    <h4 class="fw-bold mb-3" style="color: var(--primary-blue);">Have Questions?</h4>
+                    <p class="text-muted mb-3">Our team is here to help you with the registration process</p>
+                    <a href="{% url 'contact_us' %}" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-envelope me-2"></i>Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 
 {% endblock content %}
