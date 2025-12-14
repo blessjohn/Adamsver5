@@ -783,7 +783,7 @@ def delete_image_view(request, image_name):
     Handle deletion of images from MinIO storage by admin users.
 
     This view processes image deletion requests from admin users. It validates the request
-    and attempts to delete the specified image from MinIO storage and database.
+    and attempts to delete the specified image from MinIO storage.
 
     Args:
         request: HttpRequest object containing session info and POST data
@@ -800,19 +800,11 @@ def delete_image_view(request, image_name):
     logger.debug(f"Processing delete request for image: {image_name}")
 
     if request.method == "POST":
-        from .models import GalleryImage
-        
         # Attempt to delete the image from MinIO
         success = delete_image_from_minio(image_name)
         if success:
-            # Also delete from database
-            try:
-                GalleryImage.objects.filter(image_name=image_name).delete()
-                messages.success(request, f"Image '{image_name}' deleted successfully.")
-                logger.info(f"Image '{image_name}' deleted from MinIO and database.")
-            except Exception as e:
-                logger.error(f"Error deleting image from database: {str(e)}")
-                messages.success(request, f"Image deleted from storage but not from database.")
+            messages.success(request, f"Image '{image_name}' deleted successfully.")
+            logger.info(f"Image '{image_name}' deleted from MinIO.")
         else:
             messages.error(
                 request, f"Failed to delete image '{image_name}'. Please try again."
@@ -820,40 +812,6 @@ def delete_image_view(request, image_name):
             logger.error(f"Failed to delete image '{image_name}' from MinIO.")
 
     logger.debug("Redirecting to gallery page")
-    return redirect("gallery")
-
-
-@login_required(login_url="/login/")
-@admin_required
-def edit_image_view(request, image_id):
-    """
-    Handle editing of image metadata (title and description) by admin users.
-
-    Args:
-        request: HttpRequest object containing POST data
-        image_id (int): ID of the GalleryImage to edit
-
-    Returns:
-        HttpResponseRedirect: Redirect to gallery page after edit attempt
-    """
-    if request.method == "POST":
-        from .models import GalleryImage
-        
-        try:
-            image = GalleryImage.objects.get(id=image_id)
-            image.title = request.POST.get("title", "").strip()
-            image.description = request.POST.get("description", "").strip()
-            image.save()
-            
-            messages.success(request, "Image details updated successfully.")
-            logger.info(f"Image ID {image_id} details updated.")
-        except GalleryImage.DoesNotExist:
-            messages.error(request, "Image not found.")
-            logger.error(f"Image ID {image_id} not found for editing.")
-        except Exception as e:
-            messages.error(request, "Failed to update image details.")
-            logger.error(f"Error updating image ID {image_id}: {str(e)}")
-    
     return redirect("gallery")
 
 
@@ -1449,19 +1407,18 @@ def contact_view(request):
 @admin_required
 def admin_panel(request):
     """
-    Render the admin panel with user management interface and statistics.
+    Render the admin panel with user management interface.
 
     This view handles displaying the admin panel by:
     - Retrieving the current admin user from session
     - Fetching all users from the database
-    - Calculating category statistics
-    - Rendering the admin panel template with user data and statistics
+    - Rendering the admin panel template with user data
 
     Args:
         request: HttpRequest object containing session and other metadata
 
     Returns:
-        HttpResponse: Rendered admin_panel.html template with user data and statistics
+        HttpResponse: Rendered admin_panel.html template with user data
 
     Logs:
         - Info: When admin user accesses the panel
@@ -1485,35 +1442,8 @@ def admin_panel(request):
 
     users = User.objects.all()
     logger.debug(f"Retrieved {len(users)} users from database")
-    
-    # Calculate statistics
-    from django.db.models import Count
-    
-    total_users = users.count()
-    stats_by_category = {}
-    
-    # Count users by category
-    category_counts = users.values('category').annotate(count=Count('id'))
-    for item in category_counts:
-        category = item['category'] or 'Not Specified'
-        stats_by_category[category] = item['count']
-    
-    # Count by status
-    status_counts = {
-        'approved': users.filter(status='approved').count(),
-        'pending': users.filter(status='pending').count(),
-        'rejected': users.filter(status='rejected').count(),
-    }
-    
-    statistics = {
-        'total_users': total_users,
-        'by_category': stats_by_category,
-        'by_status': status_counts,
-    }
-    
-    logger.debug(f"Statistics calculated: {statistics}")
 
-    data = {"user": user, "users": users, "statistics": statistics}
+    data = {"user": user, "users": users}
     logger.debug("Rendering admin panel")
     return render(request, "admin_panel.html", {"data": data})
 
@@ -3341,7 +3271,7 @@ def get_active_rulebook(request):
                 
                 # Generate MinIO presigned URL
                 pdf_url = minio_client.presigned_get_object(
-                    "test",
+                    settings.MINIO_BUCKET_NAME,
                     rulebook.pdf_file,
                     expires=timedelta(hours=1)
                 )
@@ -3399,7 +3329,7 @@ def upload_rulebook(request):
         
         try:
             minio_client.put_object(
-                "test",
+                settings.MINIO_BUCKET_NAME,
                 file_name,
                 pdf_file,
                 length=pdf_file.size,
@@ -3478,7 +3408,7 @@ def delete_rulebook(request, rulebook_id):
         
         # Delete from MinIO
         try:
-            minio_client.remove_object("test", rulebook.pdf_file)
+            minio_client.remove_object(settings.MINIO_BUCKET_NAME, rulebook.pdf_file)
             logger.info(f"Deleted rulebook PDF from MinIO: {rulebook.pdf_file}")
         except Exception as e:
             logger.warning(f"Error deleting from MinIO: {str(e)}")
@@ -3512,7 +3442,7 @@ def serve_rulebook_pdf(request):
         
         try:
             # Get PDF from MinIO
-            response = minio_client.get_object("test", rulebook.pdf_file)
+            response = minio_client.get_object(settings.MINIO_BUCKET_NAME, rulebook.pdf_file)
             pdf_data = response.read()
             response.close()
             response.release_conn()
@@ -3574,4 +3504,3 @@ def refund_policy(request):
     
     data = {"user": user}
     return render(request, "refund_policy.html", {"data": data})
-

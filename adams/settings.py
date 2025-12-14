@@ -24,24 +24,45 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("DJANGO_SECRET_KEY environment variable must be set!")
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG_MODE", "false") == "true"
 
-# CSRF_TRUSTED_ORIGINS = ["https://*", "http://*", "http://web:8000"]
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:8000",  # Localhost access
-    "http://web",  # Internal Docker service
-    "http://13.126.176.168",
-    "https://13.126.176.168",
-    "http://adams.org.in",
-    "https://adams.org.in",
-]
+# CSRF_TRUSTED_ORIGINS - support environment variable or use defaults
+csrf_origins_env = os.getenv("CSRF_TRUSTED_ORIGINS")
+if csrf_origins_env:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_origins_env.split(",")]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        "http://localhost:8000",  # Localhost access
+        "http://web",  # Internal Docker service
+        "http://13.126.176.168",
+        "https://13.126.176.168",
+        "http://adams.org.in",
+        "https://adams.org.in",
+    ]
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "web", "adams.org.in", "13.126.176.168"]
+# ALLOWED_HOSTS - support environment variable or use defaults
+allowed_hosts_env = os.getenv("ALLOWED_HOSTS")
+if allowed_hosts_env:
+    ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(",")]
+else:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "web", "adams.org.in", "13.126.176.168"]
 SECURE_PROXY_SSL_HEADER = (
     "HTTP_X_FORWARDED_PROTO",
     "https",
 )  # <-- Required if using HTTPS
+
+# Security settings for production (only when DEBUG=False)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "false") == "true"
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = "DENY"
 
 
 # Application definition
@@ -164,10 +185,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # For production collectstatic
 
-import os
-
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+# Only use STATICFILES_DIRS in development
+if DEBUG:
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

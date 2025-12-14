@@ -16,4 +16,7 @@ RUN pip install gunicorn
 
 COPY . .
 
+# Collect static files for production
+RUN python manage.py collectstatic --noinput || true
+
 ENV PYTHONUNBUFFERED=1
