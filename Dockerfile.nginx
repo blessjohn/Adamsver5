@@ -7,9 +7,12 @@ EXPOSE 80 443
 # Create directory in case volume is empty initially
 RUN mkdir -p /app/static
 
-# Copy nginx configs
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY nginx-http-only.conf /etc/nginx/conf.d/nginx-http-only.conf
+# Copy nginx configs to /tmp first (entrypoint will copy to final location)
+COPY nginx-http-only.conf /tmp/nginx-http-only.conf
+COPY nginx.conf /tmp/nginx-https.conf
+
+# Start with HTTP-only as default (safer - won't fail without SSL)
+COPY nginx-http-only.conf /etc/nginx/conf.d/default.conf
 
 # Copy and set up entrypoint script
 COPY nginx-entrypoint.sh /docker-entrypoint.d/nginx-entrypoint.sh
