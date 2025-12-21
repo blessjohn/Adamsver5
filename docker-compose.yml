@@ -66,27 +66,7 @@ services:
 
       dockerfile: Dockerfile.app
 
-    command: >
-
-      sh -c "
-
-      python manage.py wait_for_db &&
-
-      python manage.py migrate &&
-
-      python manage.py collectstatic --noinput &&
-
-      gunicorn adams.wsgi:application
-
-      --bind 0.0.0.0:8000
-
-      --workers 4
-
-      --access-logfile -
-
-      --error-logfile -
-
-      "
+    command: sh -c "python manage.py wait_for_db && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 --workers 4 --access-logfile - --error-logfile - adams.wsgi:application"
 
     environment:
 
@@ -100,9 +80,7 @@ services:
 
       DB_PORT: 5432
 
-
-
-      DEBUG: "false"
+      DEBUG_MODE: "false"
 
 
 
@@ -151,16 +129,11 @@ services:
     restart: always
 
     healthcheck:
-
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
-
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
       interval: 10s
-
       timeout: 5s
-
       retries: 5
-
-      start_period: 40s
+      start_period: 60s
 
 
 
