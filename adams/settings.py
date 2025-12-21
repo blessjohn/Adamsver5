@@ -158,9 +158,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
+ LOGGING = {
+     "version": 1,
+     "disable_existing_loggers": False,
 #     "handlers": {
 #         "default": {
 #             "class": "logging.StreamHandler",
