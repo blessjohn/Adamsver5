@@ -13,7 +13,7 @@ from . import views
 from app.views import health
 
 urlpatterns = [
-    path(""health/",health),
+    path("health/", health),
     path('register/', views.register_user_view, name='register'),
     path('registration/', views.get_registration, name='registration'),
     path("update-user/<int:user_id>", views.update_user_view, name="update_user"),
@@ -51,7 +51,6 @@ urlpatterns = [
     path('api/user/<int:user_id>/file/<str:file_field>/', views.serve_user_file, name='serve_user_image'),
     path('media/image/<str:image_name>/', views.serve_image, name='serve_image'),
     path('delete/image/<str:image_name>/', views.delete_image_view, name='delete_image'),
-#    path('gallery/edit/<int:image_id>/', views.edit_image_view, name='edit_image'),
     path("api/update-user-status/<int:user_id>/", views.update_user_status, name="update_user_status"),
     path("about-us/", views.render_about_us, name="about_us"),
     path("contact-us", views.render_contact_us, name="contact_us"),

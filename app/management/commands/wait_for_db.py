@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        max_retries = 5
+        max_retries = 30  # Increased from 5 to allow more time for DB to start
         retry_count = 0
         while retry_count < max_retries:
             try:
@@ -20,9 +20,11 @@ class Command(BaseCommand):
                 conn.close()
                 self.stdout.write(self.style.SUCCESS('Database is ready!'))
                 return
-            except psycopg2.OperationalError:
-                self.stdout.write('Database not ready, waiting 2 seconds...')
-                time.sleep(2)
+            except (psycopg2.OperationalError, psycopg2.Error) as e:
                 retry_count += 1
-        self.stdout.write(self.style.ERROR('Could not connect to database after retries'))
-        exit(1)
+                if retry_count < max_retries:
+                    self.stdout.write(f'Database not ready (attempt {retry_count}/{max_retries}), waiting 2 seconds...')
+                    time.sleep(2)
+                else:
+                    self.stdout.write(self.style.ERROR(f'Could not connect to database after {max_retries} retries: {str(e)}'))
+                    exit(1)

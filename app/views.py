@@ -41,7 +41,7 @@ from .utils import (
 from app.decorators import admin_required
 
 def health(request):
-    returnHttpResponse("OK")
+    return HttpResponse("OK")
 	
 def get_registration(request):
     """

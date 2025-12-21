@@ -128,6 +128,17 @@ DATABASES = {
     }
 }
 
+# Validate database settings (will fail at startup if missing)
+if not all([DATABASES["default"]["NAME"], DATABASES["default"]["USER"], 
+            DATABASES["default"]["PASSWORD"], DATABASES["default"]["HOST"]]):
+    missing = [k for k, v in {
+        "DB_NAME": DATABASES["default"]["NAME"],
+        "DB_USER": DATABASES["default"]["USER"],
+        "DB_PASSWORD": DATABASES["default"]["PASSWORD"],
+        "DB_HOST": DATABASES["default"]["HOST"]
+    }.items() if not v]
+    raise ValueError(f"Missing required database environment variables: {', '.join(missing)}")
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -199,6 +210,16 @@ MINIO_URL = os.getenv("MINIO_URL")  # URL of your MinIO server
 MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
 MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
 MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME")
+
+# Validate MinIO settings (will fail at startup if missing, preventing runtime errors)
+if not all([MINIO_URL, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_BUCKET_NAME]):
+    missing = [k for k, v in {
+        "MINIO_URL": MINIO_URL,
+        "MINIO_ACCESS_KEY": MINIO_ACCESS_KEY,
+        "MINIO_SECRET_KEY": MINIO_SECRET_KEY,
+        "MINIO_BUCKET_NAME": MINIO_BUCKET_NAME
+    }.items() if not v]
+    raise ValueError(f"Missing required MinIO environment variables: {', '.join(missing)}")
 
 
 AUTH_USER_MODEL = "app.User"
