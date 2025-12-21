@@ -19,6 +19,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.http import HttpResponse
 
 # Third party imports
 from loguru import logger
@@ -39,7 +40,9 @@ from .utils import (
 )
 from app.decorators import admin_required
 
-
+def health(request):
+    returnHttpResponse("OK")
+	
 def get_registration(request):
     """
     Handles GET requests for the registration page.

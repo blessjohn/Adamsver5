@@ -1,0 +1,72 @@
+# =========================
+
+# Django
+
+# =========================
+
+DJANGO_SECRET_KEY=django-insecure￾tayrv=r+_8@ze@3(asdfasdfaf6k1hfxfo)7=q(12q6$d*!_-18*-%@*7%ht
+
+DEBUG_MODE=false
+
+
+
+# =========================
+
+# Hosts & CSRF
+
+# =========================
+
+ALLOWED_HOSTS=13.126.176.168,adams.org.in
+
+CSRF_TRUSTED_ORIGINS=https://13.126.176.168,https://adams.org.in
+
+
+
+# =========================
+
+# PostgreSQL Database
+
+# =========================
+
+DB_NAME=adamsdb
+
+DB_USER=admin_adams
+
+DB_PASSWORD=adams_!@#0005==~@
+
+DB_HOST=localhost
+
+DB_PORT=5432
+
+
+
+# =========================
+
+# MinIO
+
+# =========================
+
+MINIO_URL=minio:9000
+
+MINIO_ACCESS_KEY=fire_user
+
+MINIO_SECRET_KEY=fire_pasword
+
+MINIO_BUCKET_NAME=adams
+
+
+
+# =========================
+
+# Email
+
+# =========================
+
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+
+EMAIL_HOST=smtp.hostinger.com
+
+EMAIL_HOST_USER=officedesk@adams.org.in
+
+EMAIL_HOST_PASSWORD=Adams@05
+

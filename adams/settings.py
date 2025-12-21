@@ -50,14 +50,11 @@ if allowed_hosts_env:
     ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(",")]
 else:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1", "web", "adams.org.in", "13.126.176.168"]
-SECURE_PROXY_SSL_HEADER = (
-    "HTTP_X_FORWARDED_PROTO",
-    "https",
-)  # <-- Required if using HTTPS
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https",)  # <-- Required if using HTTPS
 
 # Security settings for production (only when DEBUG=False)
 if not DEBUG:
-    SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "false") == "true"
+    SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
@@ -184,7 +181,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # For production collectstatic
 
 # Only use STATICFILES_DIRS in development
