@@ -1,11 +1,10 @@
 FROM nginx:latest
 
 WORKDIR /app
-EXPOSE 80 443
+EXPOSE 80
 
 # Static files will be mounted via volume from web container
 # Create directory in case volume is empty initially
 RUN mkdir -p /app/static
 
-# Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
