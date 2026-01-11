@@ -2468,3 +2468,1580 @@ smtplib.SMTPAuthenticationError: (535, b'5.7.8 Error: authentication failed: (re
 2026-01-11T23:43:07.724217+0530 - INFO - User member accessed their profile page
 2026-01-11T23:43:07.728839+0530 - DEBUG - Rendering user profile page
 2026-01-11T23:43:07.769901+0530 - INFO - Response status: 200
+2026-01-12T01:11:38.473225+0530 - INFO - Incoming request: GET /
+2026-01-12T01:11:38.617469+0530 - DEBUG - Processing home page request
+2026-01-12T01:11:38.617765+0530 - DEBUG - No username found in session
+2026-01-12T01:11:38.622549+0530 - DEBUG - Retrieved 0 announcements
+2026-01-12T01:11:38.622848+0530 - DEBUG - Rendering home page
+2026-01-12T01:11:38.648724+0530 - INFO - Response status: 200
+2026-01-12T01:12:17.851297+0530 - INFO - Incoming request: GET /.env
+2026-01-12T01:12:17.858848+0530 - INFO - Response status: 404
+2026-01-12T01:12:19.075361+0530 - INFO - Incoming request: POST /
+2026-01-12T01:12:19.199688+0530 - INFO - Response status: 403
+2026-01-12T01:12:34.995239+0530 - INFO - Incoming request: GET /
+2026-01-12T01:12:34.995543+0530 - DEBUG - Processing home page request
+2026-01-12T01:12:34.995653+0530 - DEBUG - No username found in session
+2026-01-12T01:12:34.997455+0530 - DEBUG - Retrieved 0 announcements
+2026-01-12T01:12:34.997629+0530 - DEBUG - Rendering home page
+2026-01-12T01:12:34.999680+0530 - INFO - Response status: 200
+2026-01-12T01:12:36.229704+0530 - INFO - Incoming request: GET /favicon.ico
+2026-01-12T01:12:36.357846+0530 - INFO - Response status: 404
+2026-01-12T01:12:45.488664+0530 - INFO - Incoming request: GET /registration/
+2026-01-12T01:12:45.489033+0530 - DEBUG - No username found in session for registration page
+2026-01-12T01:12:45.489163+0530 - INFO - Rendering registration page
+2026-01-12T01:12:45.505850+0530 - INFO - Response status: 200
+2026-01-12T01:13:07.907245+0530 - INFO - Incoming request: GET /
+2026-01-12T01:13:07.907590+0530 - DEBUG - Processing home page request
+2026-01-12T01:13:07.907715+0530 - DEBUG - No username found in session
+2026-01-12T01:13:07.912840+0530 - DEBUG - Retrieved 0 announcements
+2026-01-12T01:13:07.913041+0530 - DEBUG - Rendering home page
+2026-01-12T01:13:07.931166+0530 - INFO - Response status: 200
+2026-01-12T01:13:09.436122+0530 - INFO - Incoming request: GET /favicon.ico
+2026-01-12T01:13:09.441886+0530 - INFO - Response status: 404
+2026-01-12T01:13:13.435580+0530 - INFO - Incoming request: GET /login/
+2026-01-12T01:13:13.435867+0530 - DEBUG - Processing login view request
+2026-01-12T01:13:13.436107+0530 - DEBUG - Rendering login page
+2026-01-12T01:13:13.439084+0530 - INFO - Response status: 200
+2026-01-12T01:13:20.800468+0530 - INFO - Incoming request: GET /registration/
+2026-01-12T01:13:20.800806+0530 - DEBUG - No username found in session for registration page
+2026-01-12T01:13:20.800920+0530 - INFO - Rendering registration page
+2026-01-12T01:13:20.802234+0530 - INFO - Response status: 200
+2026-01-12T01:13:24.438712+0530 - INFO - Incoming request: GET /registration/
+2026-01-12T01:13:24.439064+0530 - DEBUG - No username found in session for registration page
+2026-01-12T01:13:24.439172+0530 - INFO - Rendering registration page
+2026-01-12T01:13:24.440966+0530 - INFO - Response status: 200
+2026-01-12T01:13:30.083016+0530 - INFO - Incoming request: GET /register/
+2026-01-12T01:13:30.083311+0530 - DEBUG - Starting user registration process
+2026-01-12T01:13:30.083415+0530 - DEBUG - Displaying empty registration form
+2026-01-12T01:13:30.101716+0530 - INFO - Response status: 200
+2026-01-12T01:13:34.044504+0530 - INFO - Incoming request: GET /
+2026-01-12T01:13:34.045335+0530 - DEBUG - Processing home page request
+2026-01-12T01:13:34.045510+0530 - DEBUG - No username found in session
+2026-01-12T01:13:34.047507+0530 - DEBUG - Retrieved 0 announcements
+2026-01-12T01:13:34.047661+0530 - DEBUG - Rendering home page
+2026-01-12T01:13:34.049704+0530 - INFO - Response status: 200
+2026-01-12T01:13:35.805482+0530 - INFO - Incoming request: GET /login/
+2026-01-12T01:13:35.805791+0530 - DEBUG - Processing login view request
+2026-01-12T01:13:35.806041+0530 - DEBUG - Rendering login page
+2026-01-12T01:13:35.808318+0530 - INFO - Response status: 200
+2026-01-12T01:13:44.662010+0530 - INFO - Incoming request: POST /login/
+2026-01-12T01:13:44.662611+0530 - DEBUG - Processing login view request
+2026-01-12T01:13:44.662747+0530 - INFO - Processing POST login request
+2026-01-12T01:13:45.082752+0530 - DEBUG - Login form is valid, attempting authentication
+2026-01-12T01:13:45.494511+0530 - INFO - User admin authenticated successfully
+2026-01-12T01:13:45.494796+0530 - INFO - Sending OTP to user: admin
+2026-01-12T01:13:45.494885+0530 - INFO - Generating new OTP
+2026-01-12T01:13:45.494966+0530 - DEBUG - Generated OTP: 330822
+2026-01-12T01:13:45.495039+0530 - DEBUG - Generated OTP for user admin
+2026-01-12T01:13:45.502143+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-12T01:13:48.521914+0530 - INFO - Successfully sent OTP email to techbless7@gmail.com
+2026-01-12T01:13:48.523150+0530 - INFO - OTP sent to user admin's email: techbless7@gmail.com
+2026-01-12T01:13:48.523896+0530 - INFO - Response status: 302
+2026-01-12T01:13:48.578607+0530 - INFO - Incoming request: GET /verify-otp/
+2026-01-12T01:13:48.583273+0530 - INFO - Response status: 200
+2026-01-12T01:14:26.852213+0530 - INFO - Incoming request: POST /verify-otp/
+2026-01-12T01:14:26.854713+0530 - INFO - OTP verification request received. User ID from session: 1, OTP code: 330822
+2026-01-12T01:14:26.856136+0530 - INFO - User found: admin
+2026-01-12T01:14:26.857122+0530 - INFO - OTP record found for user admin
+2026-01-12T01:14:26.876699+0530 - INFO - User admin logged in successfully.
+2026-01-12T01:14:26.877110+0530 - INFO - Response status: 302
+2026-01-12T01:14:26.929912+0530 - INFO - Incoming request: GET /
+2026-01-12T01:14:26.930206+0530 - DEBUG - Processing home page request
+2026-01-12T01:14:26.932809+0530 - INFO - User admin accessed the home page
+2026-01-12T01:14:26.933979+0530 - DEBUG - Retrieved 0 announcements
+2026-01-12T01:14:26.934113+0530 - DEBUG - Rendering home page
+2026-01-12T01:14:26.940070+0530 - INFO - Response status: 200
+2026-01-12T01:14:38.103643+0530 - INFO - Incoming request: GET /about-us/
+2026-01-12T01:14:38.104003+0530 - DEBUG - Processing about us page request
+2026-01-12T01:14:38.106735+0530 - INFO - User admin accessed the about us page
+2026-01-12T01:14:38.106934+0530 - DEBUG - Rendering about us page
+2026-01-12T01:14:38.111218+0530 - INFO - Response status: 200
+2026-01-12T01:14:47.267704+0530 - INFO - Incoming request: GET /user_profile
+2026-01-12T01:14:47.270308+0530 - DEBUG - Processing user profile page request
+2026-01-12T01:14:47.271371+0530 - INFO - User admin accessed their profile page
+2026-01-12T01:14:47.273377+0530 - DEBUG - Rendering user profile page
+2026-01-12T01:14:47.280032+0530 - INFO - Response status: 200
+2026-01-12T01:14:53.313740+0530 - INFO - Incoming request: GET /rulebook-viewer/
+2026-01-12T01:14:53.316467+0530 - DEBUG - Processing rulebook viewer request
+2026-01-12T01:14:53.317333+0530 - INFO - User admin accessed the rulebook viewer
+2026-01-12T01:14:53.317463+0530 - DEBUG - Rendering rulebook viewer page
+2026-01-12T01:14:53.319855+0530 - INFO - Response status: 200
+2026-01-12T01:14:53.614309+0530 - INFO - Incoming request: GET /api/get-active-rulebook/
+2026-01-12T01:14:53.617250+0530 - INFO - Response status: 404
+2026-01-12T01:14:56.132473+0530 - INFO - Incoming request: GET /logout/
+2026-01-12T01:14:56.135659+0530 - INFO - User admin logging out
+2026-01-12T01:14:56.142564+0530 - INFO - User logged out successfully
+2026-01-12T01:14:56.142967+0530 - INFO - Response status: 302
+2026-01-12T01:14:56.187593+0530 - INFO - Incoming request: GET /login/
+2026-01-12T01:14:56.187909+0530 - DEBUG - Processing login view request
+2026-01-12T01:14:56.188144+0530 - DEBUG - Rendering login page
+2026-01-12T01:14:56.189915+0530 - INFO - Response status: 200
+2026-01-12T01:15:04.294017+0530 - INFO - Incoming request: POST /login/
+2026-01-12T01:15:04.294585+0530 - DEBUG - Processing login view request
+2026-01-12T01:15:04.294727+0530 - INFO - Processing POST login request
+2026-01-12T01:15:04.707457+0530 - DEBUG - Login form is valid, attempting authentication
+2026-01-12T01:15:05.121422+0530 - INFO - User member authenticated successfully
+2026-01-12T01:15:05.121698+0530 - INFO - Sending OTP to user: member
+2026-01-12T01:15:05.121819+0530 - INFO - Generating new OTP
+2026-01-12T01:15:05.121948+0530 - DEBUG - Generated OTP: 438784
+2026-01-12T01:15:05.122065+0530 - DEBUG - Generated OTP for user member
+2026-01-12T01:15:05.129123+0530 - DEBUG - Saved OTP to database for user member
+2026-01-12T01:15:08.326991+0530 - INFO - Successfully sent OTP email to blessjohn2001@gmail.com
+2026-01-12T01:15:08.328000+0530 - INFO - OTP sent to user member's email: blessjohn2001@gmail.com
+2026-01-12T01:15:08.328585+0530 - INFO - Response status: 302
+2026-01-12T01:15:08.382311+0530 - INFO - Incoming request: GET /verify-otp/
+2026-01-12T01:15:08.386106+0530 - INFO - Response status: 200
+2026-01-12T01:15:22.608430+0530 - INFO - Incoming request: POST /verify-otp/
+2026-01-12T01:15:22.610887+0530 - INFO - OTP verification request received. User ID from session: 2, OTP code: 438784
+2026-01-12T01:15:22.611982+0530 - INFO - User found: member
+2026-01-12T01:15:22.612956+0530 - INFO - OTP record found for user member
+2026-01-12T01:15:22.632614+0530 - INFO - User member logged in successfully.
+2026-01-12T01:15:22.633017+0530 - INFO - Response status: 302
+2026-01-12T01:15:22.686558+0530 - INFO - Incoming request: GET /
+2026-01-12T01:15:22.686892+0530 - DEBUG - Processing home page request
+2026-01-12T01:15:22.689485+0530 - INFO - User member accessed the home page
+2026-01-12T01:15:22.690197+0530 - DEBUG - Retrieved 0 announcements
+2026-01-12T01:15:22.690338+0530 - DEBUG - Rendering home page
+2026-01-12T01:15:22.693856+0530 - INFO - Response status: 200
+2026-01-12T01:15:25.559310+0530 - INFO - Incoming request: GET /notice_board
+2026-01-12T01:15:25.561931+0530 - DEBUG - Processing notice board page request
+2026-01-12T01:15:25.562939+0530 - INFO - User member accessed the notice board
+2026-01-12T01:15:25.563091+0530 - DEBUG - Rendering notice board page
+2026-01-12T01:15:25.565380+0530 - INFO - Response status: 200
+2026-01-12T01:15:25.668393+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-12T01:15:25.671779+0530 - INFO - Response status: 200
+2026-01-12T01:15:29.599235+0530 - INFO - Incoming request: GET /user_profile
+2026-01-12T01:15:29.601870+0530 - DEBUG - Processing user profile page request
+2026-01-12T01:15:29.602855+0530 - INFO - User member accessed their profile page
+2026-01-12T01:15:29.604239+0530 - DEBUG - Rendering user profile page
+2026-01-12T01:15:29.610914+0530 - INFO - Response status: 200
+2026-01-12T01:15:38.175516+0530 - INFO - Incoming request: GET /about-us/
+2026-01-12T01:15:38.175838+0530 - DEBUG - Processing about us page request
+2026-01-12T01:15:38.178106+0530 - INFO - User member accessed the about us page
+2026-01-12T01:15:38.178269+0530 - DEBUG - Rendering about us page
+2026-01-12T01:15:38.180617+0530 - INFO - Response status: 200
+2026-01-12T01:15:38.900333+0530 - INFO - Incoming request: GET /gallery/
+2026-01-12T01:15:38.900661+0530 - DEBUG - Processing gallery page request
+2026-01-12T01:15:38.906625+0530 - INFO - User member accessed the gallery page
+2026-01-12T01:15:38.906873+0530 - INFO - Fetching gallery images from database
+2026-01-12T01:15:38.908568+0530 - INFO - Successfully fetched 0 gallery images
+2026-01-12T01:15:38.908734+0530 - DEBUG - Retrieved 0 gallery images
+2026-01-12T01:15:38.908816+0530 - DEBUG - Rendering gallery page
+2026-01-12T01:15:38.913555+0530 - INFO - Response status: 200
+2026-01-12T01:15:52.217980+0530 - INFO - Incoming request: GET /
+2026-01-12T01:15:52.218362+0530 - DEBUG - Processing home page request
+2026-01-12T01:15:52.218621+0530 - DEBUG - No username found in session
+2026-01-12T01:15:52.220268+0530 - DEBUG - Retrieved 0 announcements
+2026-01-12T01:15:52.220422+0530 - DEBUG - Rendering home page
+2026-01-12T01:15:52.222336+0530 - INFO - Response status: 200
+2026-01-12T01:17:11.239926+0530 - INFO - Incoming request: GET /user_profile
+2026-01-12T01:17:11.243545+0530 - DEBUG - Processing user profile page request
+2026-01-12T01:17:11.245322+0530 - INFO - User member accessed their profile page
+2026-01-12T01:17:11.246540+0530 - DEBUG - Rendering user profile page
+2026-01-12T01:17:11.249457+0530 - INFO - Response status: 200
+2026-01-12T01:17:29.770606+0530 - INFO - Incoming request: GET /reset_password
+2026-01-12T01:17:29.773300+0530 - DEBUG - Processing password reset request
+2026-01-12T01:17:29.773504+0530 - DEBUG - Rendering password reset form
+2026-01-12T01:17:29.776202+0530 - INFO - Response status: 200
+2026-01-12T01:18:06.752877+0530 - INFO - Incoming request: GET /about-us/
+2026-01-12T01:18:06.753193+0530 - DEBUG - Processing about us page request
+2026-01-12T01:18:06.755629+0530 - INFO - User member accessed the about us page
+2026-01-12T01:18:06.755796+0530 - DEBUG - Rendering about us page
+2026-01-12T01:18:06.758979+0530 - INFO - Response status: 200
+2026-01-12T01:18:13.854448+0530 - INFO - Incoming request: GET /privacy-policy/
+2026-01-12T01:18:13.860324+0530 - INFO - Response status: 200
+2026-01-12T01:18:16.567878+0530 - INFO - Incoming request: GET /terms-conditions/
+2026-01-12T01:18:16.573915+0530 - INFO - Response status: 200
+2026-01-12T01:18:18.637405+0530 - INFO - Incoming request: GET /refund-policy/
+2026-01-12T01:18:18.643540+0530 - INFO - Response status: 200
+2026-01-12T01:18:23.011012+0530 - INFO - Incoming request: GET /logout/
+2026-01-12T01:18:23.013551+0530 - INFO - User member logging out
+2026-01-12T01:18:23.019900+0530 - INFO - User logged out successfully
+2026-01-12T01:18:23.020226+0530 - INFO - Response status: 302
+2026-01-12T01:18:23.065841+0530 - INFO - Incoming request: GET /login/
+2026-01-12T01:18:23.066145+0530 - DEBUG - Processing login view request
+2026-01-12T01:18:23.066436+0530 - DEBUG - Rendering login page
+2026-01-12T01:18:23.068315+0530 - INFO - Response status: 200
+2026-01-12T01:22:17.075182+0530 - INFO - Incoming request: GET /
+2026-01-12T01:22:17.075468+0530 - DEBUG - Processing home page request
+2026-01-12T01:22:17.075569+0530 - DEBUG - No username found in session
+2026-01-12T01:22:17.077265+0530 - DEBUG - Retrieved 0 announcements
+2026-01-12T01:22:17.078007+0530 - DEBUG - Rendering home page
+2026-01-12T01:22:17.080050+0530 - INFO - Response status: 200
+2026-01-12T01:22:18.428986+0530 - INFO - Incoming request: GET /favicon.ico
+2026-01-12T01:22:18.435180+0530 - INFO - Response status: 404
+2026-01-12T01:22:24.304342+0530 - INFO - Incoming request: GET /registration/
+2026-01-12T01:22:24.304641+0530 - DEBUG - No username found in session for registration page
+2026-01-12T01:22:24.304749+0530 - INFO - Rendering registration page
+2026-01-12T01:22:24.306056+0530 - INFO - Response status: 200
+2026-01-12T01:23:55.631435+0530 - INFO - Incoming request: GET /
+2026-01-12T01:23:55.631738+0530 - DEBUG - Processing home page request
+2026-01-12T01:23:55.631862+0530 - DEBUG - No username found in session
+2026-01-12T01:23:55.633513+0530 - DEBUG - Retrieved 0 announcements
+2026-01-12T01:23:55.633687+0530 - DEBUG - Rendering home page
+2026-01-12T01:23:55.635672+0530 - INFO - Response status: 200
+2026-01-12T01:28:45.737108+0530 - INFO - Incoming request: GET /2/000000000000.cfg
+2026-01-12T01:28:45.744324+0530 - INFO - Response status: 404
+2026-01-12T01:34:28.039219+0530 - INFO - Incoming request: GET /wp-2019.php
+2026-01-12T01:34:28.044890+0530 - INFO - Response status: 404
+2026-01-12T01:34:28.177452+0530 - INFO - Incoming request: GET /wp-content/upgrade/index.php
+2026-01-12T01:34:28.183456+0530 - INFO - Response status: 404
+2026-01-12T01:34:28.315819+0530 - INFO - Incoming request: GET /2.php
+2026-01-12T01:34:28.321483+0530 - INFO - Response status: 404
+2026-01-12T01:34:28.454005+0530 - INFO - Incoming request: GET /css.php
+2026-01-12T01:34:28.459782+0530 - INFO - Response status: 404
+2026-01-12T01:34:28.592200+0530 - INFO - Incoming request: GET /f35.php
+2026-01-12T01:34:28.597872+0530 - INFO - Response status: 404
+2026-01-12T01:34:28.730273+0530 - INFO - Incoming request: GET /gg.php
+2026-01-12T01:34:28.735987+0530 - INFO - Response status: 404
+2026-01-12T01:34:28.868174+0530 - INFO - Incoming request: GET /ma.php
+2026-01-12T01:34:28.873818+0530 - INFO - Response status: 404
+2026-01-12T01:34:29.006341+0530 - INFO - Incoming request: GET /wp-content/themes/index.php
+2026-01-12T01:34:29.012321+0530 - INFO - Response status: 404
+2026-01-12T01:34:29.144992+0530 - INFO - Incoming request: GET /wp-content/themes/pridmag/j.php
+2026-01-12T01:34:29.150680+0530 - INFO - Response status: 404
+2026-01-12T01:34:29.283191+0530 - INFO - Incoming request: GET /wp-content/themes/seotheme/db.php
+2026-01-12T01:34:29.288863+0530 - INFO - Response status: 404
+2026-01-12T01:34:29.421460+0530 - INFO - Incoming request: GET /wp-includes/Text
+2026-01-12T01:34:29.427088+0530 - INFO - Response status: 404
+2026-01-12T01:34:29.559660+0530 - INFO - Incoming request: GET /assets/images
+2026-01-12T01:34:29.565920+0530 - INFO - Response status: 404
+2026-01-12T01:34:29.698709+0530 - INFO - Incoming request: GET /cc.php
+2026-01-12T01:34:29.704236+0530 - INFO - Response status: 404
+2026-01-12T01:34:29.836467+0530 - INFO - Incoming request: GET /cgi-bin/file.php
+2026-01-12T01:34:29.842062+0530 - INFO - Response status: 404
+2026-01-12T01:34:29.974406+0530 - INFO - Incoming request: GET /function/function.php
+2026-01-12T01:34:29.980131+0530 - INFO - Response status: 404
+2026-01-12T01:34:30.112557+0530 - INFO - Incoming request: GET /help.php
+2026-01-12T01:34:30.118240+0530 - INFO - Response status: 404
+2026-01-12T01:34:30.250819+0530 - INFO - Incoming request: GET /wp-admin/images
+2026-01-12T01:34:30.256376+0530 - INFO - Response status: 404
+2026-01-12T01:34:30.388831+0530 - INFO - Incoming request: GET /wp-content/plugins/mainhosting/asasx.php
+2026-01-12T01:34:30.394917+0530 - INFO - Response status: 404
+2026-01-12T01:34:30.527608+0530 - INFO - Incoming request: GET /wp-includes/Text/Diff
+2026-01-12T01:34:30.534547+0530 - INFO - Response status: 404
+2026-01-12T01:34:30.667073+0530 - INFO - Incoming request: GET /wp-includes/block-bindings
+2026-01-12T01:34:30.672681+0530 - INFO - Response status: 404
+2026-01-12T01:34:30.804885+0530 - INFO - Incoming request: GET /13.php
+2026-01-12T01:34:30.810538+0530 - INFO - Response status: 404
+2026-01-12T01:34:30.943140+0530 - INFO - Incoming request: GET /doc.php
+2026-01-12T01:34:30.948747+0530 - INFO - Response status: 404
+2026-01-12T01:34:31.081791+0530 - INFO - Incoming request: GET /images
+2026-01-12T01:34:31.087896+0530 - INFO - Response status: 404
+2026-01-12T01:34:31.220746+0530 - INFO - Incoming request: GET /wp-content/themes/404.php
+2026-01-12T01:34:31.226371+0530 - INFO - Response status: 404
+2026-01-12T01:34:31.358901+0530 - INFO - Incoming request: GET /wp-includes/blocks/about.php
+2026-01-12T01:34:31.364486+0530 - INFO - Response status: 404
+2026-01-12T01:34:31.496889+0530 - INFO - Incoming request: GET /wp-includes/style-engine/about.php
+2026-01-12T01:34:31.502951+0530 - INFO - Response status: 404
+2026-01-12T01:34:31.635538+0530 - INFO - Incoming request: GET /.well-known/rk2.php
+2026-01-12T01:34:31.641358+0530 - INFO - Response status: 404
+2026-01-12T01:34:31.773764+0530 - INFO - Incoming request: GET /ava.php
+2026-01-12T01:34:31.779619+0530 - INFO - Response status: 404
+2026-01-12T01:34:31.911973+0530 - INFO - Incoming request: GET /shell20211028.php
+2026-01-12T01:34:31.917787+0530 - INFO - Response status: 404
+2026-01-12T01:34:32.051305+0530 - INFO - Incoming request: GET /st.php
+2026-01-12T01:34:32.057243+0530 - INFO - Response status: 404
+2026-01-12T01:34:32.189578+0530 - INFO - Incoming request: GET /ab.php
+2026-01-12T01:34:32.195801+0530 - INFO - Response status: 404
+2026-01-12T01:34:32.328144+0530 - INFO - Incoming request: GET /bala.php
+2026-01-12T01:34:32.333832+0530 - INFO - Response status: 404
+2026-01-12T01:34:32.466142+0530 - INFO - Incoming request: GET /ca4.php
+2026-01-12T01:34:32.471801+0530 - INFO - Response status: 404
+2026-01-12T01:34:32.604371+0530 - INFO - Incoming request: GET /content.php
+2026-01-12T01:34:32.610108+0530 - INFO - Response status: 404
+2026-01-12T01:34:32.742374+0530 - INFO - Incoming request: GET /gmo.php
+2026-01-12T01:34:32.747978+0530 - INFO - Response status: 404
+2026-01-12T01:34:32.880367+0530 - INFO - Incoming request: GET /ulc6.php
+2026-01-12T01:34:32.886008+0530 - INFO - Response status: 404
+2026-01-12T01:34:33.018269+0530 - INFO - Incoming request: GET /wp-admin/network
+2026-01-12T01:34:33.023994+0530 - INFO - Response status: 404
+2026-01-12T01:34:33.156292+0530 - INFO - Incoming request: GET /wp-includes/customize
+2026-01-12T01:34:33.163139+0530 - INFO - Response status: 404
+2026-01-12T01:34:33.295679+0530 - INFO - Incoming request: GET /wp-includes/images/about.php
+2026-01-12T01:34:33.301307+0530 - INFO - Response status: 404
+2026-01-12T01:34:33.433727+0530 - INFO - Incoming request: GET /xx.php
+2026-01-12T01:34:33.439434+0530 - INFO - Response status: 404
+2026-01-12T01:34:33.572040+0530 - INFO - Incoming request: GET /12.php
+2026-01-12T01:34:33.577721+0530 - INFO - Response status: 404
+2026-01-12T01:34:33.710064+0530 - INFO - Incoming request: GET /autoloadclassmap.php
+2026-01-12T01:34:33.715679+0530 - INFO - Response status: 404
+2026-01-12T01:34:33.847921+0530 - INFO - Incoming request: GET /berlin.php
+2026-01-12T01:34:33.853676+0530 - INFO - Response status: 404
+2026-01-12T01:34:33.986254+0530 - INFO - Incoming request: GET /cgi-bin/xmrlpc.php
+2026-01-12T01:34:33.992225+0530 - INFO - Response status: 404
+2026-01-12T01:34:34.124803+0530 - INFO - Incoming request: GET /modules/mod_simplefileuploadv1.3/elements/wcg9LbOHD14.php
+2026-01-12T01:34:34.130573+0530 - INFO - Response status: 404
+2026-01-12T01:34:34.268801+0530 - INFO - Incoming request: GET /wp-admin/js/about.php
+2026-01-12T01:34:34.278754+0530 - INFO - Response status: 404
+2026-01-12T01:34:34.412954+0530 - INFO - Incoming request: GET /wp-includes/css/about.php
+2026-01-12T01:34:34.418741+0530 - INFO - Response status: 404
+2026-01-12T01:34:34.551121+0530 - INFO - Incoming request: GET /ar.php
+2026-01-12T01:34:34.557386+0530 - INFO - Response status: 404
+2026-01-12T01:34:34.689834+0530 - INFO - Incoming request: GET /copypaths.php
+2026-01-12T01:34:34.695886+0530 - INFO - Response status: 404
+2026-01-12T01:34:34.828476+0530 - INFO - Incoming request: GET /function.php
+2026-01-12T01:34:34.834504+0530 - INFO - Response status: 404
+2026-01-12T01:34:34.967182+0530 - INFO - Incoming request: GET /go.php
+2026-01-12T01:34:34.972777+0530 - INFO - Response status: 404
+2026-01-12T01:34:35.105198+0530 - INFO - Incoming request: GET /options-reading.php
+2026-01-12T01:34:35.111028+0530 - INFO - Response status: 404
+2026-01-12T01:34:35.243668+0530 - INFO - Incoming request: GET /randkeyword.php
+2026-01-12T01:34:35.249321+0530 - INFO - Response status: 404
+2026-01-12T01:34:35.381592+0530 - INFO - Incoming request: GET /simple/function.php
+2026-01-12T01:34:35.387619+0530 - INFO - Response status: 404
+2026-01-12T01:34:35.524393+0530 - INFO - Incoming request: GET /wp-admin/css/colors/midnight
+2026-01-12T01:34:35.530311+0530 - INFO - Response status: 404
+2026-01-12T01:38:18.179193+0530 - INFO - Incoming request: GET /gallery/
+2026-01-12T01:38:18.179499+0530 - DEBUG - Processing gallery page request
+2026-01-12T01:38:18.179609+0530 - DEBUG - No username found in session
+2026-01-12T01:38:18.179692+0530 - INFO - Fetching gallery images from database
+2026-01-12T01:38:18.180910+0530 - INFO - Successfully fetched 0 gallery images
+2026-01-12T01:38:18.181070+0530 - DEBUG - Retrieved 0 gallery images
+2026-01-12T01:38:18.181153+0530 - DEBUG - Rendering gallery page
+2026-01-12T01:38:18.182645+0530 - INFO - Response status: 200
+2026-01-12T01:46:22.165595+0530 - INFO - Incoming request: GET /privacy-policy/
+2026-01-12T01:46:22.167735+0530 - INFO - Response status: 200
+2026-01-12T01:49:01.871780+0530 - INFO - Incoming request: GET /
+2026-01-12T01:49:01.872096+0530 - DEBUG - Processing home page request
+2026-01-12T01:49:01.872357+0530 - DEBUG - No username found in session
+2026-01-12T01:49:01.876186+0530 - DEBUG - Retrieved 0 announcements
+2026-01-12T01:49:01.876534+0530 - DEBUG - Rendering home page
+2026-01-12T01:49:01.879668+0530 - INFO - Response status: 200
+2026-01-12T01:49:02.607858+0530 - INFO - Incoming request: GET /favicon.ico
+2026-01-12T01:49:02.613854+0530 - INFO - Response status: 404
+2026-01-12T01:49:04.539031+0530 - INFO - Incoming request: GET /login/
+2026-01-12T01:49:04.539313+0530 - DEBUG - Processing login view request
+2026-01-12T01:49:04.539531+0530 - DEBUG - Rendering login page
+2026-01-12T01:49:04.541040+0530 - INFO - Response status: 200
+2026-01-12T01:49:09.508189+0530 - INFO - Incoming request: POST /login/
+2026-01-12T01:49:09.508637+0530 - DEBUG - Processing login view request
+2026-01-12T01:49:09.508748+0530 - INFO - Processing POST login request
+2026-01-12T01:49:09.921636+0530 - DEBUG - Login form is valid, attempting authentication
+2026-01-12T01:49:10.356947+0530 - INFO - User admin authenticated successfully
+2026-01-12T01:49:10.357231+0530 - INFO - Sending OTP to user: admin
+2026-01-12T01:49:10.357320+0530 - INFO - Generating new OTP
+2026-01-12T01:49:10.357401+0530 - DEBUG - Generated OTP: 282858
+2026-01-12T01:49:10.357479+0530 - DEBUG - Generated OTP for user admin
+2026-01-12T01:49:10.364452+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-12T01:49:13.700852+0530 - INFO - Successfully sent OTP email to techbless7@gmail.com
+2026-01-12T01:49:13.701864+0530 - INFO - OTP sent to user admin's email: techbless7@gmail.com
+2026-01-12T01:49:13.702451+0530 - INFO - Response status: 302
+2026-01-12T01:49:13.762050+0530 - INFO - Incoming request: GET /verify-otp/
+2026-01-12T01:49:13.765296+0530 - INFO - Response status: 200
+2026-01-12T01:49:47.765554+0530 - INFO - Incoming request: POST /verify-otp/
+2026-01-12T01:49:47.767744+0530 - INFO - OTP verification request received. User ID from session: 1, OTP code: 282858
+2026-01-12T01:49:47.768784+0530 - INFO - User found: admin
+2026-01-12T01:49:47.769560+0530 - INFO - OTP record found for user admin
+2026-01-12T01:49:47.789181+0530 - INFO - User admin logged in successfully.
+2026-01-12T01:49:47.789572+0530 - INFO - Response status: 302
+2026-01-12T01:49:47.839888+0530 - INFO - Incoming request: GET /
+2026-01-12T01:49:47.840167+0530 - DEBUG - Processing home page request
+2026-01-12T01:49:47.842560+0530 - INFO - User admin accessed the home page
+2026-01-12T01:49:47.843431+0530 - DEBUG - Retrieved 0 announcements
+2026-01-12T01:49:47.843582+0530 - DEBUG - Rendering home page
+2026-01-12T01:49:47.846933+0530 - INFO - Response status: 200
+2026-01-12T01:49:52.529885+0530 - INFO - Incoming request: GET /gallery/
+2026-01-12T01:49:52.530152+0530 - DEBUG - Processing gallery page request
+2026-01-12T01:49:52.532629+0530 - INFO - User admin accessed the gallery page
+2026-01-12T01:49:52.532830+0530 - INFO - Fetching gallery images from database
+2026-01-12T01:49:52.533731+0530 - INFO - Successfully fetched 0 gallery images
+2026-01-12T01:49:52.533872+0530 - DEBUG - Retrieved 0 gallery images
+2026-01-12T01:49:52.533953+0530 - DEBUG - Rendering gallery page
+2026-01-12T01:49:52.538073+0530 - INFO - Response status: 200
+2026-01-12T01:49:55.655870+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-12T01:49:55.658373+0530 - DEBUG - Processing admin panel request
+2026-01-12T01:49:55.659387+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-12T01:49:55.660048+0530 - DEBUG - Retrieved 2 users from database
+2026-01-12T01:49:55.660171+0530 - DEBUG - Rendering admin panel
+2026-01-12T01:49:55.666602+0530 - INFO - Response status: 200
+2026-01-12T01:49:55.922762+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-12T01:49:55.922867+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-12T01:49:55.925217+0530 - INFO - Response status: 200
+2026-01-12T01:49:55.925227+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-12T01:49:55.926464+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-12T01:49:55.927797+0530 - DEBUG - Fetching category change requests for admin
+2026-01-12T01:49:55.928272+0530 - INFO - Response status: 200
+2026-01-12T01:49:55.929437+0530 - INFO - Response status: 200
+2026-01-12T01:49:55.930399+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-12T01:49:55.930631+0530 - INFO - Response status: 200
+2026-01-12T01:50:29.516529+0530 - INFO - Incoming request: GET /user_profile
+2026-01-12T01:50:29.519310+0530 - DEBUG - Processing user profile page request
+2026-01-12T01:50:29.520513+0530 - INFO - User admin accessed their profile page
+2026-01-12T01:50:29.521645+0530 - DEBUG - Rendering user profile page
+2026-01-12T01:50:29.523908+0530 - INFO - Response status: 200
+2026-01-12T01:50:34.431599+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-12T01:50:34.434190+0530 - DEBUG - Processing admin panel request
+2026-01-12T01:50:34.435149+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-12T01:50:34.435840+0530 - DEBUG - Retrieved 2 users from database
+2026-01-12T01:50:34.435972+0530 - DEBUG - Rendering admin panel
+2026-01-12T01:50:34.441293+0530 - INFO - Response status: 200
+2026-01-12T01:50:34.583898+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-12T01:50:34.583968+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-12T01:50:34.586834+0530 - INFO - Response status: 200
+2026-01-12T01:50:34.588511+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-12T01:50:34.588575+0530 - INFO - Response status: 200
+2026-01-12T01:50:34.589778+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-12T01:50:34.591147+0530 - INFO - Response status: 200
+2026-01-12T01:50:34.600826+0530 - DEBUG - Fetching category change requests for admin
+2026-01-12T01:50:34.601880+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-12T01:50:34.602143+0530 - INFO - Response status: 200
+2026-01-12T01:50:43.000900+0530 - INFO - Incoming request: GET /api/get-user-details/1/
+2026-01-12T01:50:43.004177+0530 - DEBUG - Fetching user details for ID: 1
+2026-01-12T01:50:43.005119+0530 - INFO - Retrieved user details for ID 1
+2026-01-12T01:50:43.005291+0530 - DEBUG - Returning user details for ID 1
+2026-01-12T01:50:43.005522+0530 - INFO - Response status: 200
+2026-01-12T01:50:43.049934+0530 - INFO - Incoming request: GET /api/user/1/file/photo/
+2026-01-12T01:50:43.052773+0530 - DEBUG - Processing file serve request for user ID 1, field photo
+2026-01-12T01:50:43.053535+0530 - WARNING - File field photo is empty for user 1
+2026-01-12T01:50:43.053731+0530 - INFO - Response status: 404
+2026-01-12T01:50:43.096857+0530 - INFO - Incoming request: GET /api/user/1/file/state_nmc/
+2026-01-12T01:50:43.099649+0530 - DEBUG - Processing file serve request for user ID 1, field state_nmc
+2026-01-12T01:50:43.100437+0530 - WARNING - File field state_nmc is empty for user 1
+2026-01-12T01:50:43.100637+0530 - INFO - Response status: 404
+2026-01-12T01:50:43.142549+0530 - INFO - Incoming request: GET /api/user/1/file/passport/
+2026-01-12T01:50:43.145187+0530 - DEBUG - Processing file serve request for user ID 1, field passport
+2026-01-12T01:50:43.145953+0530 - WARNING - File field passport is empty for user 1
+2026-01-12T01:50:43.146155+0530 - INFO - Response status: 404
+2026-01-12T01:50:43.190952+0530 - INFO - Incoming request: GET /api/user/1/file/medical_qualification/
+2026-01-12T01:50:43.193552+0530 - DEBUG - Processing file serve request for user ID 1, field medical_qualification
+2026-01-12T01:50:43.194387+0530 - WARNING - File field medical_qualification is empty for user 1
+2026-01-12T01:50:43.194620+0530 - INFO - Response status: 404
+2026-01-12T01:50:43.235440+0530 - INFO - Incoming request: GET /api/user/1/file/payment_transaction_proof/
+2026-01-12T01:50:43.238039+0530 - DEBUG - Processing file serve request for user ID 1, field payment_transaction_proof
+2026-01-12T01:50:43.238899+0530 - WARNING - File field payment_transaction_proof is empty for user 1
+2026-01-12T01:50:43.239111+0530 - INFO - Response status: 404
+2026-01-12T01:50:46.968862+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-12T01:50:46.971623+0530 - DEBUG - Processing admin panel request
+2026-01-12T01:50:46.972537+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-12T01:50:46.973191+0530 - DEBUG - Retrieved 2 users from database
+2026-01-12T01:50:46.973315+0530 - DEBUG - Rendering admin panel
+2026-01-12T01:50:46.977449+0530 - INFO - Response status: 200
+2026-01-12T01:50:47.110011+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-12T01:50:47.110141+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-12T01:50:47.113213+0530 - DEBUG - Fetching category change requests for admin
+2026-01-12T01:50:47.113324+0530 - INFO - Response status: 200
+2026-01-12T01:50:47.114172+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-12T01:50:47.114454+0530 - INFO - Response status: 200
+2026-01-12T01:50:47.114635+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-12T01:50:47.115573+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-12T01:50:47.116228+0530 - INFO - Response status: 200
+2026-01-12T01:50:47.117620+0530 - INFO - Response status: 200
+2026-01-12T01:50:49.449085+0530 - INFO - Incoming request: GET /update-user/1
+2026-01-12T01:50:49.449400+0530 - INFO - Accessing update view for user ID: 1
+2026-01-12T01:50:49.451377+0530 - DEBUG - Retrieved user: admin
+2026-01-12T01:50:49.451568+0530 - DEBUG - Displaying update form for user admin
+2026-01-12T01:50:49.466557+0530 - INFO - Response status: 200
+2026-01-12T01:50:54.631228+0530 - INFO - Incoming request: GET /.env
+2026-01-12T01:50:54.637110+0530 - INFO - Response status: 404
+2026-01-12T01:50:55.345249+0530 - INFO - Incoming request: POST /
+2026-01-12T01:50:55.347204+0530 - INFO - Response status: 403
+2026-01-12T01:51:07.555348+0530 - INFO - Incoming request: POST /update-user/1
+2026-01-12T01:51:07.558104+0530 - INFO - Accessing update view for user ID: 1
+2026-01-12T01:51:07.560085+0530 - DEBUG - Retrieved user: admin
+2026-01-12T01:51:07.560264+0530 - INFO - Processing POST request to update user admin
+2026-01-12T01:51:07.566920+0530 - DEBUG - Form validation successful
+2026-01-12T01:51:07.567144+0530 - DEBUG - Processing file upload for photo
+2026-01-12T01:51:07.567236+0530 - INFO - Uploading image users/admin/photo/dummy-profile-image.png to MinIO
+2026-01-12T01:51:13.574871+0530 - WARNING - Could not verify MinIO bucket (MinIO may not be running): HTTPConnectionPool(host='localhost', port=9000): Max retries exceeded with url: /adams?location= (Caused by NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused"))
+2026-01-12T01:51:19.580315+0530 - ERROR - Error uploading image users/admin/photo/dummy-profile-image.png: HTTPConnectionPool(host='localhost', port=9000): Max retries exceeded with url: /adams?location= (Caused by NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused"))
+Traceback (most recent call last):
+
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+           │          └ <function create_connection at 0x7fbb51553560>
+           └ <module 'urllib3.util.connection' from '/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/util/connection.py'>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+          └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+    │    │       └ ('127.0.0.1', 9000)
+    │    └ <method 'connect' of '_socket.socket' objects>
+    └ <socket.socket [closed] fd=-1, family=2, type=1, proto=6>
+
+ConnectionRefusedError: [Errno 111] Connection refused
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               │    └ <function HTTPConnectionPool._make_request at 0x7fbb513fde40>
+               └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb50794990>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 493, in _make_request
+    conn.request(
+    │    └ <function HTTPConnection.request at 0x7fbb513e1bc0>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb5076e0d0>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connection.py", line 500, in request
+    self.endheaders()
+    │    └ <function HTTPConnection.endheaders at 0x7fbb5226cf40>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb5076e0d0>
+  File "/usr/lib/python3.11/http/client.py", line 1277, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    │    │            │                            └ False
+    │    │            └ None
+    │    └ <function HTTPConnection._send_output at 0x7fbb5226cae0>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb5076e0d0>
+  File "/usr/lib/python3.11/http/client.py", line 1037, in _send_output
+    self.send(msg)
+    │    │    └ b'GET /adams?location= HTTP/1.1\r\nAccept-Encoding: identity\r\nHost: localhost:9000\r\nUser-Agent: MinIO (Linux; x86_64) min...
+    │    └ <function HTTPConnection.send at 0x7fbb5226c900>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb5076e0d0>
+  File "/usr/lib/python3.11/http/client.py", line 975, in send
+    self.connect()
+    │    └ <function HTTPConnection.connect at 0x7fbb513e1620>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb5076e0d0>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connection.py", line 331, in connect
+    self.sock = self._new_conn()
+    │    │      │    └ <function HTTPConnection._new_conn at 0x7fbb513e13a0>
+    │    │      └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb5076e0d0>
+    │    └ None
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb5076e0d0>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connection.py", line 219, in _new_conn
+    raise NewConnectionError(
+          └ <class 'urllib3.exceptions.NewConnectionError'>
+
+urllib3.exceptions.NewConnectionError: HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "/home/admin/Adamsver5/venv/bin/gunicorn", line 7, in <module>
+    sys.exit(run())
+    │   │    └ <function run at 0x7fbb533485e0>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 66, in run
+    WSGIApplication("%(prog)s [OPTIONS] [APP_MODULE]", prog=prog).run()
+    │                                                       └ None
+    └ <class 'gunicorn.app.wsgiapp.WSGIApplication'>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/app/base.py", line 235, in run
+    super().run()
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/app/base.py", line 71, in run
+    Arbiter(self).run()
+    │       └ <gunicorn.app.wsgiapp.WSGIApplication object at 0x7fbb531b2550>
+    └ <class 'gunicorn.arbiter.Arbiter'>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/arbiter.py", line 201, in run
+    self.manage_workers()
+    │    └ <function Arbiter.manage_workers at 0x7fbb52c9c360>
+    └ <gunicorn.arbiter.Arbiter object at 0x7fbb531b0310>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/arbiter.py", line 570, in manage_workers
+    self.spawn_workers()
+    │    └ <function Arbiter.spawn_workers at 0x7fbb52c9c4a0>
+    └ <gunicorn.arbiter.Arbiter object at 0x7fbb531b0310>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/arbiter.py", line 641, in spawn_workers
+    self.spawn_worker()
+    │    └ <function Arbiter.spawn_worker at 0x7fbb52c9c400>
+    └ <gunicorn.arbiter.Arbiter object at 0x7fbb531b0310>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+    worker.init_process()
+    │      └ <function Worker.init_process at 0x7fbb525da8e0>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e0d50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/base.py", line 143, in init_process
+    self.run()
+    │    └ <function SyncWorker.run at 0x7fbb525db060>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e0d50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 125, in run
+    self.run_for_one(timeout)
+    │    │           └ 15.0
+    │    └ <function SyncWorker.run_for_one at 0x7fbb525daf20>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e0d50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 69, in run_for_one
+    self.accept(listener)
+    │    │      └ <gunicorn.sock.UnixSocket object at 0x7fbb525e0d10>
+    │    └ <function SyncWorker.accept at 0x7fbb525c72e0>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e0d50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 31, in accept
+    self.handle(listener, client, addr)
+    │    │      │         │       └ ''
+    │    │      │         └ <socket.socket fd=10, family=1, type=1, proto=0, laddr=/home/admin/Adamsver5/gunicorn.sock>
+    │    │      └ <gunicorn.sock.UnixSocket object at 0x7fbb525e0d10>
+    │    └ <function SyncWorker.handle at 0x7fbb525db100>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e0d50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+    │    │              │         │    │       └ ''
+    │    │              │         │    └ <socket.socket fd=10, family=1, type=1, proto=0, laddr=/home/admin/Adamsver5/gunicorn.sock>
+    │    │              │         └ <gunicorn.http.message.Request object at 0x7fbb507944d0>
+    │    │              └ <gunicorn.sock.UnixSocket object at 0x7fbb525e0d10>
+    │    └ <function SyncWorker.handle_request at 0x7fbb525db1a0>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e0d50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               │    │    │        │    └ <function Response.start_response at 0x7fbb525c7560>
+               │    │    │        └ <gunicorn.http.wsgi.Response object at 0x7fbb50782ed0>
+               │    │    └ {'wsgi.errors': <gunicorn.http.wsgi.WSGIErrorsWrapper object at 0x7fbb5073bb20>, 'wsgi.version': (1, 0), 'wsgi.multithread': ...
+               │    └ <django.core.handlers.wsgi.WSGIHandler object at 0x7fbb51475590>
+               └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e0d50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/wsgi.py", line 124, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │    └ <function BaseHandler.get_response at 0x7fbb519cd300>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x7fbb51475590>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 140, in get_response
+    response = self._middleware_chain(request)
+               │    │                 └ <WSGIRequest: POST '/update-user/1'>
+               │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb51473100>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x7fbb51475590>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb51472f20>
+               │           └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb514716c0>
+               │           └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb51915d00>
+               │           └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb5164a200>
+               │           └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb5164a520>
+               │           └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb5164a2a0>
+               │           └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb51617ce0>
+               │           └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x7fbb51475750>
+
+  File "/home/admin/Adamsver5/adams/custom_middlewares.py", line 9, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │    └ <function BaseHandler._get_response at 0x7fbb525b3420>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x7fbb51475750>
+
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <bound method BaseHandler._get_response of <django.core.handlers.wsgi.WSGIHandler object at 0x7fbb51475590>>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               │                │         │                └ {'user_id': 1}
+               │                │         └ ()
+               │                └ <WSGIRequest: POST '/update-user/1'>
+               └ <function update_user_view at 0x7fbb50fe5440>
+
+  File "/home/admin/Adamsver5/app/views.py", line 258, in update_user_view
+    if upload_image_to_minio(file, file_name):
+       │                     │     └ 'users/admin/photo/dummy-profile-image.png'
+       │                     └ <InMemoryUploadedFile: dummy-profile-image.png (image/png)>
+       └ <function upload_image_to_minio at 0x7fbb50fcf920>
+
+> File "/home/admin/Adamsver5/app/utils.py", line 105, in upload_image_to_minio
+    client.put_object(
+    │      └ <function Minio.put_object at 0x7fbb512fb9c0>
+    └ <minio.api.Minio object at 0x7fbb507970d0>
+
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 1996, in put_object
+    raise exc
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 1942, in put_object
+    return self._put_object(
+           │    └ <function Minio._put_object at 0x7fbb512fb7e0>
+           └ <minio.api.Minio object at 0x7fbb507970d0>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 1781, in _put_object
+    response = self._execute(
+               │    └ <function Minio._execute at 0x7fbb512f9f80>
+               └ <minio.api.Minio object at 0x7fbb507970d0>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 438, in _execute
+    region = self._get_region(bucket_name)
+             │    │           └ 'adams'
+             │    └ <function Minio._get_region at 0x7fbb512fa020>
+             └ <minio.api.Minio object at 0x7fbb507970d0>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 495, in _get_region
+    response = self._url_open(
+               │    └ <function Minio._url_open at 0x7fbb512f9ee0>
+               └ <minio.api.Minio object at 0x7fbb507970d0>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 303, in _url_open
+    response = self._http.urlopen(
+               │    │     └ <function PoolManager.urlopen at 0x7fbb513ff6a0>
+               │    └ <urllib3.poolmanager.PoolManager object at 0x7fbb5078a610>
+               └ <minio.api.Minio object at 0x7fbb507970d0>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/poolmanager.py", line 457, in urlopen
+    response = conn.urlopen(method, u.request_uri, **kw)
+               │    │       │       │ │              └ {'body': None, 'headers': HTTPHeaderDict({'Host': 'localhost:9000', 'User-Agent': 'MinIO (Linux; x86_64) minio-py/7.2.13', 'x...
+               │    │       │       │ └ <property object at 0x7fbb515236a0>
+               │    │       │       └ Url(scheme='http', auth=None, host='localhost', port=9000, path='/adams', query='location=', fragment=None)
+               │    │       └ 'GET'
+               │    └ <function HTTPConnectionPool.urlopen at 0x7fbb513fe020>
+               └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb50794990>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 871, in urlopen
+    return self.urlopen(
+           │    └ <function HTTPConnectionPool.urlopen at 0x7fbb513fe020>
+           └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb50794990>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 871, in urlopen
+    return self.urlopen(
+           │    └ <function HTTPConnectionPool.urlopen at 0x7fbb513fe020>
+           └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb50794990>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 871, in urlopen
+    return self.urlopen(
+           │    └ <function HTTPConnectionPool.urlopen at 0x7fbb513fe020>
+           └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb50794990>
+  [Previous line repeated 2 more times]
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              │       └ <function Retry.increment at 0x7fbb5137dd00>
+              └ Retry(total=0, connect=None, read=None, redirect=None, status=None)
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/util/retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+          │             │      │    │            └ NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection...
+          │             │      │    └ NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection...
+          │             │      └ '/adams?location='
+          │             └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb50794990>
+          └ <class 'urllib3.exceptions.MaxRetryError'>
+
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=9000): Max retries exceeded with url: /adams?location= (Caused by NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused"))
+2026-01-12T01:51:19.594462+0530 - ERROR - Failed to upload photo
+2026-01-12T01:51:19.594710+0530 - DEBUG - Keeping existing file for state_nmc
+2026-01-12T01:51:19.594914+0530 - DEBUG - Keeping existing file for passport
+2026-01-12T01:51:19.595057+0530 - DEBUG - Keeping existing file for medical_qualification
+2026-01-12T01:51:19.595183+0530 - DEBUG - Keeping existing file for payment_transaction_proof
+2026-01-12T01:51:19.611672+0530 - INFO - Response status: 200
+2026-01-12T01:51:25.862601+0530 - INFO - Incoming request: GET /user_profile
+2026-01-12T01:51:25.865704+0530 - DEBUG - Processing user profile page request
+2026-01-12T01:51:25.866745+0530 - INFO - User admin accessed their profile page
+2026-01-12T01:51:25.868171+0530 - DEBUG - Rendering user profile page
+2026-01-12T01:51:25.874801+0530 - INFO - Response status: 200
+2026-01-12T01:51:37.079635+0530 - INFO - Incoming request: GET /user_profile
+2026-01-12T01:51:37.082535+0530 - DEBUG - Processing user profile page request
+2026-01-12T01:51:37.083590+0530 - INFO - User admin accessed their profile page
+2026-01-12T01:51:37.084586+0530 - DEBUG - Rendering user profile page
+2026-01-12T01:51:37.086604+0530 - INFO - Response status: 200
+2026-01-12T01:51:41.794980+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-12T01:51:41.797830+0530 - DEBUG - Processing admin panel request
+2026-01-12T01:51:41.798788+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-12T01:51:41.799475+0530 - DEBUG - Retrieved 2 users from database
+2026-01-12T01:51:41.799601+0530 - DEBUG - Rendering admin panel
+2026-01-12T01:51:41.801805+0530 - INFO - Response status: 200
+2026-01-12T01:51:41.932738+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-12T01:51:41.932862+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-12T01:51:41.934498+0530 - INFO - Response status: 200
+2026-01-12T01:51:41.935716+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-12T01:51:41.936063+0530 - INFO - Response status: 200
+2026-01-12T01:51:41.937051+0530 - INFO - Response status: 200
+2026-01-12T01:51:41.937330+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-12T01:51:41.939490+0530 - DEBUG - Fetching category change requests for admin
+2026-01-12T01:51:41.940240+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-12T01:51:41.940451+0530 - INFO - Response status: 200
+2026-01-12T01:51:45.418486+0530 - INFO - Incoming request: GET /update-user/1
+2026-01-12T01:51:45.418903+0530 - INFO - Accessing update view for user ID: 1
+2026-01-12T01:51:45.420806+0530 - DEBUG - Retrieved user: admin
+2026-01-12T01:51:45.420989+0530 - DEBUG - Displaying update form for user admin
+2026-01-12T01:51:45.431237+0530 - INFO - Response status: 200
+2026-01-12T01:51:59.457853+0530 - INFO - Incoming request: POST /update-user/1
+2026-01-12T01:51:59.459857+0530 - INFO - Accessing update view for user ID: 1
+2026-01-12T01:51:59.461456+0530 - DEBUG - Retrieved user: admin
+2026-01-12T01:51:59.461601+0530 - INFO - Processing POST request to update user admin
+2026-01-12T01:51:59.466505+0530 - DEBUG - Form validation successful
+2026-01-12T01:51:59.466694+0530 - DEBUG - Keeping existing file for photo
+2026-01-12T01:51:59.466836+0530 - DEBUG - Keeping existing file for state_nmc
+2026-01-12T01:51:59.466920+0530 - DEBUG - Keeping existing file for passport
+2026-01-12T01:51:59.466995+0530 - DEBUG - Keeping existing file for medical_qualification
+2026-01-12T01:51:59.467073+0530 - DEBUG - Keeping existing file for payment_transaction_proof
+2026-01-12T01:51:59.473358+0530 - INFO - Successfully updated profile for user admin
+2026-01-12T01:51:59.473644+0530 - INFO - Sending custom email to ['techbless7@gmail.com']
+2026-01-12T01:52:02.986906+0530 - INFO - Successfully sent custom email to ['techbless7@gmail.com']
+2026-01-12T01:52:02.988558+0530 - INFO - Response status: 302
+2026-01-12T01:52:03.059517+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-12T01:52:03.062212+0530 - DEBUG - Processing admin panel request
+2026-01-12T01:52:03.063239+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-12T01:52:03.063928+0530 - DEBUG - Retrieved 2 users from database
+2026-01-12T01:52:03.064054+0530 - DEBUG - Rendering admin panel
+2026-01-12T01:52:03.066273+0530 - INFO - Response status: 200
+2026-01-12T01:52:03.292964+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-12T01:52:03.293373+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-12T01:52:03.296253+0530 - DEBUG - Fetching category change requests for admin
+2026-01-12T01:52:03.296618+0530 - INFO - Response status: 200
+2026-01-12T01:52:03.297133+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-12T01:52:03.297323+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-12T01:52:03.297413+0530 - INFO - Response status: 200
+2026-01-12T01:52:03.298653+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-12T01:52:03.299090+0530 - INFO - Response status: 200
+2026-01-12T01:52:03.300034+0530 - INFO - Response status: 200
+2026-01-12T01:52:05.680946+0530 - INFO - Incoming request: GET /user_profile
+2026-01-12T01:52:05.683904+0530 - DEBUG - Processing user profile page request
+2026-01-12T01:52:05.684883+0530 - INFO - User admin accessed their profile page
+2026-01-12T01:52:05.685964+0530 - DEBUG - Rendering user profile page
+2026-01-12T01:52:05.688543+0530 - INFO - Response status: 200
+2026-01-12T01:52:13.461748+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-12T01:52:13.464442+0530 - DEBUG - Processing admin panel request
+2026-01-12T01:52:13.465298+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-12T01:52:13.465942+0530 - DEBUG - Retrieved 2 users from database
+2026-01-12T01:52:13.466063+0530 - DEBUG - Rendering admin panel
+2026-01-12T01:52:13.468195+0530 - INFO - Response status: 200
+2026-01-12T01:52:13.609585+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-12T01:52:13.609829+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-12T01:52:13.612370+0530 - DEBUG - Fetching category change requests for admin
+2026-01-12T01:52:13.613092+0530 - INFO - Response status: 200
+2026-01-12T01:52:13.613207+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-12T01:52:13.613409+0530 - INFO - Response status: 200
+2026-01-12T01:52:13.614329+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-12T01:52:13.615118+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-12T01:52:13.616399+0530 - INFO - Response status: 200
+2026-01-12T01:52:13.618911+0530 - INFO - Response status: 200
+2026-01-12T01:52:18.719920+0530 - INFO - Incoming request: GET /update-user/1
+2026-01-12T01:52:18.720202+0530 - INFO - Accessing update view for user ID: 1
+2026-01-12T01:52:18.721769+0530 - DEBUG - Retrieved user: admin
+2026-01-12T01:52:18.721928+0530 - DEBUG - Displaying update form for user admin
+2026-01-12T01:52:18.733326+0530 - INFO - Response status: 200
+2026-01-12T01:52:24.518447+0530 - INFO - Incoming request: GET /user_profile
+2026-01-12T01:52:24.521598+0530 - DEBUG - Processing user profile page request
+2026-01-12T01:52:24.522453+0530 - INFO - User admin accessed their profile page
+2026-01-12T01:52:24.523516+0530 - DEBUG - Rendering user profile page
+2026-01-12T01:52:24.525793+0530 - INFO - Response status: 200
+2026-01-12T01:52:30.512394+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-12T01:52:30.515240+0530 - DEBUG - Processing admin panel request
+2026-01-12T01:52:30.516208+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-12T01:52:30.516966+0530 - DEBUG - Retrieved 2 users from database
+2026-01-12T01:52:30.517112+0530 - DEBUG - Rendering admin panel
+2026-01-12T01:52:30.519396+0530 - INFO - Response status: 200
+2026-01-12T01:52:30.730077+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-12T01:52:30.730097+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-12T01:52:30.731890+0530 - INFO - Response status: 200
+2026-01-12T01:52:30.733012+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-12T01:52:30.734109+0530 - INFO - Response status: 200
+2026-01-12T01:52:30.734367+0530 - INFO - Response status: 200
+2026-01-12T01:52:30.735589+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-12T01:52:30.737868+0530 - DEBUG - Fetching category change requests for admin
+2026-01-12T01:52:30.738633+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-12T01:52:30.739122+0530 - INFO - Response status: 200
+2026-01-12T01:52:33.591591+0530 - INFO - Incoming request: GET /update-user/1
+2026-01-12T01:52:33.591887+0530 - INFO - Accessing update view for user ID: 1
+2026-01-12T01:52:33.593448+0530 - DEBUG - Retrieved user: admin
+2026-01-12T01:52:33.593612+0530 - DEBUG - Displaying update form for user admin
+2026-01-12T01:52:33.607740+0530 - INFO - Response status: 200
+2026-01-12T01:52:45.187348+0530 - INFO - Incoming request: POST /update-user/1
+2026-01-12T01:52:45.190496+0530 - INFO - Accessing update view for user ID: 1
+2026-01-12T01:52:45.192802+0530 - DEBUG - Retrieved user: admin
+2026-01-12T01:52:45.193090+0530 - INFO - Processing POST request to update user admin
+2026-01-12T01:52:45.196623+0530 - DEBUG - Form validation successful
+2026-01-12T01:52:45.196827+0530 - DEBUG - Processing file upload for photo
+2026-01-12T01:52:45.196950+0530 - INFO - Uploading image users/admin/photo/admin_qr.png to MinIO
+2026-01-12T01:52:51.203685+0530 - WARNING - Could not verify MinIO bucket (MinIO may not be running): HTTPConnectionPool(host='localhost', port=9000): Max retries exceeded with url: /adams?location= (Caused by NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused"))
+2026-01-12T01:52:57.210658+0530 - ERROR - Error uploading image users/admin/photo/admin_qr.png: HTTPConnectionPool(host='localhost', port=9000): Max retries exceeded with url: /adams?location= (Caused by NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused"))
+Traceback (most recent call last):
+
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+           │          └ <function create_connection at 0x7fbb51553600>
+           └ <module 'urllib3.util.connection' from '/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/util/connection.py'>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+          └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+    │    │       └ ('127.0.0.1', 9000)
+    │    └ <method 'connect' of '_socket.socket' objects>
+    └ <socket.socket [closed] fd=-1, family=2, type=1, proto=6>
+
+ConnectionRefusedError: [Errno 111] Connection refused
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               │    └ <function HTTPConnectionPool._make_request at 0x7fbb513fdee0>
+               └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb5074d710>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 493, in _make_request
+    conn.request(
+    │    └ <function HTTPConnection.request at 0x7fbb513d5c60>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50606690>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connection.py", line 500, in request
+    self.endheaders()
+    │    └ <function HTTPConnection.endheaders at 0x7fbb5226cfe0>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50606690>
+  File "/usr/lib/python3.11/http/client.py", line 1277, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    │    │            │                            └ False
+    │    │            └ None
+    │    └ <function HTTPConnection._send_output at 0x7fbb5226cb80>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50606690>
+  File "/usr/lib/python3.11/http/client.py", line 1037, in _send_output
+    self.send(msg)
+    │    │    └ b'GET /adams?location= HTTP/1.1\r\nAccept-Encoding: identity\r\nHost: localhost:9000\r\nUser-Agent: MinIO (Linux; x86_64) min...
+    │    └ <function HTTPConnection.send at 0x7fbb5226c9a0>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50606690>
+  File "/usr/lib/python3.11/http/client.py", line 975, in send
+    self.connect()
+    │    └ <function HTTPConnection.connect at 0x7fbb513d56c0>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50606690>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connection.py", line 331, in connect
+    self.sock = self._new_conn()
+    │    │      │    └ <function HTTPConnection._new_conn at 0x7fbb513d5440>
+    │    │      └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50606690>
+    │    └ None
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50606690>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connection.py", line 219, in _new_conn
+    raise NewConnectionError(
+          └ <class 'urllib3.exceptions.NewConnectionError'>
+
+urllib3.exceptions.NewConnectionError: HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "/home/admin/Adamsver5/venv/bin/gunicorn", line 7, in <module>
+    sys.exit(run())
+    │   │    └ <function run at 0x7fbb533485e0>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 66, in run
+    WSGIApplication("%(prog)s [OPTIONS] [APP_MODULE]", prog=prog).run()
+    │                                                       └ None
+    └ <class 'gunicorn.app.wsgiapp.WSGIApplication'>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/app/base.py", line 235, in run
+    super().run()
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/app/base.py", line 71, in run
+    Arbiter(self).run()
+    │       └ <gunicorn.app.wsgiapp.WSGIApplication object at 0x7fbb531b2550>
+    └ <class 'gunicorn.arbiter.Arbiter'>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/arbiter.py", line 201, in run
+    self.manage_workers()
+    │    └ <function Arbiter.manage_workers at 0x7fbb52c9c360>
+    └ <gunicorn.arbiter.Arbiter object at 0x7fbb531b0310>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/arbiter.py", line 570, in manage_workers
+    self.spawn_workers()
+    │    └ <function Arbiter.spawn_workers at 0x7fbb52c9c4a0>
+    └ <gunicorn.arbiter.Arbiter object at 0x7fbb531b0310>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/arbiter.py", line 641, in spawn_workers
+    self.spawn_worker()
+    │    └ <function Arbiter.spawn_worker at 0x7fbb52c9c400>
+    └ <gunicorn.arbiter.Arbiter object at 0x7fbb531b0310>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+    worker.init_process()
+    │      └ <function Worker.init_process at 0x7fbb525da8e0>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3e90>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/base.py", line 143, in init_process
+    self.run()
+    │    └ <function SyncWorker.run at 0x7fbb525db060>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3e90>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 125, in run
+    self.run_for_one(timeout)
+    │    │           └ 15.0
+    │    └ <function SyncWorker.run_for_one at 0x7fbb525daf20>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3e90>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 69, in run_for_one
+    self.accept(listener)
+    │    │      └ <gunicorn.sock.UnixSocket object at 0x7fbb525e0d10>
+    │    └ <function SyncWorker.accept at 0x7fbb525c72e0>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3e90>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 31, in accept
+    self.handle(listener, client, addr)
+    │    │      │         │       └ ''
+    │    │      │         └ <socket.socket fd=10, family=1, type=1, proto=0, laddr=/home/admin/Adamsver5/gunicorn.sock>
+    │    │      └ <gunicorn.sock.UnixSocket object at 0x7fbb525e0d10>
+    │    └ <function SyncWorker.handle at 0x7fbb525db100>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3e90>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+    │    │              │         │    │       └ ''
+    │    │              │         │    └ <socket.socket fd=10, family=1, type=1, proto=0, laddr=/home/admin/Adamsver5/gunicorn.sock>
+    │    │              │         └ <gunicorn.http.message.Request object at 0x7fbb507b3550>
+    │    │              └ <gunicorn.sock.UnixSocket object at 0x7fbb525e0d10>
+    │    └ <function SyncWorker.handle_request at 0x7fbb525db1a0>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3e90>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               │    │    │        │    └ <function Response.start_response at 0x7fbb525c7560>
+               │    │    │        └ <gunicorn.http.wsgi.Response object at 0x7fbb506106d0>
+               │    │    └ {'wsgi.errors': <gunicorn.http.wsgi.WSGIErrorsWrapper object at 0x7fbb5079bac0>, 'wsgi.version': (1, 0), 'wsgi.multithread': ...
+               │    └ <django.core.handlers.wsgi.WSGIHandler object at 0x7fbb51479710>
+               └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3e90>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/wsgi.py", line 124, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │    └ <function BaseHandler.get_response at 0x7fbb519d13a0>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x7fbb51479710>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 140, in get_response
+    response = self._middleware_chain(request)
+               │    │                 └ <WSGIRequest: POST '/update-user/1'>
+               │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb514771a0>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x7fbb51479710>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb51476fc0>
+               │           └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb51475760>
+               │           └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb51915da0>
+               │           └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb5164a2a0>
+               │           └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb5164a5c0>
+               │           └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb5164a340>
+               │           └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb51617d80>
+               │           └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x7fbb514798d0>
+
+  File "/home/admin/Adamsver5/adams/custom_middlewares.py", line 9, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │    └ <function BaseHandler._get_response at 0x7fbb525b3420>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x7fbb514798d0>
+
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <bound method BaseHandler._get_response of <django.core.handlers.wsgi.WSGIHandler object at 0x7fbb51479710>>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               │                │         │                └ {'user_id': 1}
+               │                │         └ ()
+               │                └ <WSGIRequest: POST '/update-user/1'>
+               └ <function update_user_view at 0x7fbb50fe54e0>
+
+  File "/home/admin/Adamsver5/app/views.py", line 258, in update_user_view
+    if upload_image_to_minio(file, file_name):
+       │                     │     └ 'users/admin/photo/admin_qr.png'
+       │                     └ <InMemoryUploadedFile: admin_qr.png (image/png)>
+       └ <function upload_image_to_minio at 0x7fbb50fcf9c0>
+
+> File "/home/admin/Adamsver5/app/utils.py", line 105, in upload_image_to_minio
+    client.put_object(
+    │      └ <function Minio.put_object at 0x7fbb512fba60>
+    └ <minio.api.Minio object at 0x7fbb50afd390>
+
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 1996, in put_object
+    raise exc
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 1942, in put_object
+    return self._put_object(
+           │    └ <function Minio._put_object at 0x7fbb512fb880>
+           └ <minio.api.Minio object at 0x7fbb50afd390>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 1781, in _put_object
+    response = self._execute(
+               │    └ <function Minio._execute at 0x7fbb512fa020>
+               └ <minio.api.Minio object at 0x7fbb50afd390>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 438, in _execute
+    region = self._get_region(bucket_name)
+             │    │           └ 'adams'
+             │    └ <function Minio._get_region at 0x7fbb512fa0c0>
+             └ <minio.api.Minio object at 0x7fbb50afd390>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 495, in _get_region
+    response = self._url_open(
+               │    └ <function Minio._url_open at 0x7fbb512f9f80>
+               └ <minio.api.Minio object at 0x7fbb50afd390>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 303, in _url_open
+    response = self._http.urlopen(
+               │    │     └ <function PoolManager.urlopen at 0x7fbb513ff740>
+               │    └ <urllib3.poolmanager.PoolManager object at 0x7fbb5060edd0>
+               └ <minio.api.Minio object at 0x7fbb50afd390>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/poolmanager.py", line 457, in urlopen
+    response = conn.urlopen(method, u.request_uri, **kw)
+               │    │       │       │ │              └ {'body': None, 'headers': HTTPHeaderDict({'Host': 'localhost:9000', 'User-Agent': 'MinIO (Linux; x86_64) minio-py/7.2.13', 'x...
+               │    │       │       │ └ <property object at 0x7fbb51523330>
+               │    │       │       └ Url(scheme='http', auth=None, host='localhost', port=9000, path='/adams', query='location=', fragment=None)
+               │    │       └ 'GET'
+               │    └ <function HTTPConnectionPool.urlopen at 0x7fbb513fe0c0>
+               └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb5074d710>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 871, in urlopen
+    return self.urlopen(
+           │    └ <function HTTPConnectionPool.urlopen at 0x7fbb513fe0c0>
+           └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb5074d710>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 871, in urlopen
+    return self.urlopen(
+           │    └ <function HTTPConnectionPool.urlopen at 0x7fbb513fe0c0>
+           └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb5074d710>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 871, in urlopen
+    return self.urlopen(
+           │    └ <function HTTPConnectionPool.urlopen at 0x7fbb513fe0c0>
+           └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb5074d710>
+  [Previous line repeated 2 more times]
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              │       └ <function Retry.increment at 0x7fbb51375da0>
+              └ Retry(total=0, connect=None, read=None, redirect=None, status=None)
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/util/retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+          │             │      │    │            └ NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection...
+          │             │      │    └ NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection...
+          │             │      └ '/adams?location='
+          │             └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb5074d710>
+          └ <class 'urllib3.exceptions.MaxRetryError'>
+
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=9000): Max retries exceeded with url: /adams?location= (Caused by NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused"))
+2026-01-12T01:52:57.223087+0530 - ERROR - Failed to upload photo
+2026-01-12T01:52:57.223244+0530 - DEBUG - Keeping existing file for state_nmc
+2026-01-12T01:52:57.223325+0530 - DEBUG - Keeping existing file for passport
+2026-01-12T01:52:57.223396+0530 - DEBUG - Keeping existing file for medical_qualification
+2026-01-12T01:52:57.223464+0530 - DEBUG - Keeping existing file for payment_transaction_proof
+2026-01-12T01:52:57.232975+0530 - INFO - Response status: 200
+2026-01-12T01:53:05.322833+0530 - INFO - Incoming request: POST /update-user/1
+2026-01-12T01:53:05.324773+0530 - INFO - Accessing update view for user ID: 1
+2026-01-12T01:53:05.326364+0530 - DEBUG - Retrieved user: admin
+2026-01-12T01:53:05.326510+0530 - INFO - Processing POST request to update user admin
+2026-01-12T01:53:05.331604+0530 - DEBUG - Form validation successful
+2026-01-12T01:53:05.331809+0530 - DEBUG - Processing file upload for photo
+2026-01-12T01:53:05.331894+0530 - INFO - Uploading image users/admin/photo/admin_qr.png to MinIO
+2026-01-12T01:53:11.272904+0530 - INFO - Incoming request: GET /rulebook-viewer/
+2026-01-12T01:53:11.275622+0530 - DEBUG - Processing rulebook viewer request
+2026-01-12T01:53:11.276485+0530 - INFO - User admin accessed the rulebook viewer
+2026-01-12T01:53:11.276618+0530 - DEBUG - Rendering rulebook viewer page
+2026-01-12T01:53:11.278732+0530 - INFO - Response status: 200
+2026-01-12T01:53:11.338033+0530 - WARNING - Could not verify MinIO bucket (MinIO may not be running): HTTPConnectionPool(host='localhost', port=9000): Max retries exceeded with url: /adams?location= (Caused by NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused"))
+2026-01-12T01:53:12.408657+0530 - INFO - Incoming request: GET /api/get-active-rulebook/
+2026-01-12T01:53:12.410401+0530 - INFO - Response status: 404
+2026-01-12T01:53:14.829318+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-12T01:53:14.832013+0530 - DEBUG - Processing admin panel request
+2026-01-12T01:53:14.832882+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-12T01:53:14.833545+0530 - DEBUG - Retrieved 2 users from database
+2026-01-12T01:53:14.833670+0530 - DEBUG - Rendering admin panel
+2026-01-12T01:53:14.835816+0530 - INFO - Response status: 200
+2026-01-12T01:53:14.971958+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-12T01:53:14.971958+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-12T01:53:14.974092+0530 - INFO - Response status: 200
+2026-01-12T01:53:14.975587+0530 - DEBUG - Fetching category change requests for admin
+2026-01-12T01:53:14.976133+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-12T01:53:14.976705+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-12T01:53:14.976960+0530 - INFO - Response status: 200
+2026-01-12T01:53:14.979696+0530 - INFO - Response status: 200
+2026-01-12T01:53:15.017796+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-12T01:53:15.019934+0530 - INFO - Response status: 200
+2026-01-12T01:53:17.343539+0530 - ERROR - Error uploading image users/admin/photo/admin_qr.png: HTTPConnectionPool(host='localhost', port=9000): Max retries exceeded with url: /adams?location= (Caused by NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused"))
+Traceback (most recent call last):
+
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+           │          └ <function create_connection at 0x7fbb51553600>
+           └ <module 'urllib3.util.connection' from '/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/util/connection.py'>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+          └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+    │    │       └ ('127.0.0.1', 9000)
+    │    └ <method 'connect' of '_socket.socket' objects>
+    └ <socket.socket [closed] fd=-1, family=2, type=1, proto=6>
+
+ConnectionRefusedError: [Errno 111] Connection refused
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               │    └ <function HTTPConnectionPool._make_request at 0x7fbb513fdee0>
+               └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb5032bd10>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 493, in _make_request
+    conn.request(
+    │    └ <function HTTPConnection.request at 0x7fbb513d5c60>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50369d90>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connection.py", line 500, in request
+    self.endheaders()
+    │    └ <function HTTPConnection.endheaders at 0x7fbb5226cfe0>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50369d90>
+  File "/usr/lib/python3.11/http/client.py", line 1277, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    │    │            │                            └ False
+    │    │            └ None
+    │    └ <function HTTPConnection._send_output at 0x7fbb5226cb80>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50369d90>
+  File "/usr/lib/python3.11/http/client.py", line 1037, in _send_output
+    self.send(msg)
+    │    │    └ b'GET /adams?location= HTTP/1.1\r\nAccept-Encoding: identity\r\nHost: localhost:9000\r\nUser-Agent: MinIO (Linux; x86_64) min...
+    │    └ <function HTTPConnection.send at 0x7fbb5226c9a0>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50369d90>
+  File "/usr/lib/python3.11/http/client.py", line 975, in send
+    self.connect()
+    │    └ <function HTTPConnection.connect at 0x7fbb513d56c0>
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50369d90>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connection.py", line 331, in connect
+    self.sock = self._new_conn()
+    │    │      │    └ <function HTTPConnection._new_conn at 0x7fbb513d5440>
+    │    │      └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50369d90>
+    │    └ None
+    └ <HTTPConnection(host='localhost', port=9000) at 0x7fbb50369d90>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connection.py", line 219, in _new_conn
+    raise NewConnectionError(
+          └ <class 'urllib3.exceptions.NewConnectionError'>
+
+urllib3.exceptions.NewConnectionError: HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "/home/admin/Adamsver5/venv/bin/gunicorn", line 7, in <module>
+    sys.exit(run())
+    │   │    └ <function run at 0x7fbb533485e0>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 66, in run
+    WSGIApplication("%(prog)s [OPTIONS] [APP_MODULE]", prog=prog).run()
+    │                                                       └ None
+    └ <class 'gunicorn.app.wsgiapp.WSGIApplication'>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/app/base.py", line 235, in run
+    super().run()
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/app/base.py", line 71, in run
+    Arbiter(self).run()
+    │       └ <gunicorn.app.wsgiapp.WSGIApplication object at 0x7fbb531b2550>
+    └ <class 'gunicorn.arbiter.Arbiter'>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/arbiter.py", line 201, in run
+    self.manage_workers()
+    │    └ <function Arbiter.manage_workers at 0x7fbb52c9c360>
+    └ <gunicorn.arbiter.Arbiter object at 0x7fbb531b0310>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/arbiter.py", line 570, in manage_workers
+    self.spawn_workers()
+    │    └ <function Arbiter.spawn_workers at 0x7fbb52c9c4a0>
+    └ <gunicorn.arbiter.Arbiter object at 0x7fbb531b0310>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/arbiter.py", line 641, in spawn_workers
+    self.spawn_worker()
+    │    └ <function Arbiter.spawn_worker at 0x7fbb52c9c400>
+    └ <gunicorn.arbiter.Arbiter object at 0x7fbb531b0310>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+    worker.init_process()
+    │      └ <function Worker.init_process at 0x7fbb525da8e0>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3f50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/base.py", line 143, in init_process
+    self.run()
+    │    └ <function SyncWorker.run at 0x7fbb525db060>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3f50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 125, in run
+    self.run_for_one(timeout)
+    │    │           └ 15.0
+    │    └ <function SyncWorker.run_for_one at 0x7fbb525daf20>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3f50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 69, in run_for_one
+    self.accept(listener)
+    │    │      └ <gunicorn.sock.UnixSocket object at 0x7fbb525e0d10>
+    │    └ <function SyncWorker.accept at 0x7fbb525c72e0>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3f50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 31, in accept
+    self.handle(listener, client, addr)
+    │    │      │         │       └ ''
+    │    │      │         └ <socket.socket fd=10, family=1, type=1, proto=0, laddr=/home/admin/Adamsver5/gunicorn.sock>
+    │    │      └ <gunicorn.sock.UnixSocket object at 0x7fbb525e0d10>
+    │    └ <function SyncWorker.handle at 0x7fbb525db100>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3f50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+    │    │              │         │    │       └ ''
+    │    │              │         │    └ <socket.socket fd=10, family=1, type=1, proto=0, laddr=/home/admin/Adamsver5/gunicorn.sock>
+    │    │              │         └ <gunicorn.http.message.Request object at 0x7fbb50b04c50>
+    │    │              └ <gunicorn.sock.UnixSocket object at 0x7fbb525e0d10>
+    │    └ <function SyncWorker.handle_request at 0x7fbb525db1a0>
+    └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3f50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               │    │    │        │    └ <function Response.start_response at 0x7fbb525c7560>
+               │    │    │        └ <gunicorn.http.wsgi.Response object at 0x7fbb50488410>
+               │    │    └ {'wsgi.errors': <gunicorn.http.wsgi.WSGIErrorsWrapper object at 0x7fbb50332290>, 'wsgi.version': (1, 0), 'wsgi.multithread': ...
+               │    └ <django.core.handlers.wsgi.WSGIHandler object at 0x7fbb51479890>
+               └ <gunicorn.workers.sync.SyncWorker object at 0x7fbb525e3f50>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/wsgi.py", line 124, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │    └ <function BaseHandler.get_response at 0x7fbb519d13a0>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x7fbb51479890>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 140, in get_response
+    response = self._middleware_chain(request)
+               │    │                 └ <WSGIRequest: POST '/update-user/1'>
+               │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb514771a0>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x7fbb51479890>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb51476fc0>
+               │           └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb51475760>
+               │           └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb51915da0>
+               │           └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb5164e2a0>
+               │           └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb5164e5c0>
+               │           └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb5164e340>
+               │           └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x7fbb51617d80>
+               │           └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x7fbb51479a50>
+
+  File "/home/admin/Adamsver5/adams/custom_middlewares.py", line 9, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/update-user/1'>
+               │    └ <function BaseHandler._get_response at 0x7fbb525b3420>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x7fbb51479a50>
+
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/update-user/1'>
+               └ <bound method BaseHandler._get_response of <django.core.handlers.wsgi.WSGIHandler object at 0x7fbb51479890>>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               │                │         │                └ {'user_id': 1}
+               │                │         └ ()
+               │                └ <WSGIRequest: POST '/update-user/1'>
+               └ <function update_user_view at 0x7fbb50fe54e0>
+
+  File "/home/admin/Adamsver5/app/views.py", line 258, in update_user_view
+    if upload_image_to_minio(file, file_name):
+       │                     │     └ 'users/admin/photo/admin_qr.png'
+       │                     └ <InMemoryUploadedFile: admin_qr.png (image/png)>
+       └ <function upload_image_to_minio at 0x7fbb50fcf9c0>
+
+> File "/home/admin/Adamsver5/app/utils.py", line 105, in upload_image_to_minio
+    client.put_object(
+    │      └ <function Minio.put_object at 0x7fbb512fba60>
+    └ <minio.api.Minio object at 0x7fbb50326910>
+
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 1996, in put_object
+    raise exc
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 1942, in put_object
+    return self._put_object(
+           │    └ <function Minio._put_object at 0x7fbb512fb880>
+           └ <minio.api.Minio object at 0x7fbb50326910>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 1781, in _put_object
+    response = self._execute(
+               │    └ <function Minio._execute at 0x7fbb512fa020>
+               └ <minio.api.Minio object at 0x7fbb50326910>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 438, in _execute
+    region = self._get_region(bucket_name)
+             │    │           └ 'adams'
+             │    └ <function Minio._get_region at 0x7fbb512fa0c0>
+             └ <minio.api.Minio object at 0x7fbb50326910>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 495, in _get_region
+    response = self._url_open(
+               │    └ <function Minio._url_open at 0x7fbb512f9f80>
+               └ <minio.api.Minio object at 0x7fbb50326910>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/minio/api.py", line 303, in _url_open
+    response = self._http.urlopen(
+               │    │     └ <function PoolManager.urlopen at 0x7fbb513ff740>
+               │    └ <urllib3.poolmanager.PoolManager object at 0x7fbb504b00d0>
+               └ <minio.api.Minio object at 0x7fbb50326910>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/poolmanager.py", line 457, in urlopen
+    response = conn.urlopen(method, u.request_uri, **kw)
+               │    │       │       │ │              └ {'body': None, 'headers': HTTPHeaderDict({'Host': 'localhost:9000', 'User-Agent': 'MinIO (Linux; x86_64) minio-py/7.2.13', 'x...
+               │    │       │       │ └ <property object at 0x7fbb515234c0>
+               │    │       │       └ Url(scheme='http', auth=None, host='localhost', port=9000, path='/adams', query='location=', fragment=None)
+               │    │       └ 'GET'
+               │    └ <function HTTPConnectionPool.urlopen at 0x7fbb513fe0c0>
+               └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb5032bd10>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 871, in urlopen
+    return self.urlopen(
+           │    └ <function HTTPConnectionPool.urlopen at 0x7fbb513fe0c0>
+           └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb5032bd10>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 871, in urlopen
+    return self.urlopen(
+           │    └ <function HTTPConnectionPool.urlopen at 0x7fbb513fe0c0>
+           └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb5032bd10>
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 871, in urlopen
+    return self.urlopen(
+           │    └ <function HTTPConnectionPool.urlopen at 0x7fbb513fe0c0>
+           └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb5032bd10>
+  [Previous line repeated 2 more times]
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              │       └ <function Retry.increment at 0x7fbb51375da0>
+              └ Retry(total=0, connect=None, read=None, redirect=None, status=None)
+  File "/home/admin/Adamsver5/venv/lib/python3.11/site-packages/urllib3/util/retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+          │             │      │    │            └ NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection...
+          │             │      │    └ NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection...
+          │             │      └ '/adams?location='
+          │             └ <urllib3.connectionpool.HTTPConnectionPool object at 0x7fbb5032bd10>
+          └ <class 'urllib3.exceptions.MaxRetryError'>
+
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=9000): Max retries exceeded with url: /adams?location= (Caused by NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused"))
+2026-01-12T01:53:17.356470+0530 - ERROR - Failed to upload photo
+2026-01-12T01:53:17.356703+0530 - DEBUG - Keeping existing file for state_nmc
+2026-01-12T01:53:17.356839+0530 - DEBUG - Keeping existing file for passport
+2026-01-12T01:53:17.356964+0530 - DEBUG - Keeping existing file for medical_qualification
+2026-01-12T01:53:17.357075+0530 - DEBUG - Keeping existing file for payment_transaction_proof
+2026-01-12T01:53:17.370097+0530 - INFO - Response status: 200
+2026-01-12T01:54:54.285039+0530 - INFO - Incoming request: POST /api/upload-rulebook/
+2026-01-12T01:55:00.291219+0530 - ERROR - Error uploading to MinIO: HTTPConnectionPool(host='localhost', port=9000): Max retries exceeded with url: /adams?location= (Caused by NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused"))
+2026-01-12T01:55:00.291738+0530 - INFO - Response status: 500
+2026-01-12T01:55:05.646921+0530 - INFO - Incoming request: POST /api/upload-rulebook/
+2026-01-12T01:55:11.652811+0530 - ERROR - Error uploading to MinIO: HTTPConnectionPool(host='localhost', port=9000): Max retries exceeded with url: /adams?location= (Caused by NewConnectionError("HTTPConnection(host='localhost', port=9000): Failed to establish a new connection: [Errno 111] Connection refused"))
+2026-01-12T01:55:11.653122+0530 - INFO - Response status: 500
+2026-01-12T01:55:35.144593+0530 - INFO - Incoming request: GET /admin/config.php
+2026-01-12T01:55:35.148666+0530 - INFO - Response status: 302
+2026-01-12T01:55:35.284236+0530 - INFO - Incoming request: GET /admin/login/
+2026-01-12T01:55:35.298517+0530 - INFO - Response status: 200
