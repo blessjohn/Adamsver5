@@ -2463,3 +2463,8 @@ smtplib.SMTPAuthenticationError: (535, b'5.7.8 Error: authentication failed: (re
 2026-01-11T23:27:59.040409+0530 - INFO - User member accessed their profile page
 2026-01-11T23:27:59.050333+0530 - DEBUG - Rendering user profile page
 2026-01-11T23:27:59.067719+0530 - INFO - Response status: 200
+2026-01-11T23:43:07.713504+0530 - INFO - Incoming request: GET /user_profile
+2026-01-11T23:43:07.721449+0530 - DEBUG - Processing user profile page request
+2026-01-11T23:43:07.724217+0530 - INFO - User member accessed their profile page
+2026-01-11T23:43:07.728839+0530 - DEBUG - Rendering user profile page
+2026-01-11T23:43:07.769901+0530 - INFO - Response status: 200

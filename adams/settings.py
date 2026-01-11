@@ -30,9 +30,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# Use environment variable in production, fallback to dev key for local development
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 if not SECRET_KEY:
-    raise ValueError("DJANGO_SECRET_KEY environment variable must be set!")
+    # Default development key - MUST be changed in production via environment variable
+    SECRET_KEY = "django-insecure-dev-key-change-in-production-" + str(BASE_DIR)
+    import warnings
+    warnings.warn(
+        "Using default SECRET_KEY for development. Set DJANGO_SECRET_KEY environment variable in production!",
+        UserWarning
+    )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG_MODE", "false") == "true"
@@ -119,8 +126,9 @@ WSGI_APPLICATION = "adams.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # Database configuration
-# For local testing, you can use SQLite instead of PostgreSQL
-USE_SQLITE = os.getenv("USE_SQLITE", "false").lower() == "true"
+# Default to SQLite for easy local development and fresh server setup
+# Set USE_SQLITE=false and provide DB_* variables to use PostgreSQL
+USE_SQLITE = os.getenv("USE_SQLITE", "true").lower() == "true"
 
 if USE_SQLITE:
     # SQLite for quick local testing (no setup required)
@@ -131,29 +139,36 @@ if USE_SQLITE:
         }
     }
 else:
-    # PostgreSQL for production-like setup
+    # PostgreSQL for production setup
+    # Get database settings with safe defaults
+    db_name = os.getenv("DB_NAME")
+    db_user = os.getenv("DB_USER")
+    db_password = os.getenv("DB_PASSWORD")
+    db_host = os.getenv("DB_HOST", "localhost")
+    db_port = os.getenv("DB_PORT", "5432")
+    
+    # Validate PostgreSQL settings - only fail if explicitly trying to use PostgreSQL
+    if not all([db_name, db_user, db_password]):
+        missing = [k for k, v in {
+            "DB_NAME": db_name,
+            "DB_USER": db_user,
+            "DB_PASSWORD": db_password,
+        }.items() if not v]
+        raise ValueError(
+            f"USE_SQLITE=false but missing required PostgreSQL environment variables: {', '.join(missing)}. "
+            f"Either set USE_SQLITE=true (default) or provide all DB_* variables."
+        )
+    
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("DB_NAME"),
-            "USER": os.getenv("DB_USER"),
-            "PASSWORD": os.getenv("DB_PASSWORD"),
-            "HOST": os.getenv("DB_HOST"),
-            "PORT": os.getenv("DB_PORT"),
+            "NAME": db_name,
+            "USER": db_user,
+            "PASSWORD": db_password,
+            "HOST": db_host,
+            "PORT": db_port,
         }
     }
-
-# Validate database settings (only for PostgreSQL, not SQLite)
-if not USE_SQLITE:
-    if not all([DATABASES["default"].get("NAME"), DATABASES["default"].get("USER"), 
-                DATABASES["default"].get("PASSWORD"), DATABASES["default"].get("HOST")]):
-        missing = [k for k, v in {
-            "DB_NAME": DATABASES["default"].get("NAME"),
-            "DB_USER": DATABASES["default"].get("USER"),
-            "DB_PASSWORD": DATABASES["default"].get("PASSWORD"),
-            "DB_HOST": DATABASES["default"].get("HOST")
-        }.items() if not v]
-        raise ValueError(f"Missing required database environment variables: {', '.join(missing)}")
 
 
 # Password validation
@@ -224,33 +239,46 @@ if DEBUG:
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# settings.py
+# MinIO Configuration (S3-compatible object storage)
+# Provide defaults for development, but these should be set via environment variables in production
+MINIO_URL = os.getenv("MINIO_URL", "localhost:9000")
+MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "")
+MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "")
+MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME", "adams")
 
-MINIO_URL = os.getenv("MINIO_URL")  # URL of your MinIO server
-MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
-MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
-MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME")
-
-# Validate MinIO settings (will fail at startup if missing, preventing runtime errors)
-if not all([MINIO_URL, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_BUCKET_NAME]):
+# MinIO is optional for basic operations (migrate, runserver)
+# Validation will only warn in development, fail in production
+MINIO_ENABLED = all([MINIO_URL, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_BUCKET_NAME])
+if not MINIO_ENABLED and not DEBUG:
+    # In production, MinIO should be configured
     missing = [k for k, v in {
         "MINIO_URL": MINIO_URL,
         "MINIO_ACCESS_KEY": MINIO_ACCESS_KEY,
         "MINIO_SECRET_KEY": MINIO_SECRET_KEY,
         "MINIO_BUCKET_NAME": MINIO_BUCKET_NAME
     }.items() if not v]
-    raise ValueError(f"Missing required MinIO environment variables: {', '.join(missing)}")
+    raise ValueError(f"Missing required MinIO environment variables in production: {', '.join(missing)}")
+elif not MINIO_ENABLED:
+    # In development, just warn
+    import warnings
+    warnings.warn(
+        "MinIO not fully configured. Some features may not work. Set MINIO_* environment variables.",
+        UserWarning
+    )
 
 
 AUTH_USER_MODEL = "app.User"
 
 
-EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+# Email configuration
+# Default to console backend for development (prints emails to console)
+# Set EMAIL_BACKEND=smtp and provide credentials for production
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() == "true"
 EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "false").lower() == "true"
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 
-DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER", "testadams08@gmail.com")
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER", "noreply@adams.org.in")
