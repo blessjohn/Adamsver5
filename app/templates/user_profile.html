@@ -17,6 +17,10 @@
         margin-bottom: 30px;
         padding-bottom: 20px;
         border-bottom: 2px solid #e9ecef;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 
     .profile-photo {
@@ -26,6 +30,22 @@
         object-fit: cover;
         border: 4px solid #007bff;
         margin-bottom: 15px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .profile-photo-placeholder {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 4px solid #007bff;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .profile-name {
@@ -188,17 +208,24 @@
             <!-- Profile Header -->
             <div class="profile-card">
                 <div class="profile-header">
-                    {% if data.user.photo %}
-                    <img src="{% url 'serve_user_image' data.user.id 'photo' %}" 
-                         alt="{{ data.user.first_name }}'s Photo" 
-                         class="profile-photo">
-                    {% else %}
-                    <div class="profile-photo d-flex align-items-center justify-content-center" 
-                         style="background-color: #e9ecef;">
-                        <i class="bi bi-person-fill" style="font-size: 4rem; color: #6c757d;"></i>
+                    <div style="display: flex; justify-content: center; width: 100%;">
+                        {% if data.user.photo %}
+                        <img src="{% url 'serve_user_image' data.user.id 'photo' %}" 
+                             alt="{{ data.user.first_name }}'s Photo" 
+                             class="profile-photo">
+                        {% else %}
+                        <div class="profile-photo-placeholder" 
+                             style="background-color: #e9ecef;">
+                            <i class="bi bi-person-fill" style="font-size: 4rem; color: #6c757d;"></i>
+                        </div>
+                        {% endif %}
                     </div>
-                    {% endif %}
-                    <h2 class="profile-name">{{ data.user.first_name }} {{ data.user.middle_name }} {{ data.user.last_name }}</h2>
+                    <h2 class="profile-name">
+                        {% if data.user.first_name %}{{ data.user.first_name }}{% endif %}
+                        {% if data.user.middle_name and data.user.middle_name.strip %} {{ data.user.middle_name }}{% endif %}
+                        {% if data.user.last_name %} {{ data.user.last_name }}{% endif %}
+                        {% if not data.user.first_name and not data.user.last_name %}{{ data.user.username }}{% endif %}
+                    </h2>
                     <p class="profile-role">{{ data.user.get_role_display }}</p>
                     <span class="badge-status {% if data.user.status == 'approved' %}badge-approved{% elif data.user.status == 'pending' %}badge-pending{% else %}badge-rejected{% endif %}">
                         {{ data.user.get_status_display }}
@@ -229,35 +256,35 @@
                     </div>
                     <div class="profile-field">
                         <span class="field-label">Gender:</span>
-                        <span class="field-value">{{ data.user.gender }}</span>
+                        <span class="field-value">{% if data.user.gender and data.user.gender|default:""|stringformat:"s" != "None" %}{{ data.user.gender }}{% else %}-{% endif %}</span>
                     </div>
                     <div class="profile-field">
                         <span class="field-label">Mobile Number:</span>
-                        <span class="field-value">{{ data.user.mobile_number }}</span>
+                        <span class="field-value">{% if data.user.mobile_number and data.user.mobile_number|default:""|stringformat:"s" != "None" %}{{ data.user.mobile_number }}{% else %}-{% endif %}</span>
                     </div>
                     <div class="profile-field">
                         <span class="field-label">WhatsApp Number:</span>
-                        <span class="field-value">{{ data.user.whatsapp_number }}</span>
+                        <span class="field-value">{% if data.user.whatsapp_number and data.user.whatsapp_number|default:""|stringformat:"s" != "None" %}{{ data.user.whatsapp_number }}{% else %}-{% endif %}</span>
                     </div>
                     <div class="profile-field">
                         <span class="field-label">Blood Group:</span>
-                        <span class="field-value">{{ data.user.blood_group }}</span>
+                        <span class="field-value">{% if data.user.blood_group and data.user.blood_group|default:""|stringformat:"s" != "None" %}{{ data.user.blood_group }}{% else %}-{% endif %}</span>
                     </div>
                     <div class="profile-field">
                         <span class="field-label">District:</span>
-                        <span class="field-value">{{ data.user.district }}</span>
+                        <span class="field-value">{% if data.user.district and data.user.district|default:""|stringformat:"s" != "None" %}{{ data.user.district }}{% else %}-{% endif %}</span>
                     </div>
                     <div class="profile-field">
                         <span class="field-label">Father/Spouse Details:</span>
-                        <span class="field-value">{{ data.user.father_spouse_details }}</span>
+                        <span class="field-value">{% if data.user.father_spouse_details and data.user.father_spouse_details|default:""|stringformat:"s" != "None" %}{{ data.user.father_spouse_details }}{% else %}-{% endif %}</span>
                     </div>
                     <div class="profile-field">
                         <span class="field-label">Communication Address:</span>
-                        <span class="field-value">{{ data.user.address_communication }}</span>
+                        <span class="field-value">{% if data.user.address_communication and data.user.address_communication|default:""|stringformat:"s" != "None" %}{{ data.user.address_communication }}{% else %}-{% endif %}</span>
                     </div>
                     <div class="profile-field">
                         <span class="field-label">Permanent Address:</span>
-                        <span class="field-value">{{ data.user.address_permanent }}</span>
+                        <span class="field-value">{% if data.user.address_permanent and data.user.address_permanent|default:""|stringformat:"s" != "None" %}{{ data.user.address_permanent }}{% else %}-{% endif %}</span>
                     </div>
                 </div>
 
@@ -266,12 +293,12 @@
                     <h3 class="section-title"><i class="bi bi-mortarboard"></i> Educational Information</h3>
                     <div class="profile-field">
                         <span class="field-label">Educational Status:</span>
-                        <span class="field-value">{{ data.user.educational_status }}</span>
+                        <span class="field-value">{% if data.user.educational_status and data.user.educational_status|default:""|stringformat:"s" != "None" %}{{ data.user.educational_status }}{% else %}-{% endif %}</span>
                     </div>
                     <div class="profile-field">
                         <span class="field-label">Category:</span>
                         <span class="field-value">
-                            <strong>{{ data.user.category }}</strong>
+                            <strong>{% if data.user.category and data.user.category|default:""|stringformat:"s" != "None" %}{{ data.user.category }}{% else %}-{% endif %}</strong>
                             {% if not data.pending_category_request %}
                             <button class="btn btn-sm btn-category-change ms-2" onclick="openCategoryChangeModal()">
                                 <i class="bi bi-pencil-square"></i> Change Category
@@ -281,19 +308,19 @@
                     </div>
                     <div class="profile-field">
                         <span class="field-label">University Name:</span>
-                        <span class="field-value">{{ data.user.university_name }}</span>
+                        <span class="field-value">{% if data.user.university_name and data.user.university_name|default:""|stringformat:"s" != "None" %}{{ data.user.university_name }}{% else %}-{% endif %}</span>
                     </div>
                     <div class="profile-field">
                         <span class="field-label">Country:</span>
-                        <span class="field-value">{{ data.user.country_university }}</span>
+                        <span class="field-value">{% if data.user.country_university and data.user.country_university|default:""|stringformat:"s" != "None" %}{{ data.user.country_university }}{% else %}-{% endif %}</span>
                     </div>
                     <div class="profile-field">
                         <span class="field-label">Year of Joining:</span>
-                        <span class="field-value">{{ data.user.year_of_joining }}</span>
+                        <span class="field-value">{% if data.user.year_of_joining and data.user.year_of_joining|default:""|stringformat:"s" != "None" %}{{ data.user.year_of_joining }}{% else %}-{% endif %}</span>
                     </div>
                     <div class="profile-field">
                         <span class="field-label">Year of Completion:</span>
-                        <span class="field-value">{{ data.user.year_of_completion }}</span>
+                        <span class="field-value">{% if data.user.year_of_completion and data.user.year_of_completion|default:""|stringformat:"s" != "None" %}{{ data.user.year_of_completion }}{% else %}-{% endif %}</span>
                     </div>
                 </div>
 
@@ -351,7 +378,7 @@
                     <h3 class="section-title"><i class="bi bi-info-circle"></i> Additional Information</h3>
                     <div class="profile-field">
                         <span class="field-label">Payment Date & Time:</span>
-                        <span class="field-value">{{ data.user.date_time_of_payment }}</span>
+                        <span class="field-value">{% if data.user.date_time_of_payment %}{{ data.user.date_time_of_payment }}{% else %}-{% endif %}</span>
                     </div>
                     <div class="profile-field">
                         <span class="field-label">Willing to be Blood Donor:</span>
@@ -360,13 +387,13 @@
                     {% if data.user.mid %}
                     <div class="profile-field">
                         <span class="field-label">MID:</span>
-                        <span class="field-value">{{ data.user.mid }}</span>
+                        <span class="field-value">{% if data.user.mid and data.user.mid|default:""|stringformat:"s" != "None" %}{{ data.user.mid }}{% else %}-{% endif %}</span>
                     </div>
                     {% endif %}
                     {% if data.user.admin_remarks %}
                     <div class="profile-field">
                         <span class="field-label">Admin Remarks:</span>
-                        <span class="field-value">{{ data.user.admin_remarks }}</span>
+                        <span class="field-value">{% if data.user.admin_remarks and data.user.admin_remarks|default:""|stringformat:"s" != "None" %}{{ data.user.admin_remarks }}{% else %}-{% endif %}</span>
                     </div>
                     {% endif %}
                 </div>

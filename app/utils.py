@@ -13,26 +13,40 @@ import qrcode
 
 from .models import OTP
 
-# Initialize the Minio client
-minio_client = Minio(
-    settings.MINIO_URL,
-    access_key=settings.MINIO_ACCESS_KEY,
-    secret_key=settings.MINIO_SECRET_KEY,
-    secure=False,
-)
+# Initialize the Minio client (lazy initialization to avoid connection errors at startup)
+_minio_client = None
+_bucket_name = settings.MINIO_BUCKET_NAME
 
-# Bucket name from settings
-bucket_name = settings.MINIO_BUCKET_NAME
+def get_minio_client():
+    """Get or create MinIO client instance (lazy initialization)"""
+    global _minio_client
+    if _minio_client is None:
+        _minio_client = Minio(
+            settings.MINIO_URL,
+            access_key=settings.MINIO_ACCESS_KEY,
+            secret_key=settings.MINIO_SECRET_KEY,
+            secure=False,
+        )
+        # Try to ensure bucket exists (non-blocking, won't fail if MinIO is down)
+        try:
+            if not _minio_client.bucket_exists(_bucket_name):
+                _minio_client.make_bucket(_bucket_name)
+                logger.info(f"Bucket '{_bucket_name}' created successfully.")
+            else:
+                logger.info(f"Bucket '{_bucket_name}' already exists.")
+        except Exception as e:
+            logger.warning(f"Could not verify MinIO bucket (MinIO may not be running): {e}")
+    return _minio_client
 
-try:
-    # Check if the bucket exists
-    if not minio_client.bucket_exists(bucket_name):
-        minio_client.make_bucket(bucket_name)
-        print(f"Bucket '{bucket_name}' created successfully.")
-    else:
-        print(f"Bucket '{bucket_name}' already exists.")
-except S3Error as e:
-    print(f"Error checking or creating bucket: {e}")
+# Lazy MinIO client class for backward compatibility
+class LazyMinioClient:
+    """Lazy wrapper for MinIO client that initializes on first access"""
+    def __getattr__(self, name):
+        return getattr(get_minio_client(), name)
+
+# Module-level variables for backward compatibility
+minio_client = LazyMinioClient()
+bucket_name = _bucket_name
 
 
 def get_gallery_images():
@@ -87,7 +101,8 @@ def upload_image_to_minio(file, file_name):
     try:
         # Upload file to MinIO
         logger.info(f"Uploading image {file_name} to MinIO")
-        minio_client.put_object(
+        client = get_minio_client()
+        client.put_object(
             bucket_name=settings.MINIO_BUCKET_NAME,
             object_name=file_name,
             data=file,
@@ -118,7 +133,8 @@ def delete_image_from_minio(file_name):
     try:
         # Delete file from MinIO
         logger.info(f"Deleting image {file_name} from MinIO")
-        minio_client.remove_object(
+        client = get_minio_client()
+        client.remove_object(
             bucket_name=settings.MINIO_BUCKET_NAME, object_name=file_name
         )
 
@@ -277,7 +293,7 @@ def send_otp_via_email(user):
         # )
 
         subject="Your Secure Login OTP"
-        recipient_list=user.email,
+        recipient_list=[user.email]  # Must be a list
         # Create email message
         email = EmailMessage(
             subject=subject,

@@ -109,9 +109,9 @@
 <body>
 
   <!-- ======= Modern Header ======= -->
-  <header id="header" class="">
+  <header id="header" class="" style="position: sticky; top: 0; z-index: 1000; background: white; width: 100%; display: block;">
     <div class="container">
-      <div class="row align-items-center justify-content-between py-3">
+      <div class="row align-items-center justify-content-between py-3" style="position: relative;">
         <div class="col-auto d-flex align-items-center">
           <a href="{% url 'home' %}" class="logo me-3">
             <img src="{% static 'assets/img/client-img/adam_logo.png' %}" alt="ADAMS Logo" class="img-fluid" style="max-height: 60px;">
@@ -144,8 +144,8 @@
   </header><!-- End Header -->
 
   <!-- ======= Modern Navigation ======= -->
-  <nav id="navbar" class="navbar">
-    <div class="container">
+  <nav id="navbar" class="navbar" style="position: relative; z-index: 999;">
+    <div class="container" style="position: relative;">
       <ul id="nav-menu">
         <li><a class="nav-link active" href="{% url 'home' %}"><i class="bi bi-house-door me-2"></i>Home</a></li>
         {% if not user.is_authenticated %}
@@ -168,7 +168,7 @@
         <li><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
         {% endif %}
       </ul>
-      <i class="bi bi-list mobile-nav-toggle" onclick="toggleMobileNav()"></i>
+      <i class="bi bi-list mobile-nav-toggle" onclick="toggleMobileNav()" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); z-index: 1001;"></i>
     </div>
   </nav><!-- .navbar -->
 

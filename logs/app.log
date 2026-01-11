@@ -1,0 +1,2465 @@
+2026-01-11T21:00:10.796055+0530 - INFO - Incoming request: GET /health/
+2026-01-11T21:00:10.797538+0530 - INFO - Response status: 200
+2026-01-11T21:13:29.113324+0530 - INFO - Incoming request: GET /
+2026-01-11T21:13:29.114678+0530 - DEBUG - Processing home page request
+2026-01-11T21:13:29.116038+0530 - DEBUG - No username found in session
+2026-01-11T21:13:29.512991+0530 - INFO - Response status: 500
+2026-01-11T21:13:29.855216+0530 - INFO - Incoming request: GET /favicon.ico
+2026-01-11T21:13:29.906116+0530 - INFO - Response status: 404
+2026-01-11T21:14:49.807777+0530 - INFO - Incoming request: GET /
+2026-01-11T21:14:49.808464+0530 - DEBUG - Processing home page request
+2026-01-11T21:14:49.808867+0530 - DEBUG - No username found in session
+2026-01-11T21:14:49.832274+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:14:49.832935+0530 - DEBUG - Rendering home page
+2026-01-11T21:14:49.866321+0530 - INFO - Response status: 200
+2026-01-11T21:15:13.378406+0530 - INFO - Incoming request: GET /
+2026-01-11T21:15:13.378735+0530 - DEBUG - Processing home page request
+2026-01-11T21:15:13.379063+0530 - DEBUG - No username found in session
+2026-01-11T21:15:13.382768+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:15:13.383221+0530 - DEBUG - Rendering home page
+2026-01-11T21:15:13.388385+0530 - INFO - Response status: 200
+2026-01-11T21:16:10.578706+0530 - INFO - Incoming request: GET /contact-us
+2026-01-11T21:16:10.579568+0530 - DEBUG - Processing contact us page request
+2026-01-11T21:16:10.580166+0530 - DEBUG - No username found in session
+2026-01-11T21:16:10.580686+0530 - DEBUG - Rendering contact us page
+2026-01-11T21:16:10.587805+0530 - INFO - Response status: 200
+2026-01-11T21:16:19.240400+0530 - INFO - Incoming request: GET /gallery/
+2026-01-11T21:16:19.240860+0530 - DEBUG - Processing gallery page request
+2026-01-11T21:16:19.241174+0530 - DEBUG - No username found in session
+2026-01-11T21:16:19.241443+0530 - INFO - Fetching gallery images from database
+2026-01-11T21:16:19.251253+0530 - INFO - Successfully fetched 0 gallery images
+2026-01-11T21:16:19.251861+0530 - DEBUG - Retrieved 0 gallery images
+2026-01-11T21:16:19.252452+0530 - DEBUG - Rendering gallery page
+2026-01-11T21:16:19.264471+0530 - INFO - Response status: 200
+2026-01-11T21:16:21.920612+0530 - INFO - Incoming request: GET /about-us/
+2026-01-11T21:16:21.921237+0530 - DEBUG - Processing about us page request
+2026-01-11T21:16:21.921508+0530 - DEBUG - No username found in session
+2026-01-11T21:16:21.921708+0530 - DEBUG - Rendering about us page
+2026-01-11T21:16:21.925446+0530 - INFO - Response status: 200
+2026-01-11T21:16:26.928519+0530 - INFO - Incoming request: GET /registration/
+2026-01-11T21:16:26.929185+0530 - DEBUG - No username found in session for registration page
+2026-01-11T21:16:26.929706+0530 - INFO - Rendering registration page
+2026-01-11T21:16:26.950683+0530 - INFO - Response status: 200
+2026-01-11T21:16:32.286090+0530 - INFO - Incoming request: GET /register/
+2026-01-11T21:16:32.286830+0530 - DEBUG - Starting user registration process
+2026-01-11T21:16:32.287252+0530 - DEBUG - Displaying empty registration form
+2026-01-11T21:16:32.434482+0530 - INFO - Response status: 200
+2026-01-11T21:17:35.168684+0530 - INFO - Incoming request: GET /
+2026-01-11T21:17:35.169246+0530 - DEBUG - Processing home page request
+2026-01-11T21:17:35.169595+0530 - DEBUG - No username found in session
+2026-01-11T21:17:35.177426+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:17:35.178673+0530 - DEBUG - Rendering home page
+2026-01-11T21:17:35.186505+0530 - INFO - Response status: 200
+2026-01-11T21:17:36.768607+0530 - INFO - Incoming request: GET /registration/
+2026-01-11T21:17:36.769228+0530 - DEBUG - No username found in session for registration page
+2026-01-11T21:17:36.769652+0530 - INFO - Rendering registration page
+2026-01-11T21:17:36.774856+0530 - INFO - Response status: 200
+2026-01-11T21:17:38.387437+0530 - INFO - Incoming request: GET /
+2026-01-11T21:17:38.389010+0530 - DEBUG - Processing home page request
+2026-01-11T21:17:38.390671+0530 - DEBUG - No username found in session
+2026-01-11T21:17:38.395072+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:17:38.395857+0530 - DEBUG - Rendering home page
+2026-01-11T21:17:38.400734+0530 - INFO - Response status: 200
+2026-01-11T21:17:39.895498+0530 - INFO - Incoming request: GET /login/
+2026-01-11T21:17:39.896062+0530 - DEBUG - Processing login view request
+2026-01-11T21:17:39.896717+0530 - DEBUG - Rendering login page
+2026-01-11T21:17:39.911261+0530 - INFO - Response status: 200
+2026-01-11T21:17:53.069484+0530 - INFO - Incoming request: POST /login/
+2026-01-11T21:17:53.070655+0530 - DEBUG - Processing login view request
+2026-01-11T21:17:53.071206+0530 - INFO - Processing POST login request
+2026-01-11T21:17:53.786822+0530 - DEBUG - Login form is valid, attempting authentication
+2026-01-11T21:17:54.566784+0530 - INFO - User admin authenticated successfully
+2026-01-11T21:17:54.567352+0530 - INFO - Sending OTP to user: admin
+2026-01-11T21:17:54.567697+0530 - INFO - Generating new OTP
+2026-01-11T21:17:54.568016+0530 - DEBUG - Generated OTP: 503800
+2026-01-11T21:17:54.568319+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T21:17:54.587751+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T21:17:59.304933+0530 - ERROR - Error sending OTP to admin: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+Traceback (most recent call last):
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x0000024FEA714C20>
+    └ <Thread(Thread-4 (process_request_thread), started daemon 30552)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x0000024FEA7149A0>
+    └ <Thread(Thread-4 (process_request_thread), started daemon 30552)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(Thread-4 (process_request_thread), started daemon 30552)>
+    │    │        │    └ (<socket.socket fd=1828, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 60006)>, ('127.0.0.1', 600...
+    │    │        └ <Thread(Thread-4 (process_request_thread), started daemon 30552)>
+    │    └ <bound method ThreadingMixIn.process_request_thread of <django.core.servers.basehttp.WSGIServer object at 0x0000024FEEB76BA0>>
+    └ <Thread(Thread-4 (process_request_thread), started daemon 30552)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+    │    │              │        └ ('127.0.0.1', 60006)
+    │    │              └ <socket.socket fd=1828, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 60006)>
+    │    └ <function BaseServer.finish_request at 0x0000024FECDFF880>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000024FEEB76BA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    │    │                   │        │               └ <django.core.servers.basehttp.WSGIServer object at 0x0000024FEEB76BA0>
+    │    │                   │        └ ('127.0.0.1', 60006)
+    │    │                   └ <socket.socket fd=1828, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 60006)>
+    │    └ <class 'django.core.servers.basehttp.WSGIRequestHandler'>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000024FEEB76BA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+    │    └ <function WSGIRequestHandler.handle at 0x0000024FEE018860>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000024FEEE309D0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 229, in handle
+    self.handle_one_request()
+    │    └ <function WSGIRequestHandler.handle_one_request at 0x0000024FEE018900>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000024FEEE309D0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 252, in handle_one_request
+    handler.run(self.server.get_app())
+    │       │   │    │      └ <function WSGIServer.get_app at 0x0000024FEE0077E0>
+    │       │   │    └ <django.core.servers.basehttp.WSGIServer object at 0x0000024FEEB76BA0>
+    │       │   └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000024FEEE309D0>
+    │       └ <function BaseHandler.run at 0x0000024FEDFF2DE0>
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000024FEEE55310>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\wsgiref\handlers.py", line 137, in run
+    self.result = application(self.environ, self.start_response)
+    │    │        │           │    │        │    └ <function BaseHandler.start_response at 0x0000024FEDFF31A0>
+    │    │        │           │    │        └ <django.core.servers.basehttp.ServerHandler object at 0x0000024FEEE55310>
+    │    │        │           │    └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+    │    │        │           └ <django.core.servers.basehttp.ServerHandler object at 0x0000024FEEE55310>
+    │    │        └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000024FEEB76CF0>
+    │    └ None
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000024FEEE55310>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\contrib\staticfiles\handlers.py", line 80, in __call__
+    return self.application(environ, start_response)
+           │    │           │        └ <bound method BaseHandler.start_response of <django.core.servers.basehttp.ServerHandler object at 0x0000024FEEE55310>>
+           │    │           └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+           │    └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000024FEEB75550>
+           └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000024FEEB76CF0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\wsgi.py", line 124, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/login/'>
+               │    └ <function BaseHandler.get_response at 0x0000024FEDFC4360>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000024FEEB75550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 140, in get_response
+    response = self._middleware_chain(request)
+               │    │                 └ <WSGIRequest: POST '/login/'>
+               │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5E520>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000024FEEB75550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5E480>
+               │           └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5E3E0>
+               │           └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5E340>
+               │           └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5E160>
+               │           └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5E0C0>
+               │           └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5DDA0>
+               │           └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEE019120>
+               │           └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000024FEEB75400>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\adams\custom_middlewares.py", line 9, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/login/'>
+               │    └ <function BaseHandler._get_response at 0x0000024FEEBE7560>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000024FEEB75400>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <bound method BaseHandler._get_response of <django.core.handlers.wsgi.WSGIHandler object at 0x0000024FEEB75550>>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               │                │         │                └ {}
+               │                │         └ ()
+               │                └ <WSGIRequest: POST '/login/'>
+               └ <function login_view at 0x0000024FEEB1F7E0>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\views.py", line 408, in login_view
+    send_otp_via_email(user)
+    │                  └ <User: admin>
+    └ <function send_otp_via_email at 0x0000024FEEB1F2E0>
+
+> File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\utils.py", line 309, in send_otp_via_email
+    email.send(fail_silently=False)
+    │     └ <function EmailMessage.send at 0x0000024FECEB9E40>
+    └ <django.core.mail.message.EmailMessage object at 0x0000024FEEC1C050>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\message.py", line 299, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           │    │              │                             └ <django.core.mail.message.EmailMessage object at 0x0000024FEEC1C050>
+           │    │              └ False
+           │    └ <function EmailMessage.get_connection at 0x0000024FECEB9C60>
+           └ <django.core.mail.message.EmailMessage object at 0x0000024FEEC1C050>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 127, in send_messages
+    new_conn_created = self.open()
+                       │    └ <function EmailBackend.open at 0x0000024FEECBBD80>
+                       └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000024FF02002F0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 94, in open
+    self.connection.login(self.username, self.password)
+    │    │          │     │    │         │    └ 'Adams@05'
+    │    │          │     │    │         └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000024FF02002F0>
+    │    │          │     │    └ 'officedesk@adams.org.in'
+    │    │          │     └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000024FF02002F0>
+    │    │          └ <function SMTP.login at 0x0000024FEEE08220>
+    │    └ <smtplib.SMTP_SSL object at 0x0000024FF02001A0>
+    └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000024FF02002F0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 750, in login
+    raise last_exception
+          └ SMTPAuthenticationError(535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   │    └ <function SMTP.auth at 0x0000024FEEE09C60>
+                   └ <smtplib.SMTP_SSL object at 0x0000024FF02001A0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+          │                       │     └ b'5.7.8 Error: authentication failed: (reason unavailable)'
+          │                       └ 535
+          └ <class 'smtplib.SMTPAuthenticationError'>
+
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+2026-01-11T21:17:59.322878+0530 - INFO - OTP sent to user admin's email
+2026-01-11T21:17:59.323708+0530 - INFO - Response status: 302
+2026-01-11T21:17:59.347005+0530 - INFO - Incoming request: GET /verify-otp/
+2026-01-11T21:17:59.358597+0530 - INFO - Response status: 200
+2026-01-11T21:19:43.013641+0530 - INFO - Incoming request: GET /
+2026-01-11T21:19:43.014400+0530 - DEBUG - Processing home page request
+2026-01-11T21:19:43.020747+0530 - INFO - User admin accessed the home page
+2026-01-11T21:19:43.022991+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:19:43.023520+0530 - DEBUG - Rendering home page
+2026-01-11T21:19:43.030243+0530 - INFO - Response status: 200
+2026-01-11T21:22:23.611625+0530 - INFO - Incoming request: GET /
+2026-01-11T21:22:23.612301+0530 - DEBUG - Processing home page request
+2026-01-11T21:22:23.619307+0530 - INFO - User admin accessed the home page
+2026-01-11T21:22:23.626029+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:22:23.627900+0530 - DEBUG - Rendering home page
+2026-01-11T21:22:23.633383+0530 - INFO - Response status: 200
+2026-01-11T21:22:46.982439+0530 - INFO - Incoming request: GET /
+2026-01-11T21:22:46.983080+0530 - DEBUG - Processing home page request
+2026-01-11T21:22:46.983469+0530 - DEBUG - No username found in session
+2026-01-11T21:22:46.988098+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:22:46.988537+0530 - DEBUG - Rendering home page
+2026-01-11T21:22:46.993896+0530 - INFO - Response status: 200
+2026-01-11T21:23:44.286252+0530 - INFO - Incoming request: GET /login/
+2026-01-11T21:23:44.286898+0530 - DEBUG - Processing login view request
+2026-01-11T21:23:44.288363+0530 - DEBUG - Rendering login page
+2026-01-11T21:23:44.292585+0530 - INFO - Response status: 200
+2026-01-11T21:24:14.380617+0530 - INFO - Incoming request: GET /favicon.ico
+2026-01-11T21:24:14.396291+0530 - INFO - Response status: 404
+2026-01-11T21:24:29.363621+0530 - INFO - Incoming request: POST /login/
+2026-01-11T21:24:29.364502+0530 - DEBUG - Processing login view request
+2026-01-11T21:24:29.364936+0530 - INFO - Processing POST login request
+2026-01-11T21:24:30.150035+0530 - DEBUG - Login form is valid, attempting authentication
+2026-01-11T21:24:30.935721+0530 - INFO - User admin authenticated successfully
+2026-01-11T21:24:30.936267+0530 - INFO - Sending OTP to user: admin
+2026-01-11T21:24:30.936516+0530 - INFO - Generating new OTP
+2026-01-11T21:24:30.936787+0530 - DEBUG - Generated OTP: 507604
+2026-01-11T21:24:30.937038+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T21:24:30.949517+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T21:25:45.347702+0530 - ERROR - Error sending OTP to admin: Connection unexpectedly closed: [WinError 10053] An established connection was aborted by the software in your host machine
+Traceback (most recent call last):
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 398, in getreply
+    line = self.file.readline(_MAXLINE + 1)
+           │    │             └ 8192
+           │    └ None
+           └ <smtplib.SMTP_SSL object at 0x0000024FEEF39F90>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 719, in readinto
+    return self._sock.recv_into(b)
+           │    │               └ <memory at 0x0000024FEEF3DF00>
+           │    └ None
+           └ <socket.SocketIO object at 0x0000024FEFF67250>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1304, in recv_into
+    return self.read(nbytes, buffer)
+           │    │    │       └ <memory at 0x0000024FEEF3DF00>
+           │    │    └ 8192
+           │    └ <function SSLSocket.read at 0x0000024FEAC1A520>
+           └ <ssl.SSLSocket [closed] fd=-1, family=23, type=1, proto=0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1138, in read
+    return self._sslobj.read(len, buffer)
+           │    │            │    └ <memory at 0x0000024FEEF3DF00>
+           │    │            └ 8192
+           │    └ None
+           └ <ssl.SSLSocket [closed] fd=-1, family=23, type=1, proto=0>
+
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x0000024FEA714C20>
+    └ <Thread(Thread-14 (process_request_thread), started daemon 39264)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x0000024FEA7149A0>
+    └ <Thread(Thread-14 (process_request_thread), started daemon 39264)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(Thread-14 (process_request_thread), started daemon 39264)>
+    │    │        │    └ (<socket.socket fd=1444, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 58225)>, ('127.0.0.1', 582...
+    │    │        └ <Thread(Thread-14 (process_request_thread), started daemon 39264)>
+    │    └ <bound method ThreadingMixIn.process_request_thread of <django.core.servers.basehttp.WSGIServer object at 0x0000024FEEB76BA0>>
+    └ <Thread(Thread-14 (process_request_thread), started daemon 39264)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+    │    │              │        └ ('127.0.0.1', 58225)
+    │    │              └ <socket.socket fd=1444, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 58225)>
+    │    └ <function BaseServer.finish_request at 0x0000024FECDFF880>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000024FEEB76BA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    │    │                   │        │               └ <django.core.servers.basehttp.WSGIServer object at 0x0000024FEEB76BA0>
+    │    │                   │        └ ('127.0.0.1', 58225)
+    │    │                   └ <socket.socket fd=1444, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 58225)>
+    │    └ <class 'django.core.servers.basehttp.WSGIRequestHandler'>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000024FEEB76BA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+    │    └ <function WSGIRequestHandler.handle at 0x0000024FEE018860>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000024FEEC82510>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 229, in handle
+    self.handle_one_request()
+    │    └ <function WSGIRequestHandler.handle_one_request at 0x0000024FEE018900>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000024FEEC82510>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 252, in handle_one_request
+    handler.run(self.server.get_app())
+    │       │   │    │      └ <function WSGIServer.get_app at 0x0000024FEE0077E0>
+    │       │   │    └ <django.core.servers.basehttp.WSGIServer object at 0x0000024FEEB76BA0>
+    │       │   └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000024FEEC82510>
+    │       └ <function BaseHandler.run at 0x0000024FEDFF2DE0>
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000024FEEF3FAD0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\wsgiref\handlers.py", line 137, in run
+    self.result = application(self.environ, self.start_response)
+    │    │        │           │    │        │    └ <function BaseHandler.start_response at 0x0000024FEDFF31A0>
+    │    │        │           │    │        └ <django.core.servers.basehttp.ServerHandler object at 0x0000024FEEF3FAD0>
+    │    │        │           │    └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+    │    │        │           └ <django.core.servers.basehttp.ServerHandler object at 0x0000024FEEF3FAD0>
+    │    │        └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000024FEEB76CF0>
+    │    └ None
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000024FEEF3FAD0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\contrib\staticfiles\handlers.py", line 80, in __call__
+    return self.application(environ, start_response)
+           │    │           │        └ <bound method BaseHandler.start_response of <django.core.servers.basehttp.ServerHandler object at 0x0000024FEEF3FAD0>>
+           │    │           └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+           │    └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000024FEEB75550>
+           └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000024FEEB76CF0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\wsgi.py", line 124, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/login/'>
+               │    └ <function BaseHandler.get_response at 0x0000024FEDFC4360>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000024FEEB75550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 140, in get_response
+    response = self._middleware_chain(request)
+               │    │                 └ <WSGIRequest: POST '/login/'>
+               │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5E520>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000024FEEB75550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5E480>
+               │           └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5E3E0>
+               │           └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5E340>
+               │           └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5E160>
+               │           └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5E0C0>
+               │           └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEEC5DDA0>
+               │           └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000024FEE019120>
+               │           └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000024FEEB75400>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\adams\custom_middlewares.py", line 9, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/login/'>
+               │    └ <function BaseHandler._get_response at 0x0000024FEEBE7560>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000024FEEB75400>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <bound method BaseHandler._get_response of <django.core.handlers.wsgi.WSGIHandler object at 0x0000024FEEB75550>>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               │                │         │                └ {}
+               │                │         └ ()
+               │                └ <WSGIRequest: POST '/login/'>
+               └ <function login_view at 0x0000024FEEB1F7E0>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\views.py", line 408, in login_view
+    send_otp_via_email(user)
+    │                  └ <User: admin>
+    └ <function send_otp_via_email at 0x0000024FEEB1F2E0>
+
+> File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\utils.py", line 309, in send_otp_via_email
+    email.send(fail_silently=False)
+    │     └ <function EmailMessage.send at 0x0000024FECEB9E40>
+    └ <django.core.mail.message.EmailMessage object at 0x0000024FEEF3A0D0>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\message.py", line 299, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           │    │              │                             └ <django.core.mail.message.EmailMessage object at 0x0000024FEEF3A0D0>
+           │    │              └ False
+           │    └ <function EmailMessage.get_connection at 0x0000024FECEB9C60>
+           └ <django.core.mail.message.EmailMessage object at 0x0000024FEEF3A0D0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 127, in send_messages
+    new_conn_created = self.open()
+                       │    └ <function EmailBackend.open at 0x0000024FEECBBD80>
+                       └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000024FEEF39D10>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 94, in open
+    self.connection.login(self.username, self.password)
+    │    │          │     │    │         │    └ 'Adams@05'
+    │    │          │     │    │         └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000024FEEF39D10>
+    │    │          │     │    └ 'officedesk@adams.org.in'
+    │    │          │     └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000024FEEF39D10>
+    │    │          └ <function SMTP.login at 0x0000024FEEE08220>
+    │    └ <smtplib.SMTP_SSL object at 0x0000024FEEF39F90>
+    └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000024FEEF39D10>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   │    └ <function SMTP.auth at 0x0000024FEEE09C60>
+                   └ <smtplib.SMTP_SSL object at 0x0000024FEEF39F90>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 653, in auth
+    (code, resp) = self.docmd(response)
+     │     │       │    │     └ 'QWRhbXNAMDU='
+     │     │       │    └ <function SMTP.docmd at 0x0000024FEEE09B20>
+     │     │       └ <smtplib.SMTP_SSL object at 0x0000024FEEF39F90>
+     │     └ b'UGFzc3dvcmQ6'
+     └ 334
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 432, in docmd
+    return self.getreply()
+           │    └ <function SMTP.getreply at 0x0000024FEEE09620>
+           └ <smtplib.SMTP_SSL object at 0x0000024FEEF39F90>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 401, in getreply
+    raise SMTPServerDisconnected("Connection unexpectedly closed: "
+          └ <class 'smtplib.SMTPServerDisconnected'>
+
+smtplib.SMTPServerDisconnected: Connection unexpectedly closed: [WinError 10053] An established connection was aborted by the software in your host machine
+2026-01-11T21:25:45.626837+0530 - INFO - OTP sent to user admin's email
+2026-01-11T21:25:45.629770+0530 - INFO - Response status: 302
+2026-01-11T21:25:45.989616+0530 - INFO - Incoming request: GET /verify-otp/
+2026-01-11T21:25:46.128770+0530 - INFO - Response status: 200
+2026-01-11T21:37:08.715722+0530 - INFO - Incoming request: GET /
+2026-01-11T21:37:08.767080+0530 - DEBUG - Processing home page request
+2026-01-11T21:37:08.793584+0530 - INFO - User admin accessed the home page
+2026-01-11T21:37:08.799647+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:37:08.803225+0530 - DEBUG - Rendering home page
+2026-01-11T21:37:08.823281+0530 - INFO - Response status: 200
+2026-01-11T21:40:55.926724+0530 - INFO - Incoming request: GET /
+2026-01-11T21:40:55.927625+0530 - DEBUG - Processing home page request
+2026-01-11T21:40:55.936565+0530 - INFO - User admin accessed the home page
+2026-01-11T21:40:55.940647+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:40:55.941255+0530 - DEBUG - Rendering home page
+2026-01-11T21:40:55.999716+0530 - INFO - Response status: 200
+2026-01-11T21:41:07.438861+0530 - INFO - Incoming request: GET /login/
+2026-01-11T21:41:07.439675+0530 - DEBUG - Processing login view request
+2026-01-11T21:41:07.448078+0530 - DEBUG - Found username admin in session
+2026-01-11T21:41:07.460072+0530 - DEBUG - Retrieved user object for admin
+2026-01-11T21:41:07.463359+0530 - DEBUG - Rendering login page
+2026-01-11T21:41:07.474559+0530 - INFO - Response status: 200
+2026-01-11T21:41:14.804629+0530 - INFO - Incoming request: POST /login/
+2026-01-11T21:41:14.805715+0530 - DEBUG - Processing login view request
+2026-01-11T21:41:14.806544+0530 - INFO - Processing POST login request
+2026-01-11T21:41:15.617058+0530 - DEBUG - Login form is valid, attempting authentication
+2026-01-11T21:41:16.396117+0530 - INFO - Incoming request: POST /login/
+2026-01-11T21:41:16.397867+0530 - DEBUG - Processing login view request
+2026-01-11T21:41:16.398449+0530 - INFO - Processing POST login request
+2026-01-11T21:41:16.600267+0530 - INFO - User admin authenticated successfully
+2026-01-11T21:41:16.602794+0530 - INFO - Sending OTP to user: admin
+2026-01-11T21:41:16.603252+0530 - INFO - Generating new OTP
+2026-01-11T21:41:16.603610+0530 - DEBUG - Generated OTP: 426682
+2026-01-11T21:41:16.603827+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T21:41:16.619706+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T21:41:17.328483+0530 - DEBUG - Login form is valid, attempting authentication
+2026-01-11T21:41:18.541494+0530 - INFO - User admin authenticated successfully
+2026-01-11T21:41:18.544554+0530 - INFO - Sending OTP to user: admin
+2026-01-11T21:41:18.545091+0530 - INFO - Generating new OTP
+2026-01-11T21:41:18.545610+0530 - DEBUG - Generated OTP: 655760
+2026-01-11T21:41:18.546307+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T21:41:18.562521+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T21:41:26.554178+0530 - ERROR - Error sending OTP to admin: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+Traceback (most recent call last):
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x0000017D90C94C20>
+    └ <Thread(Thread-1 (process_request_thread), started daemon 10076)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x0000017D90C949A0>
+    └ <Thread(Thread-1 (process_request_thread), started daemon 10076)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(Thread-1 (process_request_thread), started daemon 10076)>
+    │    │        │    └ (<socket.socket fd=528, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 54292)>, ('127.0.0.1', 54292))
+    │    │        └ <Thread(Thread-1 (process_request_thread), started daemon 10076)>
+    │    └ <bound method ThreadingMixIn.process_request_thread of <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>>
+    └ <Thread(Thread-1 (process_request_thread), started daemon 10076)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+    │    │              │        └ ('127.0.0.1', 54292)
+    │    │              └ <socket.socket fd=528, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 54292)>
+    │    └ <function BaseServer.finish_request at 0x0000017D93303880>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    │    │                   │        │               └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+    │    │                   │        └ ('127.0.0.1', 54292)
+    │    │                   └ <socket.socket fd=528, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 54292)>
+    │    └ <class 'django.core.servers.basehttp.WSGIRequestHandler'>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+    │    └ <function WSGIRequestHandler.handle at 0x0000017D94518860>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D950163C0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 229, in handle
+    self.handle_one_request()
+    │    └ <function WSGIRequestHandler.handle_one_request at 0x0000017D94518900>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D950163C0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 252, in handle_one_request
+    handler.run(self.server.get_app())
+    │       │   │    │      └ <function WSGIServer.get_app at 0x0000017D945077E0>
+    │       │   │    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+    │       │   └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D950163C0>
+    │       └ <function BaseHandler.run at 0x0000017D944F2DE0>
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D953D4D10>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\wsgiref\handlers.py", line 137, in run
+    self.result = application(self.environ, self.start_response)
+    │    │        │           │    │        │    └ <function BaseHandler.start_response at 0x0000017D944F31A0>
+    │    │        │           │    │        └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D953D4D10>
+    │    │        │           │    └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+    │    │        │           └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D953D4D10>
+    │    │        └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000017D95016BA0>
+    │    └ None
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D953D4D10>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\contrib\staticfiles\handlers.py", line 80, in __call__
+    return self.application(environ, start_response)
+           │    │           │        └ <bound method BaseHandler.start_response of <django.core.servers.basehttp.ServerHandler object at 0x0000017D953D4D10>>
+           │    │           └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+           │    └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+           └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000017D95016BA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\wsgi.py", line 124, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/login/'>
+               │    └ <function BaseHandler.get_response at 0x0000017D944C4360>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 140, in get_response
+    response = self._middleware_chain(request)
+               │    │                 └ <WSGIRequest: POST '/login/'>
+               │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E5C0>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E520>
+               │           └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E480>
+               │           └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E3E0>
+               │           └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E200>
+               │           └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E160>
+               │           └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510DE40>
+               │           └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D94519120>
+               │           └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000017D95015400>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\adams\custom_middlewares.py", line 9, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/login/'>
+               │    └ <function BaseHandler._get_response at 0x0000017D95085940>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000017D95015400>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <bound method BaseHandler._get_response of <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               │                │         │                └ {}
+               │                │         └ ()
+               │                └ <WSGIRequest: POST '/login/'>
+               └ <function login_view at 0x0000017D94FBF7E0>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\views.py", line 408, in login_view
+    send_otp_via_email(user)
+    │                  └ <User: admin>
+    └ <function send_otp_via_email at 0x0000017D94FBF2E0>
+
+> File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\utils.py", line 309, in send_otp_via_email
+    email.send(fail_silently=False)
+    │     └ <function EmailMessage.send at 0x0000017D933B9E40>
+    └ <django.core.mail.message.EmailMessage object at 0x0000017D950CF770>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\message.py", line 299, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           │    │              │                             └ <django.core.mail.message.EmailMessage object at 0x0000017D950CF770>
+           │    │              └ False
+           │    └ <function EmailMessage.get_connection at 0x0000017D933B9C60>
+           └ <django.core.mail.message.EmailMessage object at 0x0000017D950CF770>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 127, in send_messages
+    new_conn_created = self.open()
+                       │    └ <function EmailBackend.open at 0x0000017D9528A520>
+                       └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D950CD160>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 94, in open
+    self.connection.login(self.username, self.password)
+    │    │          │     │    │         │    └ 'Adams@05'
+    │    │          │     │    │         └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D950CD160>
+    │    │          │     │    └ 'officedesk@adams.org.in'
+    │    │          │     └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D950CD160>
+    │    │          └ <function SMTP.login at 0x0000017D952885E0>
+    │    └ <smtplib.SMTP object at 0x0000017D950CFCB0>
+    └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D950CD160>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 750, in login
+    raise last_exception
+          └ SMTPAuthenticationError(535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   │    └ <function SMTP.auth at 0x0000017D9528AD40>
+                   └ <smtplib.SMTP object at 0x0000017D950CFCB0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+          │                       │     └ b'5.7.8 Error: authentication failed: (reason unavailable)'
+          │                       └ 535
+          └ <class 'smtplib.SMTPAuthenticationError'>
+
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+2026-01-11T21:41:26.600485+0530 - INFO - OTP sent to user admin's email
+2026-01-11T21:41:26.602290+0530 - INFO - Response status: 302
+2026-01-11T21:41:31.538927+0530 - ERROR - Error sending OTP to admin: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+Traceback (most recent call last):
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x0000017D90C94C20>
+    └ <Thread(Thread-2 (process_request_thread), started daemon 24676)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x0000017D90C949A0>
+    └ <Thread(Thread-2 (process_request_thread), started daemon 24676)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(Thread-2 (process_request_thread), started daemon 24676)>
+    │    │        │    └ (<socket.socket fd=936, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 50766)>, ('127.0.0.1', 50766))
+    │    │        └ <Thread(Thread-2 (process_request_thread), started daemon 24676)>
+    │    └ <bound method ThreadingMixIn.process_request_thread of <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>>
+    └ <Thread(Thread-2 (process_request_thread), started daemon 24676)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+    │    │              │        └ ('127.0.0.1', 50766)
+    │    │              └ <socket.socket fd=936, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 50766)>
+    │    └ <function BaseServer.finish_request at 0x0000017D93303880>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    │    │                   │        │               └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+    │    │                   │        └ ('127.0.0.1', 50766)
+    │    │                   └ <socket.socket fd=936, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 50766)>
+    │    └ <class 'django.core.servers.basehttp.WSGIRequestHandler'>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+    │    └ <function WSGIRequestHandler.handle at 0x0000017D94518860>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D952FEAD0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 229, in handle
+    self.handle_one_request()
+    │    └ <function WSGIRequestHandler.handle_one_request at 0x0000017D94518900>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D952FEAD0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 252, in handle_one_request
+    handler.run(self.server.get_app())
+    │       │   │    │      └ <function WSGIServer.get_app at 0x0000017D945077E0>
+    │       │   │    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+    │       │   └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D952FEAD0>
+    │       └ <function BaseHandler.run at 0x0000017D944F2DE0>
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D953D53D0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\wsgiref\handlers.py", line 137, in run
+    self.result = application(self.environ, self.start_response)
+    │    │        │           │    │        │    └ <function BaseHandler.start_response at 0x0000017D944F31A0>
+    │    │        │           │    │        └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D953D53D0>
+    │    │        │           │    └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+    │    │        │           └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D953D53D0>
+    │    │        └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000017D95016BA0>
+    │    └ None
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D953D53D0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\contrib\staticfiles\handlers.py", line 80, in __call__
+    return self.application(environ, start_response)
+           │    │           │        └ <bound method BaseHandler.start_response of <django.core.servers.basehttp.ServerHandler object at 0x0000017D953D53D0>>
+           │    │           └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+           │    └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+           └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000017D95016BA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\wsgi.py", line 124, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/login/'>
+               │    └ <function BaseHandler.get_response at 0x0000017D944C4360>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 140, in get_response
+    response = self._middleware_chain(request)
+               │    │                 └ <WSGIRequest: POST '/login/'>
+               │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E5C0>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E520>
+               │           └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E480>
+               │           └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E3E0>
+               │           └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E200>
+               │           └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E160>
+               │           └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510DE40>
+               │           └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D94519120>
+               │           └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000017D95015400>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\adams\custom_middlewares.py", line 9, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/login/'>
+               │    └ <function BaseHandler._get_response at 0x0000017D95085940>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000017D95015400>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <bound method BaseHandler._get_response of <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               │                │         │                └ {}
+               │                │         └ ()
+               │                └ <WSGIRequest: POST '/login/'>
+               └ <function login_view at 0x0000017D94FBF7E0>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\views.py", line 408, in login_view
+    send_otp_via_email(user)
+    │                  └ <User: admin>
+    └ <function send_otp_via_email at 0x0000017D94FBF2E0>
+
+> File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\utils.py", line 309, in send_otp_via_email
+    email.send(fail_silently=False)
+    │     └ <function EmailMessage.send at 0x0000017D933B9E40>
+    └ <django.core.mail.message.EmailMessage object at 0x0000017D950EE990>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\message.py", line 299, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           │    │              │                             └ <django.core.mail.message.EmailMessage object at 0x0000017D950EE990>
+           │    │              └ False
+           │    └ <function EmailMessage.get_connection at 0x0000017D933B9C60>
+           └ <django.core.mail.message.EmailMessage object at 0x0000017D950EE990>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 127, in send_messages
+    new_conn_created = self.open()
+                       │    └ <function EmailBackend.open at 0x0000017D9528A520>
+                       └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D952FFC50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 94, in open
+    self.connection.login(self.username, self.password)
+    │    │          │     │    │         │    └ 'Adams@05'
+    │    │          │     │    │         └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D952FFC50>
+    │    │          │     │    └ 'officedesk@adams.org.in'
+    │    │          │     └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D952FFC50>
+    │    │          └ <function SMTP.login at 0x0000017D952885E0>
+    │    └ <smtplib.SMTP object at 0x0000017D952FFED0>
+    └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D952FFC50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 750, in login
+    raise last_exception
+          └ SMTPAuthenticationError(535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   │    └ <function SMTP.auth at 0x0000017D9528AD40>
+                   └ <smtplib.SMTP object at 0x0000017D952FFED0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+          │                       │     └ b'5.7.8 Error: authentication failed: (reason unavailable)'
+          │                       └ 535
+          └ <class 'smtplib.SMTPAuthenticationError'>
+
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+2026-01-11T21:41:31.551276+0530 - INFO - OTP sent to user admin's email
+2026-01-11T21:41:31.552494+0530 - INFO - Response status: 302
+2026-01-11T21:41:31.577246+0530 - INFO - Incoming request: GET /verify-otp/
+2026-01-11T21:41:31.590576+0530 - INFO - Response status: 200
+2026-01-11T21:41:31.902408+0530 - INFO - Incoming request: POST /resend_otp/
+2026-01-11T21:41:31.911261+0530 - INFO - User found: admin
+2026-01-11T21:41:31.911778+0530 - INFO - Resend OTP action received
+2026-01-11T21:41:31.912438+0530 - INFO - Sending OTP to user: admin
+2026-01-11T21:41:31.912768+0530 - INFO - Generating new OTP
+2026-01-11T21:41:31.912999+0530 - DEBUG - Generated OTP: 950757
+2026-01-11T21:41:31.913225+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T21:41:31.926625+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T21:41:32.059396+0530 - INFO - Incoming request: POST /resend_otp/
+2026-01-11T21:41:32.069883+0530 - INFO - User found: admin
+2026-01-11T21:41:32.070447+0530 - INFO - Resend OTP action received
+2026-01-11T21:41:32.071002+0530 - INFO - Sending OTP to user: admin
+2026-01-11T21:41:32.071415+0530 - INFO - Generating new OTP
+2026-01-11T21:41:32.071795+0530 - DEBUG - Generated OTP: 906329
+2026-01-11T21:41:32.072245+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T21:41:32.085020+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T21:41:32.281580+0530 - INFO - Incoming request: POST /resend_otp/
+2026-01-11T21:41:32.289364+0530 - INFO - User found: admin
+2026-01-11T21:41:32.289847+0530 - INFO - Resend OTP action received
+2026-01-11T21:41:32.290639+0530 - INFO - Sending OTP to user: admin
+2026-01-11T21:41:32.293632+0530 - INFO - Generating new OTP
+2026-01-11T21:41:32.294053+0530 - DEBUG - Generated OTP: 363486
+2026-01-11T21:41:32.294367+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T21:41:32.305483+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T21:41:38.347555+0530 - ERROR - Error sending OTP to admin: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+Traceback (most recent call last):
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x0000017D90C94C20>
+    └ <Thread(Thread-3 (process_request_thread), started daemon 15500)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x0000017D90C949A0>
+    └ <Thread(Thread-3 (process_request_thread), started daemon 15500)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(Thread-3 (process_request_thread), started daemon 15500)>
+    │    │        │    └ (<socket.socket fd=928, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 51679)>, ('127.0.0.1', 51679))
+    │    │        └ <Thread(Thread-3 (process_request_thread), started daemon 15500)>
+    │    └ <bound method ThreadingMixIn.process_request_thread of <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>>
+    └ <Thread(Thread-3 (process_request_thread), started daemon 15500)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+    │    │              │        └ ('127.0.0.1', 51679)
+    │    │              └ <socket.socket fd=928, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 51679)>
+    │    └ <function BaseServer.finish_request at 0x0000017D93303880>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    │    │                   │        │               └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+    │    │                   │        └ ('127.0.0.1', 51679)
+    │    │                   └ <socket.socket fd=928, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 51679)>
+    │    └ <class 'django.core.servers.basehttp.WSGIRequestHandler'>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+    │    └ <function WSGIRequestHandler.handle at 0x0000017D94518860>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D952FED50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 227, in handle
+    self.handle_one_request()
+    │    └ <function WSGIRequestHandler.handle_one_request at 0x0000017D94518900>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D952FED50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 252, in handle_one_request
+    handler.run(self.server.get_app())
+    │       │   │    │      └ <function WSGIServer.get_app at 0x0000017D945077E0>
+    │       │   │    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+    │       │   └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D952FED50>
+    │       └ <function BaseHandler.run at 0x0000017D944F2DE0>
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D95273E90>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\wsgiref\handlers.py", line 137, in run
+    self.result = application(self.environ, self.start_response)
+    │    │        │           │    │        │    └ <function BaseHandler.start_response at 0x0000017D944F31A0>
+    │    │        │           │    │        └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D95273E90>
+    │    │        │           │    └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+    │    │        │           └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D95273E90>
+    │    │        └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000017D95016BA0>
+    │    └ None
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D95273E90>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\contrib\staticfiles\handlers.py", line 80, in __call__
+    return self.application(environ, start_response)
+           │    │           │        └ <bound method BaseHandler.start_response of <django.core.servers.basehttp.ServerHandler object at 0x0000017D95273E90>>
+           │    │           └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+           │    └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+           └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000017D95016BA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\wsgi.py", line 124, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │    └ <function BaseHandler.get_response at 0x0000017D944C4360>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 140, in get_response
+    response = self._middleware_chain(request)
+               │    │                 └ <WSGIRequest: POST '/resend_otp/'>
+               │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E5C0>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E520>
+               │           └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E480>
+               │           └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E3E0>
+               │           └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E200>
+               │           └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E160>
+               │           └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510DE40>
+               │           └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D94519120>
+               │           └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000017D95015400>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\adams\custom_middlewares.py", line 9, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │    └ <function BaseHandler._get_response at 0x0000017D95085940>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000017D95015400>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <bound method BaseHandler._get_response of <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               │                │         │                └ {}
+               │                │         └ ()
+               │                └ <WSGIRequest: POST '/resend_otp/'>
+               └ <function resend_otp at 0x0000017D94FCD760>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+           │          │       └ {}
+           │          └ (<WSGIRequest: POST '/resend_otp/'>,)
+           └ <function resend_otp at 0x0000017D94FCD6C0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\views\decorators\http.py", line 43, in inner
+    return func(request, *args, **kwargs)
+           │    │         │       └ {}
+           │    │         └ ()
+           │    └ <WSGIRequest: POST '/resend_otp/'>
+           └ <function resend_otp at 0x0000017D94FCD620>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\views.py", line 1287, in resend_otp
+    success = send_otp_via_email(user)  # Replace with actual OTP logic
+              │                  └ <User: admin>
+              └ <function send_otp_via_email at 0x0000017D94FBF2E0>
+
+> File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\utils.py", line 309, in send_otp_via_email
+    email.send(fail_silently=False)
+    │     └ <function EmailMessage.send at 0x0000017D933B9E40>
+    └ <django.core.mail.message.EmailMessage object at 0x0000017D953FAC40>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\message.py", line 299, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           │    │              │                             └ <django.core.mail.message.EmailMessage object at 0x0000017D953FAC40>
+           │    │              └ False
+           │    └ <function EmailMessage.get_connection at 0x0000017D933B9C60>
+           └ <django.core.mail.message.EmailMessage object at 0x0000017D953FAC40>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 127, in send_messages
+    new_conn_created = self.open()
+                       │    └ <function EmailBackend.open at 0x0000017D9528A520>
+                       └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D953FA9E0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 94, in open
+    self.connection.login(self.username, self.password)
+    │    │          │     │    │         │    └ 'Adams@05'
+    │    │          │     │    │         └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D953FA9E0>
+    │    │          │     │    └ 'officedesk@adams.org.in'
+    │    │          │     └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D953FA9E0>
+    │    │          └ <function SMTP.login at 0x0000017D952885E0>
+    │    └ <smtplib.SMTP object at 0x0000017D953FA8B0>
+    └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D953FA9E0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 750, in login
+    raise last_exception
+          └ SMTPAuthenticationError(535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   │    └ <function SMTP.auth at 0x0000017D9528AD40>
+                   └ <smtplib.SMTP object at 0x0000017D953FA8B0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+          │                       │     └ b'5.7.8 Error: authentication failed: (reason unavailable)'
+          │                       └ 535
+          └ <class 'smtplib.SMTPAuthenticationError'>
+
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+2026-01-11T21:41:38.363536+0530 - ERROR - Failed to resend OTP to admin
+2026-01-11T21:41:38.364162+0530 - INFO - Response status: 200
+2026-01-11T21:41:38.527883+0530 - ERROR - Error sending OTP to admin: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+Traceback (most recent call last):
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x0000017D90C94C20>
+    └ <Thread(Thread-4 (process_request_thread), started daemon 34132)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x0000017D90C949A0>
+    └ <Thread(Thread-4 (process_request_thread), started daemon 34132)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(Thread-4 (process_request_thread), started daemon 34132)>
+    │    │        │    └ (<socket.socket fd=552, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 62585)>, ('127.0.0.1', 62585))
+    │    │        └ <Thread(Thread-4 (process_request_thread), started daemon 34132)>
+    │    └ <bound method ThreadingMixIn.process_request_thread of <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>>
+    └ <Thread(Thread-4 (process_request_thread), started daemon 34132)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+    │    │              │        └ ('127.0.0.1', 62585)
+    │    │              └ <socket.socket fd=552, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 62585)>
+    │    └ <function BaseServer.finish_request at 0x0000017D93303880>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    │    │                   │        │               └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+    │    │                   │        └ ('127.0.0.1', 62585)
+    │    │                   └ <socket.socket fd=552, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 62585)>
+    │    └ <class 'django.core.servers.basehttp.WSGIRequestHandler'>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+    │    └ <function WSGIRequestHandler.handle at 0x0000017D94518860>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D953F8050>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 227, in handle
+    self.handle_one_request()
+    │    └ <function WSGIRequestHandler.handle_one_request at 0x0000017D94518900>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D953F8050>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 252, in handle_one_request
+    handler.run(self.server.get_app())
+    │       │   │    │      └ <function WSGIServer.get_app at 0x0000017D945077E0>
+    │       │   │    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+    │       │   └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D953F8050>
+    │       └ <function BaseHandler.run at 0x0000017D944F2DE0>
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D95271A90>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\wsgiref\handlers.py", line 137, in run
+    self.result = application(self.environ, self.start_response)
+    │    │        │           │    │        │    └ <function BaseHandler.start_response at 0x0000017D944F31A0>
+    │    │        │           │    │        └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D95271A90>
+    │    │        │           │    └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+    │    │        │           └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D95271A90>
+    │    │        └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000017D95016BA0>
+    │    └ None
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D95271A90>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\contrib\staticfiles\handlers.py", line 80, in __call__
+    return self.application(environ, start_response)
+           │    │           │        └ <bound method BaseHandler.start_response of <django.core.servers.basehttp.ServerHandler object at 0x0000017D95271A90>>
+           │    │           └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+           │    └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+           └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000017D95016BA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\wsgi.py", line 124, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │    └ <function BaseHandler.get_response at 0x0000017D944C4360>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 140, in get_response
+    response = self._middleware_chain(request)
+               │    │                 └ <WSGIRequest: POST '/resend_otp/'>
+               │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E5C0>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E520>
+               │           └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E480>
+               │           └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E3E0>
+               │           └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E200>
+               │           └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E160>
+               │           └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510DE40>
+               │           └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D94519120>
+               │           └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000017D95015400>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\adams\custom_middlewares.py", line 9, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │    └ <function BaseHandler._get_response at 0x0000017D95085940>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000017D95015400>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <bound method BaseHandler._get_response of <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               │                │         │                └ {}
+               │                │         └ ()
+               │                └ <WSGIRequest: POST '/resend_otp/'>
+               └ <function resend_otp at 0x0000017D94FCD760>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+           │          │       └ {}
+           │          └ (<WSGIRequest: POST '/resend_otp/'>,)
+           └ <function resend_otp at 0x0000017D94FCD6C0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\views\decorators\http.py", line 43, in inner
+    return func(request, *args, **kwargs)
+           │    │         │       └ {}
+           │    │         └ ()
+           │    └ <WSGIRequest: POST '/resend_otp/'>
+           └ <function resend_otp at 0x0000017D94FCD620>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\views.py", line 1287, in resend_otp
+    success = send_otp_via_email(user)  # Replace with actual OTP logic
+              │                  └ <User: admin>
+              └ <function send_otp_via_email at 0x0000017D94FBF2E0>
+
+> File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\utils.py", line 309, in send_otp_via_email
+    email.send(fail_silently=False)
+    │     └ <function EmailMessage.send at 0x0000017D933B9E40>
+    └ <django.core.mail.message.EmailMessage object at 0x0000017D953FB100>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\message.py", line 299, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           │    │              │                             └ <django.core.mail.message.EmailMessage object at 0x0000017D953FB100>
+           │    │              └ False
+           │    └ <function EmailMessage.get_connection at 0x0000017D933B9C60>
+           └ <django.core.mail.message.EmailMessage object at 0x0000017D953FB100>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 127, in send_messages
+    new_conn_created = self.open()
+                       │    └ <function EmailBackend.open at 0x0000017D9528A520>
+                       └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D953FAEA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 94, in open
+    self.connection.login(self.username, self.password)
+    │    │          │     │    │         │    └ 'Adams@05'
+    │    │          │     │    │         └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D953FAEA0>
+    │    │          │     │    └ 'officedesk@adams.org.in'
+    │    │          │     └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D953FAEA0>
+    │    │          └ <function SMTP.login at 0x0000017D952885E0>
+    │    └ <smtplib.SMTP object at 0x0000017D953FAD70>
+    └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D953FAEA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 750, in login
+    raise last_exception
+          └ SMTPAuthenticationError(535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   │    └ <function SMTP.auth at 0x0000017D9528AD40>
+                   └ <smtplib.SMTP object at 0x0000017D953FAD70>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+          │                       │     └ b'5.7.8 Error: authentication failed: (reason unavailable)'
+          │                       └ 535
+          └ <class 'smtplib.SMTPAuthenticationError'>
+
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+2026-01-11T21:41:38.539675+0530 - ERROR - Failed to resend OTP to admin
+2026-01-11T21:41:38.540218+0530 - INFO - Response status: 200
+2026-01-11T21:41:40.654114+0530 - ERROR - Error sending OTP to admin: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+Traceback (most recent call last):
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x0000017D90C94C20>
+    └ <Thread(Thread-2 (process_request_thread), started daemon 24676)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x0000017D90C949A0>
+    └ <Thread(Thread-2 (process_request_thread), started daemon 24676)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(Thread-2 (process_request_thread), started daemon 24676)>
+    │    │        │    └ (<socket.socket fd=936, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 50766)>, ('127.0.0.1', 50766))
+    │    │        └ <Thread(Thread-2 (process_request_thread), started daemon 24676)>
+    │    └ <bound method ThreadingMixIn.process_request_thread of <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>>
+    └ <Thread(Thread-2 (process_request_thread), started daemon 24676)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+    │    │              │        └ ('127.0.0.1', 50766)
+    │    │              └ <socket.socket fd=936, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 50766)>
+    │    └ <function BaseServer.finish_request at 0x0000017D93303880>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    │    │                   │        │               └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+    │    │                   │        └ ('127.0.0.1', 50766)
+    │    │                   └ <socket.socket fd=936, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 50766)>
+    │    └ <class 'django.core.servers.basehttp.WSGIRequestHandler'>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+    │    └ <function WSGIRequestHandler.handle at 0x0000017D94518860>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D952FEAD0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 229, in handle
+    self.handle_one_request()
+    │    └ <function WSGIRequestHandler.handle_one_request at 0x0000017D94518900>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D952FEAD0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 252, in handle_one_request
+    handler.run(self.server.get_app())
+    │       │   │    │      └ <function WSGIServer.get_app at 0x0000017D945077E0>
+    │       │   │    └ <django.core.servers.basehttp.WSGIServer object at 0x0000017D95016A50>
+    │       │   └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x0000017D952FEAD0>
+    │       └ <function BaseHandler.run at 0x0000017D944F2DE0>
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D95272390>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\wsgiref\handlers.py", line 137, in run
+    self.result = application(self.environ, self.start_response)
+    │    │        │           │    │        │    └ <function BaseHandler.start_response at 0x0000017D944F31A0>
+    │    │        │           │    │        └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D95272390>
+    │    │        │           │    └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+    │    │        │           └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D95272390>
+    │    │        └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000017D95016BA0>
+    │    └ None
+    └ <django.core.servers.basehttp.ServerHandler object at 0x0000017D95272390>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\contrib\staticfiles\handlers.py", line 80, in __call__
+    return self.application(environ, start_response)
+           │    │           │        └ <bound method BaseHandler.start_response of <django.core.servers.basehttp.ServerHandler object at 0x0000017D95272390>>
+           │    │           └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+           │    └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+           └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x0000017D95016BA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\wsgi.py", line 124, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │    └ <function BaseHandler.get_response at 0x0000017D944C4360>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 140, in get_response
+    response = self._middleware_chain(request)
+               │    │                 └ <WSGIRequest: POST '/resend_otp/'>
+               │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E5C0>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E520>
+               │           └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E480>
+               │           └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E3E0>
+               │           └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E200>
+               │           └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510E160>
+               │           └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D9510DE40>
+               │           └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x0000017D94519120>
+               │           └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000017D95015400>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\adams\custom_middlewares.py", line 9, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/resend_otp/'>
+               │    └ <function BaseHandler._get_response at 0x0000017D95085940>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x0000017D95015400>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/resend_otp/'>
+               └ <bound method BaseHandler._get_response of <django.core.handlers.wsgi.WSGIHandler object at 0x0000017D95015550>>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               │                │         │                └ {}
+               │                │         └ ()
+               │                └ <WSGIRequest: POST '/resend_otp/'>
+               └ <function resend_otp at 0x0000017D94FCD760>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+           │          │       └ {}
+           │          └ (<WSGIRequest: POST '/resend_otp/'>,)
+           └ <function resend_otp at 0x0000017D94FCD6C0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\views\decorators\http.py", line 43, in inner
+    return func(request, *args, **kwargs)
+           │    │         │       └ {}
+           │    │         └ ()
+           │    └ <WSGIRequest: POST '/resend_otp/'>
+           └ <function resend_otp at 0x0000017D94FCD620>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\views.py", line 1287, in resend_otp
+    success = send_otp_via_email(user)  # Replace with actual OTP logic
+              │                  └ <User: admin>
+              └ <function send_otp_via_email at 0x0000017D94FBF2E0>
+
+> File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\utils.py", line 309, in send_otp_via_email
+    email.send(fail_silently=False)
+    │     └ <function EmailMessage.send at 0x0000017D933B9E40>
+    └ <django.core.mail.message.EmailMessage object at 0x0000017D952FF4D0>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\message.py", line 299, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           │    │              │                             └ <django.core.mail.message.EmailMessage object at 0x0000017D952FF4D0>
+           │    │              └ False
+           │    └ <function EmailMessage.get_connection at 0x0000017D933B9C60>
+           └ <django.core.mail.message.EmailMessage object at 0x0000017D952FF4D0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 127, in send_messages
+    new_conn_created = self.open()
+                       │    └ <function EmailBackend.open at 0x0000017D9528A520>
+                       └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D952FEC10>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 94, in open
+    self.connection.login(self.username, self.password)
+    │    │          │     │    │         │    └ 'Adams@05'
+    │    │          │     │    │         └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D952FEC10>
+    │    │          │     │    └ 'officedesk@adams.org.in'
+    │    │          │     └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D952FEC10>
+    │    │          └ <function SMTP.login at 0x0000017D952885E0>
+    │    └ <smtplib.SMTP object at 0x0000017D952FF110>
+    └ <django.core.mail.backends.smtp.EmailBackend object at 0x0000017D952FEC10>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 750, in login
+    raise last_exception
+          └ SMTPAuthenticationError(535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   │    └ <function SMTP.auth at 0x0000017D9528AD40>
+                   └ <smtplib.SMTP object at 0x0000017D952FF110>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+          │                       │     └ b'5.7.8 Error: authentication failed: (reason unavailable)'
+          │                       └ 535
+          └ <class 'smtplib.SMTPAuthenticationError'>
+
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+2026-01-11T21:41:40.667299+0530 - ERROR - Failed to resend OTP to admin
+2026-01-11T21:41:40.667988+0530 - INFO - Response status: 200
+2026-01-11T21:45:24.300565+0530 - INFO - Sending OTP to user: admin
+2026-01-11T21:45:24.301147+0530 - INFO - Generating new OTP
+2026-01-11T21:45:24.301549+0530 - DEBUG - Generated OTP: 750824
+2026-01-11T21:45:24.301758+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T21:45:24.311802+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T21:45:27.693075+0530 - INFO - Successfully sent OTP email to techbless7@gmail.com
+2026-01-11T21:45:29.369177+0530 - INFO - Incoming request: GET /
+2026-01-11T21:45:29.370096+0530 - DEBUG - Processing home page request
+2026-01-11T21:45:29.376780+0530 - INFO - User admin accessed the home page
+2026-01-11T21:45:29.379467+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:45:29.379975+0530 - DEBUG - Rendering home page
+2026-01-11T21:45:29.421091+0530 - INFO - Response status: 200
+2026-01-11T21:45:37.430182+0530 - INFO - Sending OTP to user: member
+2026-01-11T21:45:37.430866+0530 - INFO - Generating new OTP
+2026-01-11T21:45:37.431345+0530 - DEBUG - Generated OTP: 553513
+2026-01-11T21:45:37.431741+0530 - DEBUG - Generated OTP for user member
+2026-01-11T21:45:37.454055+0530 - DEBUG - Saved OTP to database for user member
+2026-01-11T21:45:40.778619+0530 - INFO - Successfully sent OTP email to blessjohn2001@gmail.com
+2026-01-11T21:46:09.983724+0530 - INFO - Incoming request: GET /login/
+2026-01-11T21:46:09.984672+0530 - DEBUG - Processing login view request
+2026-01-11T21:46:09.990688+0530 - DEBUG - Found username admin in session
+2026-01-11T21:46:10.002639+0530 - DEBUG - Retrieved user object for admin
+2026-01-11T21:46:10.003625+0530 - DEBUG - Rendering login page
+2026-01-11T21:46:10.055385+0530 - INFO - Response status: 200
+2026-01-11T21:46:19.142594+0530 - INFO - Incoming request: POST /login/
+2026-01-11T21:46:19.143944+0530 - DEBUG - Processing login view request
+2026-01-11T21:46:19.144378+0530 - INFO - Processing POST login request
+2026-01-11T21:46:19.877656+0530 - DEBUG - Login form is valid, attempting authentication
+2026-01-11T21:46:20.636461+0530 - INFO - User admin authenticated successfully
+2026-01-11T21:46:20.638463+0530 - INFO - Sending OTP to user: admin
+2026-01-11T21:46:20.638905+0530 - INFO - Generating new OTP
+2026-01-11T21:46:20.639157+0530 - DEBUG - Generated OTP: 221165
+2026-01-11T21:46:20.639394+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T21:46:20.653397+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T21:46:25.457791+0530 - ERROR - Error sending OTP to admin: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+Traceback (most recent call last):
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x0000025897D04C20>
+    └ <Thread(Thread-1 (process_request_thread), started daemon 36616)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x0000025897D049A0>
+    └ <Thread(Thread-1 (process_request_thread), started daemon 36616)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(Thread-1 (process_request_thread), started daemon 36616)>
+    │    │        │    └ (<socket.socket fd=668, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 53822)>, ('127.0.0.1', 53822))
+    │    │        └ <Thread(Thread-1 (process_request_thread), started daemon 36616)>
+    │    └ <bound method ThreadingMixIn.process_request_thread of <django.core.servers.basehttp.WSGIServer object at 0x000002589C046BA0>>
+    └ <Thread(Thread-1 (process_request_thread), started daemon 36616)>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+    │    │              │        └ ('127.0.0.1', 53822)
+    │    │              └ <socket.socket fd=668, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 53822)>
+    │    └ <function BaseServer.finish_request at 0x000002589A3EF880>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x000002589C046BA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    │    │                   │        │               └ <django.core.servers.basehttp.WSGIServer object at 0x000002589C046BA0>
+    │    │                   │        └ ('127.0.0.1', 53822)
+    │    │                   └ <socket.socket fd=668, family=2, type=1, proto=0, laddr=('127.0.0.1', 8000), raddr=('127.0.0.1', 53822)>
+    │    └ <class 'django.core.servers.basehttp.WSGIRequestHandler'>
+    └ <django.core.servers.basehttp.WSGIServer object at 0x000002589C046BA0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+    │    └ <function WSGIRequestHandler.handle at 0x000002589B5D8860>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x000002589C046510>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 229, in handle
+    self.handle_one_request()
+    │    └ <function WSGIRequestHandler.handle_one_request at 0x000002589B5D8900>
+    └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x000002589C046510>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\servers\basehttp.py", line 252, in handle_one_request
+    handler.run(self.server.get_app())
+    │       │   │    │      └ <function WSGIServer.get_app at 0x000002589B5C77E0>
+    │       │   │    └ <django.core.servers.basehttp.WSGIServer object at 0x000002589C046BA0>
+    │       │   └ <django.core.servers.basehttp.WSGIRequestHandler object at 0x000002589C046510>
+    │       └ <function BaseHandler.run at 0x000002589B5B2DE0>
+    └ <django.core.servers.basehttp.ServerHandler object at 0x000002589C126710>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\wsgiref\handlers.py", line 137, in run
+    self.result = application(self.environ, self.start_response)
+    │    │        │           │    │        │    └ <function BaseHandler.start_response at 0x000002589B5B31A0>
+    │    │        │           │    │        └ <django.core.servers.basehttp.ServerHandler object at 0x000002589C126710>
+    │    │        │           │    └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+    │    │        │           └ <django.core.servers.basehttp.ServerHandler object at 0x000002589C126710>
+    │    │        └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x000002589C046CF0>
+    │    └ None
+    └ <django.core.servers.basehttp.ServerHandler object at 0x000002589C126710>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\contrib\staticfiles\handlers.py", line 80, in __call__
+    return self.application(environ, start_response)
+           │    │           │        └ <bound method BaseHandler.start_response of <django.core.servers.basehttp.ServerHandler object at 0x000002589C126710>>
+           │    │           └ {'ALLOWED_HOSTS': 'localhost,127.0.0.1,13.126.176.168,adams.org.in', 'ALLUSERSPROFILE': 'C:\\ProgramData', 'APPDATA': 'C:\\Us...
+           │    └ <django.core.handlers.wsgi.WSGIHandler object at 0x000002589C045010>
+           └ <django.contrib.staticfiles.handlers.StaticFilesHandler object at 0x000002589C046CF0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\wsgi.py", line 124, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/login/'>
+               │    └ <function BaseHandler.get_response at 0x000002589B584360>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x000002589C045010>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 140, in get_response
+    response = self._middleware_chain(request)
+               │    │                 └ <WSGIRequest: POST '/login/'>
+               │    └ <function convert_exception_to_response.<locals>.inner at 0x000002589C1465C0>
+               └ <django.core.handlers.wsgi.WSGIHandler object at 0x000002589C045010>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x000002589C146520>
+               │           └ <SecurityMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x000002589C146480>
+               │           └ <SessionMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x000002589C1463E0>
+               │           └ <CommonMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x000002589C146200>
+               │           └ <CsrfViewMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x000002589C146160>
+               │           └ <AuthenticationMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x000002589C145E40>
+               │           └ <MessageMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\utils\deprecation.py", line 134, in __call__
+    response = response or self.get_response(request)
+               │           │    │            └ <WSGIRequest: POST '/login/'>
+               │           │    └ <function convert_exception_to_response.<locals>.inner at 0x000002589B5D9120>
+               │           └ <XFrameOptionsMiddleware get_response=convert_exception_to_response.<locals>.inner>
+               └ None
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x000002589C044EC0>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\adams\custom_middlewares.py", line 9, in __call__
+    response = self.get_response(request)
+               │    │            └ <WSGIRequest: POST '/login/'>
+               │    └ <function BaseHandler._get_response at 0x000002589C0B7560>
+               └ <adams.custom_middlewares.LoguruMiddleware object at 0x000002589C044EC0>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               │            └ <WSGIRequest: POST '/login/'>
+               └ <bound method BaseHandler._get_response of <django.core.handlers.wsgi.WSGIHandler object at 0x000002589C045010>>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               │                │         │                └ {}
+               │                │         └ ()
+               │                └ <WSGIRequest: POST '/login/'>
+               └ <function login_view at 0x000002589BFF37E0>
+
+  File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\views.py", line 408, in login_view
+    send_otp_via_email(user)
+    │                  └ <User: admin>
+    └ <function send_otp_via_email at 0x000002589BFF32E0>
+
+> File "C:\Users\bless\OneDrive\Desktop\adams ver6.2\adams-django-main\app\utils.py", line 309, in send_otp_via_email
+    email.send(fail_silently=False)
+    │     └ <function EmailMessage.send at 0x000002589A4A9E40>
+    └ <django.core.mail.message.EmailMessage object at 0x000002589C0463C0>
+
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\message.py", line 299, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           │    │              │                             └ <django.core.mail.message.EmailMessage object at 0x000002589C0463C0>
+           │    │              └ False
+           │    └ <function EmailMessage.get_connection at 0x000002589A4A9C60>
+           └ <django.core.mail.message.EmailMessage object at 0x000002589C0463C0>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 127, in send_messages
+    new_conn_created = self.open()
+                       │    └ <function EmailBackend.open at 0x000002589C298180>
+                       └ <django.core.mail.backends.smtp.EmailBackend object at 0x000002589C10F230>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\mail\backends\smtp.py", line 94, in open
+    self.connection.login(self.username, self.password)
+    │    │          │     │    │         │    └ 'Adams@05'
+    │    │          │     │    │         └ <django.core.mail.backends.smtp.EmailBackend object at 0x000002589C10F230>
+    │    │          │     │    └ 'officedesk@adams.org.in'
+    │    │          │     └ <django.core.mail.backends.smtp.EmailBackend object at 0x000002589C10F230>
+    │    │          └ <function SMTP.login at 0x000002589C27B920>
+    │    └ <smtplib.SMTP object at 0x000002589C10F770>
+    └ <django.core.mail.backends.smtp.EmailBackend object at 0x000002589C10F230>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 750, in login
+    raise last_exception
+          └ SMTPAuthenticationError(535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   │    └ <function SMTP.auth at 0x000002589C279800>
+                   └ <smtplib.SMTP object at 0x000002589C10F770>
+  File "C:\Users\bless\AppData\Local\Programs\Python\Python313\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+          │                       │     └ b'5.7.8 Error: authentication failed: (reason unavailable)'
+          │                       └ 535
+          └ <class 'smtplib.SMTPAuthenticationError'>
+
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Error: authentication failed: (reason unavailable)')
+2026-01-11T21:46:25.485294+0530 - INFO - OTP sent to user admin's email
+2026-01-11T21:46:25.486750+0530 - INFO - Response status: 302
+2026-01-11T21:46:25.510367+0530 - INFO - Incoming request: GET /verify-otp/
+2026-01-11T21:46:25.526642+0530 - INFO - Response status: 200
+2026-01-11T21:47:51.281299+0530 - INFO - Sending OTP to user: admin
+2026-01-11T21:47:51.281813+0530 - INFO - Generating new OTP
+2026-01-11T21:47:51.282232+0530 - DEBUG - Generated OTP: 629693
+2026-01-11T21:47:51.282591+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T21:47:51.292638+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T21:47:55.537342+0530 - INFO - Successfully sent OTP email to techbless7@gmail.com
+2026-01-11T21:50:59.685405+0530 - INFO - Incoming request: GET /health/
+2026-01-11T21:50:59.686672+0530 - INFO - Response status: 200
+2026-01-11T21:51:39.015849+0530 - INFO - Incoming request: GET /
+2026-01-11T21:51:39.016481+0530 - DEBUG - Processing home page request
+2026-01-11T21:51:39.023021+0530 - INFO - User admin accessed the home page
+2026-01-11T21:51:39.026094+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:51:39.026593+0530 - DEBUG - Rendering home page
+2026-01-11T21:51:39.064737+0530 - INFO - Response status: 200
+2026-01-11T21:51:41.123190+0530 - INFO - Incoming request: GET /
+2026-01-11T21:51:41.123901+0530 - DEBUG - Processing home page request
+2026-01-11T21:51:41.130561+0530 - INFO - User admin accessed the home page
+2026-01-11T21:51:41.132720+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:51:41.133702+0530 - DEBUG - Rendering home page
+2026-01-11T21:51:41.147115+0530 - INFO - Response status: 200
+2026-01-11T21:51:41.698892+0530 - INFO - Incoming request: GET /
+2026-01-11T21:51:41.699528+0530 - DEBUG - Processing home page request
+2026-01-11T21:51:41.707395+0530 - INFO - User admin accessed the home page
+2026-01-11T21:51:41.709390+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:51:41.709848+0530 - DEBUG - Rendering home page
+2026-01-11T21:51:41.715965+0530 - INFO - Response status: 200
+2026-01-11T21:51:42.310722+0530 - INFO - Incoming request: GET /
+2026-01-11T21:51:42.311437+0530 - DEBUG - Processing home page request
+2026-01-11T21:51:42.319918+0530 - INFO - User admin accessed the home page
+2026-01-11T21:51:42.323789+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:51:42.324482+0530 - DEBUG - Rendering home page
+2026-01-11T21:51:42.333065+0530 - INFO - Response status: 200
+2026-01-11T21:51:42.476499+0530 - INFO - Incoming request: GET /
+2026-01-11T21:51:42.477160+0530 - DEBUG - Processing home page request
+2026-01-11T21:51:42.485784+0530 - INFO - User admin accessed the home page
+2026-01-11T21:51:42.487493+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:51:42.487948+0530 - DEBUG - Rendering home page
+2026-01-11T21:51:42.491418+0530 - INFO - Response status: 200
+2026-01-11T21:51:42.653035+0530 - INFO - Incoming request: GET /
+2026-01-11T21:51:42.653671+0530 - DEBUG - Processing home page request
+2026-01-11T21:51:42.661536+0530 - INFO - User admin accessed the home page
+2026-01-11T21:51:42.663491+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:51:42.664054+0530 - DEBUG - Rendering home page
+2026-01-11T21:51:42.667556+0530 - INFO - Response status: 200
+2026-01-11T21:51:50.932926+0530 - INFO - Incoming request: GET /login/
+2026-01-11T21:51:50.933640+0530 - DEBUG - Processing login view request
+2026-01-11T21:51:50.939772+0530 - DEBUG - Found username admin in session
+2026-01-11T21:51:50.944160+0530 - DEBUG - Retrieved user object for admin
+2026-01-11T21:51:50.945389+0530 - DEBUG - Rendering login page
+2026-01-11T21:51:50.954942+0530 - INFO - Response status: 200
+2026-01-11T21:51:58.084349+0530 - INFO - Incoming request: POST /login/
+2026-01-11T21:51:58.085257+0530 - DEBUG - Processing login view request
+2026-01-11T21:51:58.085557+0530 - INFO - Processing POST login request
+2026-01-11T21:51:58.903077+0530 - DEBUG - Login form is valid, attempting authentication
+2026-01-11T21:51:59.900828+0530 - INFO - User admin authenticated successfully
+2026-01-11T21:51:59.903956+0530 - INFO - Sending OTP to user: admin
+2026-01-11T21:51:59.904474+0530 - INFO - Generating new OTP
+2026-01-11T21:51:59.904847+0530 - DEBUG - Generated OTP: 867145
+2026-01-11T21:51:59.905167+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T21:51:59.923300+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T21:52:03.735826+0530 - INFO - Successfully sent OTP email to techbless7@gmail.com
+2026-01-11T21:52:03.737548+0530 - INFO - OTP sent to user admin's email: techbless7@gmail.com
+2026-01-11T21:52:03.738746+0530 - INFO - Response status: 302
+2026-01-11T21:52:03.762631+0530 - INFO - Incoming request: GET /verify-otp/
+2026-01-11T21:52:03.778421+0530 - INFO - Response status: 200
+2026-01-11T21:52:39.026243+0530 - INFO - Incoming request: POST /verify-otp/
+2026-01-11T21:52:39.032688+0530 - INFO - OTP verification request received. User ID from session: 1, OTP code: 629693
+2026-01-11T21:52:39.039054+0530 - INFO - User found: admin
+2026-01-11T21:52:39.042449+0530 - ERROR - Invalid OTP or user not found for user ID 1.
+2026-01-11T21:52:39.049830+0530 - INFO - Response status: 200
+2026-01-11T21:52:51.047110+0530 - INFO - Incoming request: POST /verify-otp/
+2026-01-11T21:52:51.050119+0530 - INFO - OTP verification request received. User ID from session: 1, OTP code: 867145
+2026-01-11T21:52:51.052724+0530 - INFO - User found: admin
+2026-01-11T21:52:51.055097+0530 - INFO - OTP record found for user admin
+2026-01-11T21:52:51.093080+0530 - INFO - User admin logged in successfully.
+2026-01-11T21:52:51.093834+0530 - INFO - Response status: 302
+2026-01-11T21:52:51.109916+0530 - INFO - Incoming request: GET /
+2026-01-11T21:52:51.110669+0530 - DEBUG - Processing home page request
+2026-01-11T21:52:51.118538+0530 - INFO - User admin accessed the home page
+2026-01-11T21:52:51.120003+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:52:51.120357+0530 - DEBUG - Rendering home page
+2026-01-11T21:52:51.128532+0530 - INFO - Response status: 200
+2026-01-11T21:52:56.338009+0530 - INFO - Incoming request: GET /rulebook-viewer/
+2026-01-11T21:52:56.346595+0530 - DEBUG - Processing rulebook viewer request
+2026-01-11T21:52:56.350250+0530 - INFO - User admin accessed the rulebook viewer
+2026-01-11T21:52:56.351105+0530 - DEBUG - Rendering rulebook viewer page
+2026-01-11T21:52:56.357920+0530 - INFO - Response status: 200
+2026-01-11T21:52:57.425966+0530 - INFO - Incoming request: GET /api/get-active-rulebook/
+2026-01-11T21:52:57.436498+0530 - INFO - Response status: 404
+2026-01-11T21:53:00.355406+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-11T21:53:00.362270+0530 - DEBUG - Processing admin panel request
+2026-01-11T21:53:00.365235+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-11T21:53:00.367974+0530 - DEBUG - Retrieved 2 users from database
+2026-01-11T21:53:00.368868+0530 - DEBUG - Rendering admin panel
+2026-01-11T21:53:00.393029+0530 - INFO - Response status: 200
+2026-01-11T21:53:00.455617+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-11T21:53:00.457101+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-11T21:53:00.459575+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-11T21:53:00.460744+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-11T21:53:00.477313+0530 - INFO - Response status: 200
+2026-01-11T21:53:00.490073+0530 - DEBUG - Fetching category change requests for admin
+2026-01-11T21:53:00.491114+0530 - INFO - Response status: 200
+2026-01-11T21:53:00.496730+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-11T21:53:00.497731+0530 - INFO - Response status: 200
+2026-01-11T21:53:00.501947+0530 - INFO - Response status: 200
+2026-01-11T21:53:11.989439+0530 - INFO - Incoming request: GET /api/get-user-details/1/
+2026-01-11T21:53:11.996270+0530 - DEBUG - Fetching user details for ID: 1
+2026-01-11T21:53:11.999232+0530 - INFO - Retrieved user details for ID 1
+2026-01-11T21:53:11.999763+0530 - DEBUG - Returning user details for ID 1
+2026-01-11T21:53:12.001153+0530 - INFO - Response status: 200
+2026-01-11T21:53:12.006868+0530 - INFO - Incoming request: GET /api/user/1/file/photo/
+2026-01-11T21:53:12.014024+0530 - DEBUG - Processing file serve request for user ID 1, field photo
+2026-01-11T21:53:12.019030+0530 - WARNING - File field photo is empty for user 1
+2026-01-11T21:53:12.019615+0530 - INFO - Response status: 404
+2026-01-11T21:53:12.025194+0530 - INFO - Incoming request: GET /api/user/1/file/state_nmc/
+2026-01-11T21:53:12.031935+0530 - DEBUG - Processing file serve request for user ID 1, field state_nmc
+2026-01-11T21:53:12.034566+0530 - WARNING - File field state_nmc is empty for user 1
+2026-01-11T21:53:12.037114+0530 - INFO - Response status: 404
+2026-01-11T21:53:12.041975+0530 - INFO - Incoming request: GET /api/user/1/file/passport/
+2026-01-11T21:53:12.048811+0530 - DEBUG - Processing file serve request for user ID 1, field passport
+2026-01-11T21:53:12.051522+0530 - WARNING - File field passport is empty for user 1
+2026-01-11T21:53:12.052409+0530 - INFO - Response status: 404
+2026-01-11T21:53:12.057346+0530 - INFO - Incoming request: GET /api/user/1/file/medical_qualification/
+2026-01-11T21:53:12.063557+0530 - DEBUG - Processing file serve request for user ID 1, field medical_qualification
+2026-01-11T21:53:12.065714+0530 - WARNING - File field medical_qualification is empty for user 1
+2026-01-11T21:53:12.066404+0530 - INFO - Response status: 404
+2026-01-11T21:53:12.070983+0530 - INFO - Incoming request: GET /api/user/1/file/payment_transaction_proof/
+2026-01-11T21:53:12.076832+0530 - DEBUG - Processing file serve request for user ID 1, field payment_transaction_proof
+2026-01-11T21:53:12.078958+0530 - WARNING - File field payment_transaction_proof is empty for user 1
+2026-01-11T21:53:12.079549+0530 - INFO - Response status: 404
+2026-01-11T21:53:15.492475+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-11T21:53:15.500310+0530 - DEBUG - Processing admin panel request
+2026-01-11T21:53:15.504020+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-11T21:53:15.507825+0530 - DEBUG - Retrieved 2 users from database
+2026-01-11T21:53:15.509453+0530 - DEBUG - Rendering admin panel
+2026-01-11T21:53:15.518826+0530 - INFO - Response status: 200
+2026-01-11T21:53:15.634226+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-11T21:53:15.635384+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-11T21:53:15.637087+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-11T21:53:15.640895+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-11T21:53:15.651141+0530 - INFO - Response status: 200
+2026-01-11T21:53:15.654588+0530 - INFO - Response status: 200
+2026-01-11T21:53:15.664204+0530 - DEBUG - Fetching category change requests for admin
+2026-01-11T21:53:15.669069+0530 - INFO - Response status: 200
+2026-01-11T21:53:15.669896+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-11T21:53:15.672078+0530 - INFO - Response status: 200
+2026-01-11T21:53:23.194583+0530 - INFO - Incoming request: GET /rulebook-viewer/
+2026-01-11T21:53:23.201347+0530 - DEBUG - Processing rulebook viewer request
+2026-01-11T21:53:23.204520+0530 - INFO - User admin accessed the rulebook viewer
+2026-01-11T21:53:23.205039+0530 - DEBUG - Rendering rulebook viewer page
+2026-01-11T21:53:23.208500+0530 - INFO - Response status: 200
+2026-01-11T21:53:23.253886+0530 - INFO - Incoming request: GET /api/get-active-rulebook/
+2026-01-11T21:53:23.258767+0530 - INFO - Response status: 404
+2026-01-11T21:53:33.368376+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-11T21:53:33.400957+0530 - DEBUG - Processing admin panel request
+2026-01-11T21:53:33.410028+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-11T21:53:33.418274+0530 - DEBUG - Retrieved 2 users from database
+2026-01-11T21:53:33.423656+0530 - DEBUG - Rendering admin panel
+2026-01-11T21:53:33.437548+0530 - INFO - Response status: 200
+2026-01-11T21:53:33.518917+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-11T21:53:33.521754+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-11T21:53:33.522511+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-11T21:53:33.523704+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-11T21:53:33.534871+0530 - INFO - Response status: 200
+2026-01-11T21:53:33.590559+0530 - INFO - Response status: 200
+2026-01-11T21:53:33.637509+0530 - DEBUG - Fetching category change requests for admin
+2026-01-11T21:53:33.676196+0530 - INFO - Response status: 200
+2026-01-11T21:53:33.677019+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-11T21:53:33.682699+0530 - INFO - Response status: 200
+2026-01-11T21:53:35.026606+0530 - INFO - Incoming request: GET /qr-code/1/
+2026-01-11T21:53:35.032243+0530 - DEBUG - Generating QR code for user ID: 1
+2026-01-11T21:53:35.034734+0530 - INFO - Retrieved user admin for QR code generation
+2026-01-11T21:53:35.035149+0530 - INFO - Generating QR code for user: admin
+2026-01-11T21:53:35.041828+0530 - DEBUG - QR code data added and generated
+2026-01-11T21:53:35.049080+0530 - DEBUG - QR code image created
+2026-01-11T21:53:35.199776+0530 - INFO - QR code image saved to buffer successfully
+2026-01-11T21:53:35.200301+0530 - INFO - Successfully generated QR code for user admin
+2026-01-11T21:53:35.200729+0530 - INFO - Response status: 200
+2026-01-11T21:53:54.601277+0530 - INFO - Incoming request: GET /about-us/
+2026-01-11T21:53:54.602002+0530 - DEBUG - Processing about us page request
+2026-01-11T21:53:54.608898+0530 - INFO - User admin accessed the about us page
+2026-01-11T21:53:54.609512+0530 - DEBUG - Rendering about us page
+2026-01-11T21:53:54.619221+0530 - INFO - Response status: 200
+2026-01-11T21:53:56.632496+0530 - INFO - Incoming request: GET /user_profile
+2026-01-11T21:53:56.638811+0530 - DEBUG - Processing user profile page request
+2026-01-11T21:53:56.641728+0530 - INFO - User admin accessed their profile page
+2026-01-11T21:53:56.645809+0530 - DEBUG - Rendering user profile page
+2026-01-11T21:53:56.656715+0530 - INFO - Response status: 200
+2026-01-11T21:54:01.892749+0530 - INFO - Incoming request: GET /notice_board
+2026-01-11T21:54:01.897746+0530 - DEBUG - Processing notice board page request
+2026-01-11T21:54:01.900201+0530 - INFO - User admin accessed the notice board
+2026-01-11T21:54:01.900754+0530 - DEBUG - Rendering notice board page
+2026-01-11T21:54:01.905695+0530 - INFO - Response status: 200
+2026-01-11T21:54:01.969124+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-11T21:54:01.981771+0530 - INFO - Response status: 200
+2026-01-11T21:54:05.662469+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-11T21:54:05.671540+0530 - DEBUG - Processing admin panel request
+2026-01-11T21:54:05.675888+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-11T21:54:05.679933+0530 - DEBUG - Retrieved 2 users from database
+2026-01-11T21:54:05.681271+0530 - DEBUG - Rendering admin panel
+2026-01-11T21:54:05.688062+0530 - INFO - Response status: 200
+2026-01-11T21:54:05.787319+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-11T21:54:05.794910+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-11T21:54:05.797253+0530 - INFO - Response status: 200
+2026-01-11T21:54:05.803890+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-11T21:54:05.809913+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-11T21:54:05.943910+0530 - INFO - Response status: 200
+2026-01-11T21:54:05.976937+0530 - DEBUG - Fetching category change requests for admin
+2026-01-11T21:54:05.986318+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-11T21:54:05.987272+0530 - INFO - Response status: 200
+2026-01-11T21:54:05.989576+0530 - INFO - Response status: 200
+2026-01-11T21:54:38.669549+0530 - INFO - Incoming request: GET /logout/
+2026-01-11T21:54:38.677147+0530 - INFO - User admin logging out
+2026-01-11T21:54:38.698645+0530 - INFO - User logged out successfully
+2026-01-11T21:54:38.700531+0530 - INFO - Response status: 302
+2026-01-11T21:54:38.712716+0530 - INFO - Incoming request: GET /login/
+2026-01-11T21:54:38.713526+0530 - DEBUG - Processing login view request
+2026-01-11T21:54:38.714290+0530 - DEBUG - Rendering login page
+2026-01-11T21:54:38.719634+0530 - INFO - Response status: 200
+2026-01-11T21:54:47.698766+0530 - INFO - Incoming request: POST /login/
+2026-01-11T21:54:47.699365+0530 - DEBUG - Processing login view request
+2026-01-11T21:54:47.699786+0530 - INFO - Processing POST login request
+2026-01-11T21:54:48.560229+0530 - DEBUG - Login form is valid, attempting authentication
+2026-01-11T21:54:49.387934+0530 - INFO - User admin authenticated successfully
+2026-01-11T21:54:49.388425+0530 - INFO - Sending OTP to user: admin
+2026-01-11T21:54:49.388674+0530 - INFO - Generating new OTP
+2026-01-11T21:54:49.388999+0530 - DEBUG - Generated OTP: 776633
+2026-01-11T21:54:49.389297+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T21:54:49.402136+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T21:54:53.936544+0530 - INFO - Successfully sent OTP email to techbless7@gmail.com
+2026-01-11T21:54:53.937931+0530 - INFO - OTP sent to user admin's email: techbless7@gmail.com
+2026-01-11T21:54:53.938580+0530 - INFO - Response status: 302
+2026-01-11T21:54:53.959070+0530 - INFO - Incoming request: GET /verify-otp/
+2026-01-11T21:54:53.967603+0530 - INFO - Response status: 200
+2026-01-11T21:55:05.125973+0530 - INFO - Incoming request: POST /verify-otp/
+2026-01-11T21:55:05.129500+0530 - INFO - OTP verification request received. User ID from session: 1, OTP code: 776633
+2026-01-11T21:55:05.132191+0530 - INFO - User found: admin
+2026-01-11T21:55:05.135340+0530 - INFO - OTP record found for user admin
+2026-01-11T21:55:05.172129+0530 - INFO - User admin logged in successfully.
+2026-01-11T21:55:05.173038+0530 - INFO - Response status: 302
+2026-01-11T21:55:05.192443+0530 - INFO - Incoming request: GET /
+2026-01-11T21:55:05.193023+0530 - DEBUG - Processing home page request
+2026-01-11T21:55:05.202464+0530 - INFO - User admin accessed the home page
+2026-01-11T21:55:05.204395+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T21:55:05.205016+0530 - DEBUG - Rendering home page
+2026-01-11T21:55:05.212626+0530 - INFO - Response status: 200
+2026-01-11T21:55:16.674015+0530 - INFO - Incoming request: GET /about-us/
+2026-01-11T21:55:16.674757+0530 - DEBUG - Processing about us page request
+2026-01-11T21:55:16.682752+0530 - INFO - User admin accessed the about us page
+2026-01-11T21:55:16.683867+0530 - DEBUG - Rendering about us page
+2026-01-11T21:55:16.697149+0530 - INFO - Response status: 200
+2026-01-11T21:55:21.907086+0530 - INFO - Incoming request: GET /gallery/
+2026-01-11T21:55:21.907599+0530 - DEBUG - Processing gallery page request
+2026-01-11T21:55:21.912053+0530 - INFO - User admin accessed the gallery page
+2026-01-11T21:55:21.912385+0530 - INFO - Fetching gallery images from database
+2026-01-11T21:55:21.914863+0530 - INFO - Successfully fetched 0 gallery images
+2026-01-11T21:55:21.915421+0530 - DEBUG - Retrieved 0 gallery images
+2026-01-11T21:55:21.916124+0530 - DEBUG - Rendering gallery page
+2026-01-11T21:55:21.925070+0530 - INFO - Response status: 200
+2026-01-11T21:55:24.633002+0530 - INFO - Incoming request: GET /contact-us
+2026-01-11T21:55:24.633580+0530 - DEBUG - Processing contact us page request
+2026-01-11T21:55:24.638362+0530 - INFO - User admin accessed the contact us page
+2026-01-11T21:55:24.638893+0530 - DEBUG - Rendering contact us page
+2026-01-11T21:55:24.651969+0530 - INFO - Response status: 200
+2026-01-11T21:55:29.982295+0530 - INFO - Incoming request: GET /get-scanner/
+2026-01-11T21:55:29.989057+0530 - DEBUG - Processing QR scanner page request
+2026-01-11T21:55:29.994055+0530 - INFO - Admin user admin accessed the QR scanner page
+2026-01-11T21:55:29.996533+0530 - DEBUG - Rendering QR scanner page
+2026-01-11T21:55:30.003408+0530 - INFO - Response status: 200
+2026-01-11T21:55:31.207854+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-11T21:55:31.217319+0530 - DEBUG - Processing admin panel request
+2026-01-11T21:55:31.219995+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-11T21:55:31.221934+0530 - DEBUG - Retrieved 2 users from database
+2026-01-11T21:55:31.222455+0530 - DEBUG - Rendering admin panel
+2026-01-11T21:55:31.227298+0530 - INFO - Response status: 200
+2026-01-11T21:55:31.318067+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-11T21:55:31.320563+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-11T21:55:31.321505+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-11T21:55:31.322633+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-11T21:55:31.330900+0530 - INFO - Response status: 200
+2026-01-11T21:55:31.341731+0530 - DEBUG - Fetching category change requests for admin
+2026-01-11T21:55:31.342507+0530 - INFO - Response status: 200
+2026-01-11T21:55:31.353769+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-11T21:55:31.354585+0530 - INFO - Response status: 200
+2026-01-11T21:55:31.355738+0530 - INFO - Response status: 200
+2026-01-11T21:56:01.581698+0530 - INFO - Incoming request: GET /user_profile
+2026-01-11T21:56:01.592378+0530 - DEBUG - Processing user profile page request
+2026-01-11T21:56:01.601842+0530 - INFO - User admin accessed their profile page
+2026-01-11T21:56:01.606284+0530 - DEBUG - Rendering user profile page
+2026-01-11T21:56:01.612954+0530 - INFO - Response status: 200
+2026-01-11T23:01:53.809774+0530 - INFO - Incoming request: GET /health/
+2026-01-11T23:01:53.811983+0530 - INFO - Response status: 200
+2026-01-11T23:01:55.402630+0530 - INFO - Incoming request: GET /
+2026-01-11T23:01:55.405499+0530 - DEBUG - Processing home page request
+2026-01-11T23:01:55.432129+0530 - DEBUG - No username found in session
+2026-01-11T23:01:55.452443+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T23:01:55.453035+0530 - DEBUG - Rendering home page
+2026-01-11T23:01:55.560309+0530 - INFO - Response status: 200
+2026-01-11T23:01:57.926558+0530 - INFO - Incoming request: GET /favicon.ico
+2026-01-11T23:01:58.000025+0530 - INFO - Response status: 404
+2026-01-11T23:02:44.980891+0530 - INFO - Incoming request: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-11T23:02:45.019906+0530 - INFO - Response status: 404
+2026-01-11T23:02:48.361722+0530 - INFO - Incoming request: GET /
+2026-01-11T23:02:48.362418+0530 - DEBUG - Processing home page request
+2026-01-11T23:02:48.362929+0530 - DEBUG - No username found in session
+2026-01-11T23:02:48.368681+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T23:02:48.369387+0530 - DEBUG - Rendering home page
+2026-01-11T23:02:48.375794+0530 - INFO - Response status: 200
+2026-01-11T23:02:48.434983+0530 - INFO - Incoming request: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-11T23:02:48.458822+0530 - INFO - Response status: 404
+2026-01-11T23:02:52.738085+0530 - INFO - Incoming request: GET /login/
+2026-01-11T23:02:52.738771+0530 - DEBUG - Processing login view request
+2026-01-11T23:02:52.739610+0530 - DEBUG - Rendering login page
+2026-01-11T23:02:52.769497+0530 - INFO - Response status: 200
+2026-01-11T23:02:52.850062+0530 - INFO - Incoming request: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-11T23:02:52.924550+0530 - INFO - Response status: 404
+2026-01-11T23:02:55.764636+0530 - INFO - Incoming request: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-11T23:02:55.797070+0530 - INFO - Response status: 404
+2026-01-11T23:02:55.897884+0530 - INFO - Incoming request: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-11T23:02:55.982135+0530 - INFO - Response status: 404
+2026-01-11T23:06:11.678913+0530 - INFO - Incoming request: GET /
+2026-01-11T23:06:11.679785+0530 - DEBUG - Processing home page request
+2026-01-11T23:06:11.680262+0530 - DEBUG - No username found in session
+2026-01-11T23:06:11.687118+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T23:06:11.687817+0530 - DEBUG - Rendering home page
+2026-01-11T23:06:11.711856+0530 - INFO - Response status: 200
+2026-01-11T23:06:11.915200+0530 - INFO - Incoming request: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-11T23:06:11.968849+0530 - INFO - Response status: 404
+2026-01-11T23:06:15.819175+0530 - INFO - Incoming request: GET /
+2026-01-11T23:06:15.820011+0530 - DEBUG - Processing home page request
+2026-01-11T23:06:15.820589+0530 - DEBUG - No username found in session
+2026-01-11T23:06:15.828255+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T23:06:15.834426+0530 - DEBUG - Rendering home page
+2026-01-11T23:06:15.950978+0530 - INFO - Response status: 200
+2026-01-11T23:06:16.233177+0530 - INFO - Incoming request: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-11T23:06:16.812621+0530 - INFO - Response status: 404
+2026-01-11T23:06:19.564929+0530 - INFO - Incoming request: GET /
+2026-01-11T23:06:19.565621+0530 - DEBUG - Processing home page request
+2026-01-11T23:06:19.566077+0530 - DEBUG - No username found in session
+2026-01-11T23:06:19.573091+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T23:06:19.573611+0530 - DEBUG - Rendering home page
+2026-01-11T23:06:19.579658+0530 - INFO - Response status: 200
+2026-01-11T23:06:19.652850+0530 - INFO - Incoming request: GET /.well-known/appspecific/com.chrome.devtools.json
+2026-01-11T23:06:19.672358+0530 - INFO - Response status: 404
+2026-01-11T23:06:34.579080+0530 - INFO - Incoming request: GET /
+2026-01-11T23:06:34.579968+0530 - DEBUG - Processing home page request
+2026-01-11T23:06:34.580577+0530 - DEBUG - No username found in session
+2026-01-11T23:06:34.585163+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T23:06:34.585670+0530 - DEBUG - Rendering home page
+2026-01-11T23:06:34.592024+0530 - INFO - Response status: 200
+2026-01-11T23:06:36.289419+0530 - INFO - Incoming request: GET /
+2026-01-11T23:06:36.290163+0530 - DEBUG - Processing home page request
+2026-01-11T23:06:36.290660+0530 - DEBUG - No username found in session
+2026-01-11T23:06:36.297013+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T23:06:36.297949+0530 - DEBUG - Rendering home page
+2026-01-11T23:06:36.302986+0530 - INFO - Response status: 200
+2026-01-11T23:06:37.843139+0530 - INFO - Incoming request: GET /login/
+2026-01-11T23:06:37.846479+0530 - DEBUG - Processing login view request
+2026-01-11T23:06:37.849652+0530 - DEBUG - Rendering login page
+2026-01-11T23:06:37.859852+0530 - INFO - Response status: 200
+2026-01-11T23:06:42.290991+0530 - INFO - Incoming request: POST /login/
+2026-01-11T23:06:42.292060+0530 - DEBUG - Processing login view request
+2026-01-11T23:06:42.292490+0530 - INFO - Processing POST login request
+2026-01-11T23:06:43.130639+0530 - DEBUG - Login form is valid, attempting authentication
+2026-01-11T23:06:43.969535+0530 - INFO - User admin authenticated successfully
+2026-01-11T23:06:43.970061+0530 - INFO - Sending OTP to user: admin
+2026-01-11T23:06:43.970357+0530 - INFO - Generating new OTP
+2026-01-11T23:06:43.970589+0530 - DEBUG - Generated OTP: 944428
+2026-01-11T23:06:43.970855+0530 - DEBUG - Generated OTP for user admin
+2026-01-11T23:06:43.988614+0530 - DEBUG - Saved OTP to database for user admin
+2026-01-11T23:06:47.964861+0530 - INFO - Successfully sent OTP email to techbless7@gmail.com
+2026-01-11T23:06:47.968090+0530 - INFO - OTP sent to user admin's email: techbless7@gmail.com
+2026-01-11T23:06:47.969831+0530 - INFO - Response status: 302
+2026-01-11T23:06:48.012158+0530 - INFO - Incoming request: GET /verify-otp/
+2026-01-11T23:06:48.069187+0530 - INFO - Response status: 200
+2026-01-11T23:07:25.838753+0530 - INFO - Incoming request: POST /verify-otp/
+2026-01-11T23:07:25.846686+0530 - INFO - OTP verification request received. User ID from session: 1, OTP code: 944428
+2026-01-11T23:07:25.850932+0530 - INFO - User found: admin
+2026-01-11T23:07:25.854603+0530 - INFO - OTP record found for user admin
+2026-01-11T23:07:25.899975+0530 - INFO - User admin logged in successfully.
+2026-01-11T23:07:25.906508+0530 - INFO - Response status: 302
+2026-01-11T23:07:25.928029+0530 - INFO - Incoming request: GET /
+2026-01-11T23:07:25.928782+0530 - DEBUG - Processing home page request
+2026-01-11T23:07:25.938804+0530 - INFO - User admin accessed the home page
+2026-01-11T23:07:25.940485+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T23:07:25.940966+0530 - DEBUG - Rendering home page
+2026-01-11T23:07:25.950129+0530 - INFO - Response status: 200
+2026-01-11T23:07:39.815463+0530 - INFO - Incoming request: GET /
+2026-01-11T23:07:39.816096+0530 - DEBUG - Processing home page request
+2026-01-11T23:07:39.862036+0530 - INFO - User admin accessed the home page
+2026-01-11T23:07:39.864372+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T23:07:39.864911+0530 - DEBUG - Rendering home page
+2026-01-11T23:07:39.877368+0530 - INFO - Response status: 200
+2026-01-11T23:08:03.865051+0530 - INFO - Incoming request: GET /
+2026-01-11T23:08:03.869132+0530 - DEBUG - Processing home page request
+2026-01-11T23:08:03.869668+0530 - DEBUG - No username found in session
+2026-01-11T23:08:03.886405+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T23:08:03.887248+0530 - DEBUG - Rendering home page
+2026-01-11T23:08:03.892564+0530 - INFO - Response status: 200
+2026-01-11T23:08:04.513708+0530 - INFO - Incoming request: GET /favicon.ico
+2026-01-11T23:08:04.565066+0530 - INFO - Response status: 404
+2026-01-11T23:09:03.438445+0530 - INFO - Incoming request: GET /login/
+2026-01-11T23:09:03.439712+0530 - DEBUG - Processing login view request
+2026-01-11T23:09:03.440429+0530 - DEBUG - Rendering login page
+2026-01-11T23:09:03.443998+0530 - INFO - Response status: 200
+2026-01-11T23:09:10.613645+0530 - INFO - Incoming request: POST /login/
+2026-01-11T23:09:10.614798+0530 - DEBUG - Processing login view request
+2026-01-11T23:09:10.615434+0530 - INFO - Processing POST login request
+2026-01-11T23:09:11.449570+0530 - DEBUG - Login form is valid, attempting authentication
+2026-01-11T23:09:12.254448+0530 - INFO - User member authenticated successfully
+2026-01-11T23:09:12.255041+0530 - INFO - Sending OTP to user: member
+2026-01-11T23:09:12.255412+0530 - INFO - Generating new OTP
+2026-01-11T23:09:12.255737+0530 - DEBUG - Generated OTP: 716244
+2026-01-11T23:09:12.255992+0530 - DEBUG - Generated OTP for user member
+2026-01-11T23:09:12.275040+0530 - DEBUG - Saved OTP to database for user member
+2026-01-11T23:09:16.241412+0530 - INFO - Successfully sent OTP email to blessjohn2001@gmail.com
+2026-01-11T23:09:16.242869+0530 - INFO - OTP sent to user member's email: blessjohn2001@gmail.com
+2026-01-11T23:09:16.243777+0530 - INFO - Response status: 302
+2026-01-11T23:09:16.267025+0530 - INFO - Incoming request: GET /verify-otp/
+2026-01-11T23:09:16.279098+0530 - INFO - Response status: 200
+2026-01-11T23:09:35.443575+0530 - INFO - Incoming request: POST /verify-otp/
+2026-01-11T23:09:35.449101+0530 - INFO - OTP verification request received. User ID from session: 2, OTP code: 716244
+2026-01-11T23:09:35.451423+0530 - INFO - User found: member
+2026-01-11T23:09:35.453886+0530 - INFO - OTP record found for user member
+2026-01-11T23:09:35.501826+0530 - INFO - User member logged in successfully.
+2026-01-11T23:09:35.503740+0530 - INFO - Response status: 302
+2026-01-11T23:09:35.521365+0530 - INFO - Incoming request: GET /
+2026-01-11T23:09:35.521944+0530 - DEBUG - Processing home page request
+2026-01-11T23:09:35.530052+0530 - INFO - User member accessed the home page
+2026-01-11T23:09:35.531632+0530 - DEBUG - Retrieved 0 announcements
+2026-01-11T23:09:35.532090+0530 - DEBUG - Rendering home page
+2026-01-11T23:09:35.540141+0530 - INFO - Response status: 200
+2026-01-11T23:09:46.958839+0530 - INFO - Incoming request: GET /rulebook-viewer/
+2026-01-11T23:09:46.967757+0530 - DEBUG - Processing rulebook viewer request
+2026-01-11T23:09:46.971637+0530 - INFO - User member accessed the rulebook viewer
+2026-01-11T23:09:46.973701+0530 - DEBUG - Rendering rulebook viewer page
+2026-01-11T23:09:46.980533+0530 - INFO - Response status: 200
+2026-01-11T23:09:47.390486+0530 - INFO - Incoming request: GET /api/get-active-rulebook/
+2026-01-11T23:09:47.396812+0530 - INFO - Response status: 404
+2026-01-11T23:09:52.754878+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-11T23:09:52.767411+0530 - DEBUG - Processing admin panel request
+2026-01-11T23:09:52.771100+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-11T23:09:52.773638+0530 - DEBUG - Retrieved 2 users from database
+2026-01-11T23:09:52.774428+0530 - DEBUG - Rendering admin panel
+2026-01-11T23:09:52.795778+0530 - INFO - Response status: 200
+2026-01-11T23:09:52.947816+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-11T23:09:52.995978+0530 - DEBUG - Fetching category change requests for admin
+2026-01-11T23:09:53.001191+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-11T23:09:53.004630+0530 - INFO - Response status: 200
+2026-01-11T23:09:53.009063+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-11T23:09:53.003579+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-11T23:09:53.034150+0530 - INFO - Response status: 200
+2026-01-11T23:09:53.040960+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-11T23:09:53.047581+0530 - INFO - Response status: 200
+2026-01-11T23:09:53.050976+0530 - INFO - Response status: 200
+2026-01-11T23:10:03.221464+0530 - INFO - Incoming request: GET /admin_panel
+2026-01-11T23:10:03.227997+0530 - DEBUG - Processing admin panel request
+2026-01-11T23:10:03.230610+0530 - INFO - Admin user admin accessed the admin panel
+2026-01-11T23:10:03.233299+0530 - DEBUG - Retrieved 2 users from database
+2026-01-11T23:10:03.233857+0530 - DEBUG - Rendering admin panel
+2026-01-11T23:10:03.240420+0530 - INFO - Response status: 200
+2026-01-11T23:10:03.370902+0530 - INFO - Incoming request: GET /api/get-category-change-requests/
+2026-01-11T23:10:03.372041+0530 - INFO - Incoming request: GET /api/get-notices/
+2026-01-11T23:10:03.373360+0530 - INFO - Incoming request: GET /api/get-messages/
+2026-01-11T23:10:03.375057+0530 - INFO - Incoming request: GET /api/get-rulebooks/
+2026-01-11T23:10:03.386004+0530 - INFO - Response status: 200
+2026-01-11T23:10:03.388614+0530 - INFO - Response status: 200
+2026-01-11T23:10:03.392158+0530 - DEBUG - Fetching category change requests for admin
+2026-01-11T23:10:03.400542+0530 - INFO - Retrieved 0 pending category change requests
+2026-01-11T23:10:03.401499+0530 - INFO - Response status: 200
+2026-01-11T23:10:03.404935+0530 - INFO - Response status: 200
+2026-01-11T23:10:11.348779+0530 - INFO - Incoming request: GET /user_profile
+2026-01-11T23:10:11.355627+0530 - DEBUG - Processing user profile page request
+2026-01-11T23:10:11.358281+0530 - INFO - User member accessed their profile page
+2026-01-11T23:10:11.361918+0530 - DEBUG - Rendering user profile page
+2026-01-11T23:10:11.373811+0530 - INFO - Response status: 200
+2026-01-11T23:10:18.716613+0530 - INFO - Incoming request: GET /reset_password
+2026-01-11T23:10:18.724380+0530 - DEBUG - Processing password reset request
+2026-01-11T23:10:18.725177+0530 - DEBUG - Rendering password reset form
+2026-01-11T23:10:18.734939+0530 - INFO - Response status: 200
+2026-01-11T23:13:34.749432+0530 - INFO - Incoming request: GET /api/export-category-members/
+2026-01-11T23:13:34.754877+0530 - DEBUG - Exporting category members to Excel
+2026-01-11T23:13:35.340548+0530 - INFO - Successfully exported 2 members for category: All
+2026-01-11T23:13:35.341110+0530 - INFO - Response status: 200
+2026-01-11T23:18:07.905434+0530 - INFO - Incoming request: GET /user_profile
+2026-01-11T23:18:07.921183+0530 - DEBUG - Processing user profile page request
+2026-01-11T23:18:07.924827+0530 - INFO - User member accessed their profile page
+2026-01-11T23:18:07.928368+0530 - DEBUG - Rendering user profile page
+2026-01-11T23:18:08.412220+0530 - INFO - Response status: 500
+2026-01-11T23:18:28.078645+0530 - INFO - Incoming request: GET /user_profile
+2026-01-11T23:18:28.087197+0530 - DEBUG - Processing user profile page request
+2026-01-11T23:18:28.091246+0530 - INFO - User admin accessed their profile page
+2026-01-11T23:18:28.095661+0530 - DEBUG - Rendering user profile page
+2026-01-11T23:18:28.220872+0530 - INFO - Response status: 500
+2026-01-11T23:18:33.420545+0530 - INFO - Incoming request: GET /contact-us
+2026-01-11T23:18:33.421449+0530 - DEBUG - Processing contact us page request
+2026-01-11T23:18:33.427490+0530 - INFO - User admin accessed the contact us page
+2026-01-11T23:18:33.427931+0530 - DEBUG - Rendering contact us page
+2026-01-11T23:18:33.444196+0530 - INFO - Response status: 200
+2026-01-11T23:22:47.249666+0530 - INFO - Incoming request: GET /user_profile
+2026-01-11T23:22:47.256514+0530 - DEBUG - Processing user profile page request
+2026-01-11T23:22:47.260557+0530 - INFO - User admin accessed their profile page
+2026-01-11T23:22:47.265577+0530 - DEBUG - Rendering user profile page
+2026-01-11T23:22:47.294560+0530 - INFO - Response status: 200
+2026-01-11T23:27:58.990360+0530 - INFO - Incoming request: GET /user_profile
+2026-01-11T23:27:59.026390+0530 - DEBUG - Processing user profile page request
+2026-01-11T23:27:59.040409+0530 - INFO - User member accessed their profile page
+2026-01-11T23:27:59.050333+0530 - DEBUG - Rendering user profile page
+2026-01-11T23:27:59.067719+0530 - INFO - Response status: 200

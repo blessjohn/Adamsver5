@@ -14,6 +14,13 @@ import os
 from pathlib import Path
 from log_config import logger
 
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # python-dotenv not installed, skip .env loading
+    pass
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,11 +44,11 @@ if csrf_origins_env:
 else:
     CSRF_TRUSTED_ORIGINS = [
         "http://localhost:8000",  # Localhost access
-        "http://web",  # Internal Docker service
         "http://13.126.176.168",
         "https://13.126.176.168",
         "http://adams.org.in",
         "https://adams.org.in",
+        "https://www.adams.org.in",
     ]
 
 # ALLOWED_HOSTS - support environment variable or use defaults
@@ -49,12 +56,13 @@ allowed_hosts_env = os.getenv("ALLOWED_HOSTS")
 if allowed_hosts_env:
     ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(",")]
 else:
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "web", "adams.org.in", "13.126.176.168"]
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "adams.org.in", "www.adams.org.in", "13.126.176.168"]
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https",)  # <-- Required if using HTTPS
+USE_X_FORWARDED_HOST = True  # Required for proper host header handling behind Nginx proxy
 
 # Security settings for production (only when DEBUG=False)
 if not DEBUG:
-    SECURE_SSL_REDIRECT = False
+    SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
@@ -110,34 +118,42 @@ WSGI_APPLICATION = "adams.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+# Database configuration
+# For local testing, you can use SQLite instead of PostgreSQL
+USE_SQLITE = os.getenv("USE_SQLITE", "false").lower() == "true"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
+if USE_SQLITE:
+    # SQLite for quick local testing (no setup required)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    # PostgreSQL for production-like setup
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT"),
+        }
+    }
 
-# Validate database settings (will fail at startup if missing)
-if not all([DATABASES["default"]["NAME"], DATABASES["default"]["USER"], 
-            DATABASES["default"]["PASSWORD"], DATABASES["default"]["HOST"]]):
-    missing = [k for k, v in {
-        "DB_NAME": DATABASES["default"]["NAME"],
-        "DB_USER": DATABASES["default"]["USER"],
-        "DB_PASSWORD": DATABASES["default"]["PASSWORD"],
-        "DB_HOST": DATABASES["default"]["HOST"]
-    }.items() if not v]
-    raise ValueError(f"Missing required database environment variables: {', '.join(missing)}")
+# Validate database settings (only for PostgreSQL, not SQLite)
+if not USE_SQLITE:
+    if not all([DATABASES["default"].get("NAME"), DATABASES["default"].get("USER"), 
+                DATABASES["default"].get("PASSWORD"), DATABASES["default"].get("HOST")]):
+        missing = [k for k, v in {
+            "DB_NAME": DATABASES["default"].get("NAME"),
+            "DB_USER": DATABASES["default"].get("USER"),
+            "DB_PASSWORD": DATABASES["default"].get("PASSWORD"),
+            "DB_HOST": DATABASES["default"].get("HOST")
+        }.items() if not v]
+        raise ValueError(f"Missing required database environment variables: {', '.join(missing)}")
 
 
 # Password validation
@@ -158,9 +174,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
- LOGGING = {
-     "version": 1,
-     "disable_existing_loggers": False,
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
 #     "handlers": {
 #         "default": {
 #             "class": "logging.StreamHandler",
@@ -195,6 +211,10 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # For production collectstatic
 
+# Media files (user uploads)
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 # Only use STATICFILES_DIRS in development
 if DEBUG:
     STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
@@ -225,13 +245,12 @@ if not all([MINIO_URL, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_BUCKET_NAME]):
 AUTH_USER_MODEL = "app.User"
 
 
-EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_PORT = 465
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-EMAIL_USE_SSL = True
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() == "true"
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "false").lower() == "true"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
-DEFAULT_FROM_EMAIL = "officedesk@adams.org.in"
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER", "testadams08@gmail.com")

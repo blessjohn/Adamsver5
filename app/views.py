@@ -405,11 +405,28 @@ def login_view(request):
                 logger.info(f"User {user.username} authenticated successfully")
                 request.session["user_id"] = user.id
                 request.session["username"] = user.username
-                send_otp_via_email(user)
-                logger.info(f"OTP sent to user {user.username}'s email")
-                messages.success(
-                    request, "OTP sent to your registered email. Please verify."
-                )
+                
+                # Send OTP with error handling
+                try:
+                    otp_sent = send_otp_via_email(user)
+                    if otp_sent:
+                        logger.info(f"OTP sent to user {user.username}'s email: {user.email}")
+                        messages.success(
+                            request, f"OTP sent to your registered email ({user.email}). Please check your inbox and spam folder."
+                        )
+                    else:
+                        logger.error(f"Failed to send OTP to user {user.username}")
+                        messages.error(
+                            request, "Failed to send OTP email. Please try again or contact support."
+                        )
+                        return redirect("login")
+                except Exception as e:
+                    logger.exception(f"Error sending OTP to user {user.username}: {e}")
+                    messages.error(
+                        request, f"Error sending OTP: {str(e)}. Please try again."
+                    )
+                    return redirect("login")
+                
                 return redirect("verify_otp")
             else:
                 logger.warning(
@@ -3279,14 +3296,17 @@ def get_active_rulebook(request):
                     expires=timedelta(hours=1)
                 )
                 
-                # Replace internal Docker hostname with accessible URL
+                # Replace internal MinIO hostname with accessible URL
                 # For local: use localhost or the host from request
                 # For deployment: use the actual domain
                 host = request.get_host().split(':')[0]  # Get hostname without port
                 
-                # Replace minio:9000 with the accessible host
-                if 'minio:9000' in pdf_url:
+                # Replace internal MinIO endpoint with the accessible host
+                # This handles cases where MINIO_URL is set to localhost/127.0.0.1
+                if 'minio:9000' in pdf_url or 'localhost:9000' in pdf_url or '127.0.0.1:9000' in pdf_url:
                     pdf_url = pdf_url.replace('minio:9000', f'{host}:9000')
+                    pdf_url = pdf_url.replace('localhost:9000', f'{host}:9000')
+                    pdf_url = pdf_url.replace('127.0.0.1:9000', f'{host}:9000')
                 
                 return JsonResponse({
                     'success': True,
