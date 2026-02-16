@@ -28,7 +28,7 @@ from minio import S3Error
 
 # Local application imports
 from .forms import UserLoginForm, UserRegistrationForm, UserUpdateForm
-from .models import Announcement, OTP, User, CategoryChangeRequest
+from .models import Announcement, OTP, User, CategoryChangeRequest, RegistrationQuestion, RegistrationAnswer, SystemSettings
 from .utils import (
     delete_image_from_minio,
     generate_qr_code_live,
@@ -160,6 +160,117 @@ def register_user_view(request):
                 )
                 user.save()
 
+                # Map question text to User model field names for backward compatibility
+                question_to_field_map = {
+                    'First Name': 'first_name',
+                    'Middle Name': 'middle_name',
+                    'Last Name': 'last_name',
+                    'Gender': 'gender',
+                    'WhatsApp Number': 'whatsapp_number',
+                    'Mobile Number': 'mobile_number',
+                    'Address for Communication': 'address_communication',
+                    'Permanent Address': 'address_permanent',
+                    'District': 'district',
+                    'Father/Spouse Name & Occupation': 'father_spouse_details',
+                    'Blood Group': 'blood_group',
+                    'Educational Status': 'educational_status',
+                    'Category You Belong To For Membership': 'category',
+                    'University Name': 'university_name',
+                    'Country Where University is situated': 'country_university',
+                    'Year of Joining Medical Education': 'year_of_joining',
+                    'Year of Completion/Expected Completion of course': 'year_of_completion',
+                    'Passport Size Photo': 'photo',
+                    'State/NMC registration certificate': 'state_nmc',
+                    'Passport (Front and Back)': 'passport',
+                    'Medical qualification (Provisional/Permanent) Degree/ Diploma Certificate/ Student ID Card': 'medical_qualification',
+                    'Date and time of Payment (Transaction)': 'date_time_of_payment',
+                    'Payment Transaction Proof/screenshot': 'payment_transaction_proof',
+                    'Willing to be a blood donor?': 'willing_to_be_donor',
+                    'Are you in any district group of AKFMA? If yes mention your MID': 'mid',
+                    'Agreement for Joining Association of Doctors And Medical Students (ADAMS)': 'agreement',
+                    'I agree to the terms and conditions of the association and I hereby submit my application for membership in ADAMS': 'application',
+                }
+                
+                # Save custom question answers and map to User model fields
+                custom_questions = RegistrationQuestion.objects.filter(is_active=True)
+                for question in custom_questions:
+                    answer_key = f"custom_question_{question.id}"
+                    
+                    # Handle file uploads
+                    if question.question_type == 'file':
+                        uploaded_file = request.FILES.get(answer_key)
+                        if uploaded_file:
+                            # Validate file type (PDF or JPG)
+                            file_ext = uploaded_file.name.split('.')[-1].lower()
+                            if file_ext not in ['pdf', 'jpg', 'jpeg', 'png']:
+                                continue  # Skip invalid file types
+                            
+                            # Upload to MinIO
+                            folder_path = f"users/{user.username}/custom_questions/"
+                            file_name = f"{folder_path}{uploaded_file.name}"
+                            
+                            if upload_image_to_minio(uploaded_file, file_name):
+                                answer, created = RegistrationAnswer.objects.get_or_create(
+                                    user=user,
+                                    question=question,
+                                    defaults={}
+                                )
+                                answer.answer_file = file_name
+                                answer.save()
+                                
+                                # Map to User model field if mapping exists
+                                user_field = question_to_field_map.get(question.question_text)
+                                if user_field:
+                                    setattr(user, user_field, file_name)
+                        elif question.is_required:
+                            # Required file but not provided - validation should catch this
+                            continue
+                    else:
+                        # Handle text-based answers
+                        answer_value = request.POST.get(answer_key, '').strip()
+                        
+                        if question.is_required and not answer_value:
+                            continue  # Skip if required but empty (form validation should catch this)
+                        
+                        if answer_value:  # Only save if there's an answer
+                            answer, created = RegistrationAnswer.objects.get_or_create(
+                                user=user,
+                                question=question,
+                                defaults={}
+                            )
+                            
+                            # Set answer based on question type
+                            if question.question_type == 'date':
+                                try:
+                                    from datetime import datetime
+                                    answer.answer_date = datetime.strptime(answer_value, '%Y-%m-%d').date()
+                                except:
+                                    pass
+                            elif question.question_type == 'number':
+                                try:
+                                    answer.answer_number = float(answer_value)
+                                except:
+                                    pass
+                            elif question.question_type in ['checkbox', 'radio']:
+                                answer.answer_boolean = answer_value.lower() in ['true', '1', 'on', 'yes']
+                            else:
+                                answer.answer_text = answer_value
+                            
+                            answer.save()
+                            
+                            # Map to User model field if mapping exists
+                            user_field = question_to_field_map.get(question.question_text)
+                            if user_field:
+                                if question.question_type == 'date':
+                                    setattr(user, user_field, str(answer.answer_date) if answer.answer_date else '')
+                                elif question.question_type in ['checkbox']:
+                                    setattr(user, user_field, answer.answer_boolean)
+                                else:
+                                    setattr(user, user_field, answer.answer_text or '')
+                
+                # Save user after mapping all fields
+                user.save()
+
                 logger.info(
                     f"New user registered successfully - username: {form.cleaned_data['username']}"
                 )
@@ -183,8 +294,14 @@ def register_user_view(request):
     else:
         logger.debug("Displaying empty registration form")
         form = UserRegistrationForm()
+    
+    # Get active custom questions for registration form
+    custom_questions = RegistrationQuestion.objects.filter(is_active=True).order_by('order', 'created_at')
 
-    return render(request, "register.html", {"form": form})
+    return render(request, "register.html", {
+        "form": form,
+        "custom_questions": custom_questions
+    })
 
 
 def update_user_view(request, user_id):
@@ -407,28 +524,39 @@ def login_view(request):
                 request.session["user_id"] = user.id
                 request.session["username"] = user.username
                 
-                # Send OTP with error handling
-                try:
-                    otp_sent = send_otp_via_email(user)
-                    if otp_sent:
-                        logger.info(f"OTP sent to user {user.username}'s email: {user.email}")
-                        messages.success(
-                            request, f"OTP sent to your registered email ({user.email}). Please check your inbox and spam folder."
-                        )
-                    else:
-                        logger.error(f"Failed to send OTP to user {user.username}")
+                # Check if 2FA is enabled
+                two_factor_enabled = SystemSettings.get_setting('two_factor_enabled', default='true')
+                two_factor_enabled = str(two_factor_enabled).lower() in ['true', '1', 'yes', 'on']
+                
+                if two_factor_enabled:
+                    # Send OTP with error handling
+                    try:
+                        otp_sent = send_otp_via_email(user)
+                        if otp_sent:
+                            logger.info(f"OTP sent to user {user.username}'s email: {user.email}")
+                            messages.success(
+                                request, f"OTP sent to your registered email ({user.email}). Please check your inbox and spam folder."
+                            )
+                        else:
+                            logger.error(f"Failed to send OTP to user {user.username}")
+                            messages.error(
+                                request, "Failed to send OTP email. Please try again or contact support."
+                            )
+                            return redirect("login")
+                    except Exception as e:
+                        logger.exception(f"Error sending OTP to user {user.username}: {e}")
                         messages.error(
-                            request, "Failed to send OTP email. Please try again or contact support."
+                            request, f"Error sending OTP: {str(e)}. Please try again."
                         )
                         return redirect("login")
-                except Exception as e:
-                    logger.exception(f"Error sending OTP to user {user.username}: {e}")
-                    messages.error(
-                        request, f"Error sending OTP: {str(e)}. Please try again."
-                    )
-                    return redirect("login")
-                
-                return redirect("verify_otp")
+                    
+                    return redirect("verify_otp")
+                else:
+                    # 2FA is disabled, login directly
+                    login(request, user)
+                    logger.info(f"User {user.username} logged in directly (2FA disabled)")
+                    messages.success(request, "Login successful.")
+                    return redirect("home")
             else:
                 logger.warning(
                     f"Failed login attempt for username: {form.cleaned_data['username']}"
@@ -3640,3 +3768,265 @@ def payment_response(request):
         return render(request, 'payment_failure.html', {
             "response_message": "Error processing payment response"
         })
+
+
+# ============================================
+# Registration Questions Management Views
+# ============================================
+
+@login_required(login_url="/login/")
+@admin_required
+def manage_registration_questions(request):
+    """Admin view to manage registration questions"""
+    questions = RegistrationQuestion.objects.all().order_by('order', 'created_at')
+    return render(request, 'manage_registration_questions.html', {
+        'questions': questions
+    })
+
+
+@login_required(login_url="/login/")
+@admin_required
+@require_POST
+def add_registration_question(request):
+    """Add a new registration question"""
+    try:
+        question_text = request.POST.get('question_text')
+        question_type = request.POST.get('question_type', 'text')
+        is_required = request.POST.get('is_required') == 'on'
+        order = int(request.POST.get('order', 0))
+        options = request.POST.get('options', '').strip()
+        help_text = request.POST.get('help_text', '').strip()
+        is_active = request.POST.get('is_active') == 'on'
+        
+        question = RegistrationQuestion.objects.create(
+            question_text=question_text,
+            question_type=question_type,
+            is_required=is_required,
+            order=order,
+            options=options,
+            help_text=help_text,
+            is_active=is_active,
+            created_by=request.user
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Question added successfully',
+            'question_id': question.id
+        })
+    except Exception as e:
+        logger.error(f"Error adding registration question: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+
+
+@login_required(login_url="/login/")
+@admin_required
+@require_POST
+def update_registration_question(request, question_id):
+    """Update an existing registration question"""
+    try:
+        question = get_object_or_404(RegistrationQuestion, id=question_id)
+        
+        question.question_text = request.POST.get('question_text')
+        question.question_type = request.POST.get('question_type', 'text')
+        question.is_required = request.POST.get('is_required') == 'on'
+        question.order = int(request.POST.get('order', 0))
+        question.options = request.POST.get('options', '').strip()
+        question.help_text = request.POST.get('help_text', '').strip()
+        question.is_active = request.POST.get('is_active') == 'on'
+        question.save()
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Question updated successfully'
+        })
+    except Exception as e:
+        logger.error(f"Error updating registration question: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+
+
+@login_required(login_url="/login/")
+@admin_required
+@require_POST
+def delete_registration_question(request, question_id):
+    """Delete a registration question"""
+    try:
+        question = get_object_or_404(RegistrationQuestion, id=question_id)
+        question.delete()
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Question deleted successfully'
+        })
+    except Exception as e:
+        logger.error(f"Error deleting registration question: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+
+
+@login_required(login_url="/login/")
+@admin_required
+def get_registration_question(request, question_id):
+    """Get a single registration question (for editing)"""
+    try:
+        question = get_object_or_404(RegistrationQuestion, id=question_id)
+        return JsonResponse({
+            'status': 'success',
+            'question': {
+                'id': question.id,
+                'question_text': question.question_text,
+                'question_type': question.question_type,
+                'is_required': question.is_required,
+                'order': question.order,
+                'options': question.options or '',
+                'help_text': question.help_text or '',
+                'is_active': question.is_active,
+            }
+        })
+    except Exception as e:
+        logger.error(f"Error getting registration question: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+
+
+@login_required(login_url="/login/")
+@admin_required
+@require_POST
+def migrate_existing_fields_to_questions(request):
+    """Migrate existing registration form fields to custom questions"""
+    try:
+        # Define field mappings: (field_name, question_text, question_type, is_required, order, help_text, options)
+        field_mappings = [
+            ('username', 'Username', 'text', True, 1, 'Choose a unique username', None),
+            ('first_name', 'First Name', 'text', True, 2, None, None),
+            ('middle_name', 'Middle Name', 'text', False, 3, None, None),
+            ('last_name', 'Last Name', 'text', True, 4, None, None),
+            ('gender', 'Gender', 'dropdown', True, 5, None, 'Male,Female,Other'),
+            ('whatsapp_number', 'WhatsApp Number', 'tel', True, 6, 'Include country code (e.g., +91)', None),
+            ('mobile_number', 'Mobile Number', 'tel', True, 7, 'Include country code (e.g., +91)', None),
+            ('address_communication', 'Address for Communication', 'textarea', True, 8, None, None),
+            ('address_permanent', 'Permanent Address', 'textarea', True, 9, None, None),
+            ('district', 'District', 'text', True, 10, None, None),
+            ('father_spouse_details', 'Father/Spouse Name & Occupation', 'textarea', True, 11, None, None),
+            ('blood_group', 'Blood Group', 'dropdown', True, 12, None, 'A+,A-,B+,B-,AB+,AB-,O+,O-,Bombay Group'),
+            ('educational_status', 'Educational Status', 'dropdown', True, 13, None, 'Student (@Abroad University),Graduated / FMGE Aspirant,FMGE Passed Candidate,Internship,Working Doctor,Post Graduation ongoing,Post Graduation Completed, Working'),
+            ('category', 'Category You Belong To For Membership', 'dropdown', True, 14, None, 'Student,Graduate/Trying FMGE,FMGE passed,Working Doctor (With SMC/NMC Registration),Working PG Doctor (With SMC/NMC Registration)'),
+            ('university_name', 'University Name', 'textarea', True, 15, 'Full name of university (short forms not accepted)', None),
+            ('country_university', 'Country Where University is situated', 'textarea', True, 16, None, None),
+            ('year_of_joining', 'Year of Joining Medical Education', 'date', True, 17, None, None),
+            ('year_of_completion', 'Year of Completion/Expected Completion of course', 'date', True, 18, None, None),
+            ('photo', 'Passport Size Photo', 'file', True, 19, 'Upload front facing photograph. It will be used for Association ID card', None),
+            ('state_nmc', 'State/NMC registration certificate', 'file', False, 20, 'For registered doctors only', None),
+            ('passport', 'Passport (Front and Back)', 'file', True, 21, None, None),
+            ('medical_qualification', 'Medical qualification (Provisional/Permanent) Degree/ Diploma Certificate/ Student ID Card', 'file', True, 22, None, None),
+            ('date_time_of_payment', 'Date and time of Payment (Transaction)', 'date', True, 23, None, None),
+            ('payment_transaction_proof', 'Payment Transaction Proof/screenshot', 'file', True, 24, 'Upload screenshot or slip containing transaction number', None),
+            ('willing_to_be_donor', 'Willing to be a blood donor?', 'checkbox', False, 25, None, 'Yes'),
+            ('mid', 'Are you in any district group of AKFMA? If yes mention your MID', 'text', False, 26, 'MID can be collected by contacting assigned district admins', None),
+            ('agreement', 'Agreement for Joining Association of Doctors And Medical Students (ADAMS)', 'checkbox', True, 27, None, 'I agree'),
+            ('application', 'I agree to the terms and conditions of the association and I hereby submit my application for membership in ADAMS', 'checkbox', True, 28, None, 'I agree'),
+        ]
+        
+        created_count = 0
+        skipped_count = 0
+        
+        for field_name, question_text, question_type, is_required, order, help_text, options in field_mappings:
+            # Skip username, email, password fields as per user requirement
+            if field_name in ['username']:
+                skipped_count += 1
+                continue
+            
+            # Check if question already exists
+            if RegistrationQuestion.objects.filter(question_text=question_text).exists():
+                skipped_count += 1
+                continue
+            
+            RegistrationQuestion.objects.create(
+                question_text=question_text,
+                question_type=question_type,
+                is_required=is_required,
+                order=order,
+                options=options,
+                help_text=help_text,
+                is_active=True,
+                created_by=request.user
+            )
+            created_count += 1
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': f'Migration completed. Created {created_count} questions, skipped {skipped_count} existing questions.',
+            'created': created_count,
+            'skipped': skipped_count
+        })
+    except Exception as e:
+        logger.error(f"Error migrating fields to questions: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+
+
+# ============================================
+# System Settings Management Views
+# ============================================
+
+@login_required(login_url="/login/")
+@admin_required
+def manage_system_settings(request):
+    """Admin view to manage system settings"""
+    # Initialize default 2FA setting if it doesn't exist
+    if not SystemSettings.objects.filter(key='two_factor_enabled').exists():
+        SystemSettings.set_setting(
+            key='two_factor_enabled',
+            value='true',
+            description='Enable or disable two-factor authentication (OTP) for user login'
+        )
+    
+    two_factor_enabled = SystemSettings.get_setting('two_factor_enabled', default='true')
+    two_factor_enabled = str(two_factor_enabled).lower() in ['true', '1', 'yes', 'on']
+    
+    return render(request, 'manage_system_settings.html', {
+        'two_factor_enabled': two_factor_enabled
+    })
+
+
+@login_required(login_url="/login/")
+@admin_required
+@require_POST
+def toggle_two_factor_auth(request):
+    """Toggle 2FA on/off"""
+    try:
+        enabled = request.POST.get('enabled', 'false').lower() in ['true', '1', 'yes', 'on']
+        
+        SystemSettings.set_setting(
+            key='two_factor_enabled',
+            value='true' if enabled else 'false',
+            description='Enable or disable two-factor authentication (OTP) for user login',
+            user=request.user
+        )
+        
+        status_text = 'enabled' if enabled else 'disabled'
+        logger.info(f"2FA {status_text} by admin {request.user.username}")
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': f'Two-factor authentication has been {status_text}.',
+            'enabled': enabled
+        })
+    except Exception as e:
+        logger.error(f"Error toggling 2FA: {e}")
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)

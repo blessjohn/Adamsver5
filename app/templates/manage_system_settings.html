@@ -1,0 +1,237 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .settings-card {
+        border: 1px solid #e0e6ed;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .settings-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .setting-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .setting-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary-blue);
+        margin: 0;
+    }
+    
+    .setting-description {
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+    
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+    
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+        background-color: var(--secondary-blue);
+    }
+    
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-left: 1rem;
+    }
+    
+    .status-enabled {
+        background: rgba(39, 174, 96, 0.1);
+        color: var(--success);
+        border: 1px solid var(--success);
+    }
+    
+    .status-disabled {
+        background: rgba(231, 76, 60, 0.1);
+        color: var(--danger);
+        border: 1px solid var(--danger);
+    }
+    
+    .info-box {
+        background: var(--light-blue);
+        border-left: 4px solid var(--secondary-blue);
+        padding: 1rem;
+        border-radius: 6px;
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="container mt-4 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold" style="color: var(--primary-blue);">
+                    <i class="bi bi-gear me-2"></i>System Settings
+                </h2>
+            </div>
+            
+            <!-- Two-Factor Authentication Setting -->
+            <div class="settings-card">
+                <div class="setting-header">
+                    <div>
+                        <h3 class="setting-title">
+                            <i class="bi bi-shield-lock me-2"></i>Two-Factor Authentication (2FA)
+                        </h3>
+                        <span class="status-badge {% if two_factor_enabled %}status-enabled{% else %}status-disabled{% endif %}">
+                            {% if two_factor_enabled %}
+                                <i class="bi bi-check-circle me-1"></i>Enabled
+                            {% else %}
+                                <i class="bi bi-x-circle me-1"></i>Disabled
+                            {% endif %}
+                        </span>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="twoFactorToggle" {% if two_factor_enabled %}checked{% endif %} onchange="toggle2FA()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <p class="setting-description">
+                    When enabled, users will be required to enter a One-Time Password (OTP) sent to their email after entering their username and password. 
+                    When disabled, users can login directly after entering their credentials.
+                </p>
+                
+                <div class="info-box">
+                    <strong><i class="bi bi-info-circle me-2"></i>Note:</strong> 
+                    Changing this setting will affect all users immediately. When disabled, users will be able to login without OTP verification.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggle2FA() {
+        const toggle = document.getElementById('twoFactorToggle');
+        const enabled = toggle.checked;
+        
+        // Show loading state
+        const originalText = toggle.disabled;
+        toggle.disabled = true;
+        
+        const formData = new FormData();
+        formData.append('enabled', enabled);
+        
+        fetch('/api/toggle-two-factor-auth/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            toggle.disabled = false;
+            
+            if (data.status === 'success') {
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${enabled ? 'success' : 'info'} alert-dismissible fade show`;
+                alertDiv.innerHTML = `
+                    <i class="bi bi-${enabled ? 'check-circle' : 'info-circle'} me-2"></i>${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.querySelector('.settings-card').insertBefore(alertDiv, document.querySelector('.setting-header'));
+                
+                // Update status badge
+                const statusBadge = document.querySelector('.status-badge');
+                if (enabled) {
+                    statusBadge.className = 'status-badge status-enabled';
+                    statusBadge.innerHTML = '<i class="bi bi-check-circle me-1"></i>Enabled';
+                } else {
+                    statusBadge.className = 'status-badge status-disabled';
+                    statusBadge.innerHTML = '<i class="bi bi-x-circle me-1"></i>Disabled';
+                }
+                
+                // Auto-dismiss alert after 5 seconds
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 5000);
+            } else {
+                // Revert toggle on error
+                toggle.checked = !enabled;
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            toggle.disabled = false;
+            toggle.checked = !enabled;
+            alert('Error: ' + error.message);
+        });
+    }
+    
+    // Helper function to get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+
+{% endblock content %}

@@ -311,6 +311,16 @@
                         <span class="nav-name">Rulebook</span>
                     </a>
 
+                    <a href="{% url 'manage_registration_questions' %}" class="nav-linkSidebar">
+                        <ion-icon name="document-text-outline" class="nav-icon"></ion-icon>
+                        <span class="nav-name">Registration Questions</span>
+                    </a>
+
+                    <a href="{% url 'manage_system_settings' %}" class="nav-linkSidebar">
+                        <ion-icon name="settings-outline" class="nav-icon"></ion-icon>
+                        <span class="nav-name">System Settings</span>
+                    </a>
+
                     <a href="#" class="nav-linkSidebar">
                         <ion-icon name="chatbubbles-outline" class="nav-icon"></ion-icon>
                         <span class="nav-name">Messenger</span>
@@ -347,10 +357,6 @@
                         </ul>
                     </div>
 
-                    <a href="#" class="nav-linkSidebar">
-                        <ion-icon name="settings-outline" class="nav-icon"></ion-icon>
-                        <span class="nav-name">Settings</span>
-                    </a>
                 </div>
             </div>
 
@@ -460,6 +466,52 @@
                                     <p class="text-muted text-center mb-0">No category data available</p>
                                 </div>
                                 {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions Section -->
+        <div class="container-fluid mb-4 mt-3">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm border-primary">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title mb-2">
+                                        <i class="bi bi-question-circle text-primary"></i> Registration Questions
+                                    </h5>
+                                    <p class="card-text text-muted mb-3">Manage custom questions for the registration form</p>
+                                    <a href="{% url 'manage_registration_questions' %}" class="btn btn-primary">
+                                        <i class="bi bi-gear"></i> Manage Questions
+                                    </a>
+                                </div>
+                                <div>
+                                    <i class="bi bi-file-text" style="font-size: 3rem; color: #0d6efd; opacity: 0.3;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm border-success">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title mb-2">
+                                        <i class="bi bi-gear text-success"></i> System Settings
+                                    </h5>
+                                    <p class="card-text text-muted mb-3">Configure system-wide settings like 2FA</p>
+                                    <a href="{% url 'manage_system_settings' %}" class="btn btn-success">
+                                        <i class="bi bi-sliders"></i> Manage Settings
+                                    </a>
+                                </div>
+                                <div>
+                                    <i class="bi bi-shield-lock" style="font-size: 3rem; color: #198754; opacity: 0.3;"></i>
+                                </div>
                             </div>
                         </div>
                     </div>

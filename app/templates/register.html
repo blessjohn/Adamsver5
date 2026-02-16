@@ -4,9 +4,22 @@
 {% block content %} 
 
 <div class="register-container">
-    <form method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+    <form method="POST" action="{% url 'register' %}" enctype="multipart/form-data" id="registerForm">
     {% csrf_token %}
     <h1>Create a New Account</h1>
+    
+    {% if form.errors %}
+    <div class="alert alert-danger" role="alert">
+        <strong>Please correct the following errors:</strong>
+        <ul class="mb-0 mt-2">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <li>{{ field|title }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
     <div class="customInputs">
         <div class="row">
             <div class="col-12 col-md-6">
@@ -245,26 +258,17 @@
                 {% endif %}
             </div>
 
-            <div id="payment-section" class="my-3" style="padding: 30px; border: 1px solid #e0e0e0; border-radius: 10px; background: linear-gradient(135deg, #f5f7fa, #e4e5e9); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); font-family: 'Arial', sans-serif;">
-                <h2 style="text-align: center; color: #333; font-size: 24px; margin-bottom: 20px;">Payment Section</h2>
-                <ol style="margin-left: 20px; color: #555; font-size: 16px; line-height: 1.6;">
-                  <li style="margin-bottom: 10px;">Refer to the website to select a membership.</li>
-                  <li style="margin-bottom: 10px;">Make payment using the QR code provided on the website and download/save or take a screenshot of the payment transaction number/ID.</li>
-                  <li>Upload the screenshot or slip containing the transaction number of the payment in this section.</li>
-                </ol>
-            </div>
-
             <div class="col-12 col-md-6">
-                <label for="id_date_time_of_payment">Date and time of Payment (Transaction) *</label>
-                <input type="date" id="id_date_time_of_payment" name="date_time_of_payment" required></input>
+                <label for="id_date_time_of_payment">Date and Time of Payment (Transaction) *</label>
+                <input type="datetime-local" id="id_date_time_of_payment" name="date_time_of_payment" required></input>
                 {% if form.date_time_of_payment.errors %}
                     <p style="color: red;">{{ form.date_time_of_payment.errors.0 }}</p>
                 {% endif %}
             </div>
 
             <div class="col-12 col-md-6">
-                <label for="id_payment_transaction_proof">Upload Payment Transaction Proof/screenshot *</label>
-                <input type="file" id="id_payment_transaction_proof" name="payment_transaction_proof" required></input>
+                <label for="id_payment_transaction_proof">Payment Transaction Proof/Screenshot *</label>
+                <input type="file" id="id_payment_transaction_proof" name="payment_transaction_proof" accept="image/*,.pdf" required></input>
                 {% if form.payment_transaction_proof.errors %}
                     <p style="color: red;">{{ form.payment_transaction_proof.errors.0 }}</p>
                 {% endif %}
@@ -311,10 +315,128 @@
                 {% endif %}
             </div>
 
+            <!-- Custom Registration Questions -->
+            {% if custom_questions %}
+            <div class="col-12 mt-4 mb-3">
+                <h3 style="color: #333; border-bottom: 2px solid #49b5e7; padding-bottom: 10px;">Additional Information</h3>
+            </div>
+            {% for question in custom_questions %}
+            <div class="col-12 col-md-6">
+                <label for="custom_question_{{ question.id }}">
+                    {{ question.question_text }}{% if question.is_required %} *{% endif %}
+                </label>
+                {% if question.help_text %}
+                    <small class="text-muted d-block mb-2">{{ question.help_text }}</small>
+                {% endif %}
+                
+                {% if question.question_type == 'text' %}
+                    <input type="text" 
+                           id="custom_question_{{ question.id }}" 
+                           name="custom_question_{{ question.id }}" 
+                           class="form-control"
+                           {% if question.is_required %}required{% endif %}
+                           placeholder="Enter your answer">
+                
+                {% elif question.question_type == 'textarea' %}
+                    <textarea id="custom_question_{{ question.id }}" 
+                              name="custom_question_{{ question.id }}" 
+                              class="form-control"
+                              rows="4"
+                              {% if question.is_required %}required{% endif %}
+                              placeholder="Enter your answer"></textarea>
+                
+                {% elif question.question_type == 'date' %}
+                    <input type="date" 
+                           id="custom_question_{{ question.id }}" 
+                           name="custom_question_{{ question.id }}" 
+                           class="form-control"
+                           {% if question.is_required %}required{% endif %}>
+                
+                {% elif question.question_type == 'number' %}
+                    <input type="number" 
+                           id="custom_question_{{ question.id }}" 
+                           name="custom_question_{{ question.id }}" 
+                           class="form-control"
+                           {% if question.is_required %}required{% endif %}
+                           placeholder="Enter a number">
+                
+                {% elif question.question_type == 'email' %}
+                    <input type="email" 
+                           id="custom_question_{{ question.id }}" 
+                           name="custom_question_{{ question.id }}" 
+                           class="form-control"
+                           {% if question.is_required %}required{% endif %}
+                           placeholder="Enter your email">
+                
+                {% elif question.question_type == 'tel' %}
+                    <input type="tel" 
+                           id="custom_question_{{ question.id }}" 
+                           name="custom_question_{{ question.id }}" 
+                           class="form-control"
+                           {% if question.is_required %}required{% endif %}
+                           placeholder="Enter your phone number">
+                
+                {% elif question.question_type == 'dropdown' %}
+                    <select id="custom_question_{{ question.id }}" 
+                            name="custom_question_{{ question.id }}" 
+                            class="form-control"
+                            {% if question.is_required %}required{% endif %}>
+                        <option value="" disabled selected>-- Select an option --</option>
+                        {% for option in question.get_options_list %}
+                            <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                
+                {% elif question.question_type == 'radio' %}
+                    <div class="mt-2">
+                        {% for option in question.get_options_list %}
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                       type="radio" 
+                                       name="custom_question_{{ question.id }}" 
+                                       id="custom_question_{{ question.id }}_{{ forloop.counter0 }}"
+                                       value="{{ option }}"
+                                       {% if question.is_required %}required{% endif %}>
+                                <label class="form-check-label" for="custom_question_{{ question.id }}_{{ forloop.counter0 }}">
+                                    {{ option }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                
+                {% elif question.question_type == 'checkbox' %}
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               id="custom_question_{{ question.id }}" 
+                               name="custom_question_{{ question.id }}" 
+                               value="true"
+                               {% if question.is_required %}required{% endif %}>
+                        <label class="form-check-label" for="custom_question_{{ question.id }}">
+                            {{ question.get_options_list.0|default:"Yes" }}
+                        </label>
+                    </div>
+                
+                {% elif question.question_type == 'file' %}
+                    <input type="file" 
+                           id="custom_question_{{ question.id }}" 
+                           name="custom_question_{{ question.id }}" 
+                           class="form-control"
+                           accept=".pdf,.jpg,.jpeg,.png"
+                           {% if question.is_required %}required{% endif %}>
+                    <small class="text-muted d-block mt-1">Accepted formats: PDF, JPG, JPEG, PNG</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% endif %}
+
         </div>
     </div>
     <div class="d-grid mt-3">
-        <button type="submit" class="btn btn-primary btn-block">Register</button>
+        <button type="submit" id="registerBtn" class="btn btn-primary btn-block">
+            <span id="registerBtnText">Register</span>
+            <span id="registerBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+        </button>
     </div>
     <div class="form-text mt-3">
         Already have an account? <a href="{% url 'login' %}">Sign in</a>
@@ -323,26 +445,108 @@
 </div>
 
 <script>
-    function validateForm() {
-        var password1 = document.getElementById('id_password1').value;
-        var password2 = document.getElementById('id_password2').value;
+    // Handle form submission with loading state
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('registerForm');
+        const registerBtn = document.getElementById('registerBtn');
+        const registerBtnText = document.getElementById('registerBtnText');
+        const registerBtnSpinner = document.getElementById('registerBtnSpinner');
         
-        // Check if passwords match
-        if (password1 !== password2) {
-            document.getElementById('password-error').style.display = 'block';
-            return false;
+        function resetButtonState() {
+            if (registerBtn) {
+                registerBtn.disabled = false;
+                registerBtn.classList.remove('disabled');
+            }
+            if (registerBtnText) {
+                registerBtnText.textContent = 'Register';
+            }
+            if (registerBtnSpinner) {
+                registerBtnSpinner.classList.add('d-none');
+            }
         }
-        return true;
+        
+        if (form && registerBtn) {
+            form.addEventListener('submit', function(e) {
+                // Validate passwords first
+                if (!validateForm()) {
+                    e.preventDefault();
+                    resetButtonState();
+                    return false;
+                }
+                
+                // Show loading state
+                registerBtn.disabled = true;
+                registerBtnText.textContent = 'Registering...';
+                registerBtnSpinner.classList.remove('d-none');
+                registerBtn.classList.add('disabled');
+                
+                // Allow form to submit normally
+                // Note: If form submission fails, the page will reload with errors
+                // and the button state will be reset automatically
+                return true;
+            });
+            
+            // Reset button state if page is loaded with errors (form validation failed)
+            {% if form.errors %}
+            resetButtonState();
+            {% endif %}
+        }
+    });
+
+    function validateForm() {
+        try {
+            var password1Element = document.getElementById('id_password1');
+            var password2Element = document.getElementById('id_password2');
+            var passwordErrorElement = document.getElementById('password-error');
+            
+            if (!password1Element || !password2Element) {
+                console.error('Password fields not found');
+                return true; // Let HTML5 validation handle it
+            }
+            
+            var password1 = password1Element.value;
+            var password2 = password2Element.value;
+            
+            // Check if passwords match
+            if (password1 !== password2) {
+                if (passwordErrorElement) {
+                    passwordErrorElement.style.display = 'block';
+                }
+                return false;
+            }
+            
+            // Hide error if passwords match
+            if (passwordErrorElement) {
+                passwordErrorElement.style.display = 'none';
+            }
+            
+            return true;
+        } catch (error) {
+            console.error('Error in validateForm:', error);
+            return true; // Allow form submission if validation function fails
+        }
     }
 
     function checkPasswordMatch() {
-        var password1 = document.getElementById('id_password1').value;
-        var password2 = document.getElementById('id_password2').value;
-        
-        if (password1 !== password2) {
-            document.getElementById('password-error').style.display = 'block';
-        } else {
-            document.getElementById('password-error').style.display = 'none';
+        try {
+            var password1Element = document.getElementById('id_password1');
+            var password2Element = document.getElementById('id_password2');
+            var passwordErrorElement = document.getElementById('password-error');
+            
+            if (!password1Element || !password2Element || !passwordErrorElement) {
+                return;
+            }
+            
+            var password1 = password1Element.value;
+            var password2 = password2Element.value;
+            
+            if (password1 !== password2) {
+                passwordErrorElement.style.display = 'block';
+            } else {
+                passwordErrorElement.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error in checkPasswordMatch:', error);
         }
     }
 

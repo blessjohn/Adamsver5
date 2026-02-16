@@ -59,9 +59,15 @@ else:
     ]
 
 # ALLOWED_HOSTS - support environment variable or use defaults
+# Ensure both adams.org.in and www.adams.org.in are always included
 allowed_hosts_env = os.getenv("ALLOWED_HOSTS")
 if allowed_hosts_env:
     ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(",")]
+    # Ensure both adams.org.in and www.adams.org.in are included
+    required_hosts = ["adams.org.in", "www.adams.org.in"]
+    for host in required_hosts:
+        if host not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(host)
 else:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1", "adams.org.in", "www.adams.org.in", "13.126.176.168"]
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https",)  # <-- Required if using HTTPS

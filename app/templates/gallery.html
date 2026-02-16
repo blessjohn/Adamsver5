@@ -111,6 +111,25 @@
   }
 }
 
+/* Remove blue bar from section-title */
+.section-title::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Remove any unwanted spacing from section-title */
+.section-title {
+  margin-bottom: 1rem !important;
+  padding-bottom: 0 !important;
+}
+
+/* Hide empty containers that might cause layout issues */
+section.gallery:empty,
+.gallery .container:empty,
+.gallery .row:empty {
+  display: none;
+}
+
 </style>
   <main id="main">
     <!-- <h2 class="section-title m-3 text-center">Gallery</h2> -->
@@ -120,7 +139,7 @@
     <section class="gallery">
       <div class="container">
         {% if user.is_authenticated and user.role == 'admin' %}
-        <div class="d-flex justify-content-center gallery">
+        <div class="d-flex justify-content-center mb-3">
           <i data-bs-toggle="modal" data-bs-target="#galleryUpload"
             class="bi bi-plus fs-3 d-flex justify-content-center align-items-center rounded"></i>
         </div>
@@ -163,8 +182,6 @@
       </div>
     </section>
   </main>
-  
-
 
   <!-- modal -->
   <div class="modal fade" id="galleryUpload" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -238,8 +255,6 @@
       </div>
     </div>
   </div>
-
-</main>
 
 <!-- Template Main JS File -->
 <script src="{% static 'assets/js/main.js' %}"></script>

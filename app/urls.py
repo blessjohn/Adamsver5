@@ -97,4 +97,16 @@ urlpatterns = [
     # Payment Gateway URLs
     path('payment_request/', views.payment_request, name='payment_request'),
     path('payment_response/', views.payment_response, name='payment_response'),
+    
+    # Registration Questions Management URLs
+    path('manage-registration-questions/', views.manage_registration_questions, name='manage_registration_questions'),
+    path('api/add-registration-question/', views.add_registration_question, name='add_registration_question'),
+    path('api/update-registration-question/<int:question_id>/', views.update_registration_question, name='update_registration_question'),
+    path('api/delete-registration-question/<int:question_id>/', views.delete_registration_question, name='delete_registration_question'),
+    path('api/get-registration-question/<int:question_id>/', views.get_registration_question, name='get_registration_question'),
+    path('api/migrate-existing-fields/', views.migrate_existing_fields_to_questions, name='migrate_existing_fields_to_questions'),
+    
+    # System Settings URLs
+    path('manage-system-settings/', views.manage_system_settings, name='manage_system_settings'),
+    path('api/toggle-two-factor-auth/', views.toggle_two_factor_auth, name='toggle_two_factor_auth'),
 ]
