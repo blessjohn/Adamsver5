@@ -1,0 +1,31 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg border-danger">
+        <div class="card-header bg-danger text-white text-center">
+          <h3 class="mb-0"><i class="bi bi-x-circle-fill"></i> Payment Failed</h3>
+        </div>
+        <div class="card-body text-center">
+          <div class="mb-4">
+            <i class="bi bi-x-circle-fill text-danger" style="font-size: 4rem;"></i>
+          </div>
+          <h4 class="text-danger mb-3">Transaction Failed</h4>
+          <p class="lead">{{ response_message }}</p>
+          <hr>
+          <div class="alert alert-warning">
+            <small>If you have been charged, please contact support with your transaction details.</small>
+          </div>
+          <div class="mt-4">
+            <a href="{% url 'home' %}" class="btn btn-primary">Return to Home</a>
+            <a href="{% url 'payment_request' %}" class="btn btn-outline-secondary">Try Again</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -93,4 +93,8 @@ urlpatterns = [
     path("api/upload-rulebook/", views.upload_rulebook, name="upload_rulebook"),
     path("api/toggle-rulebook/<int:rulebook_id>/", views.toggle_rulebook, name="toggle_rulebook"),
     path("api/delete-rulebook/<int:rulebook_id>/", views.delete_rulebook, name="delete_rulebook"),
+    
+    # Payment Gateway URLs
+    path('payment_request/', views.payment_request, name='payment_request'),
+    path('payment_response/', views.payment_response, name='payment_response'),
 ]

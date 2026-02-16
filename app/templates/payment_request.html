@@ -1,0 +1,149 @@
+{% extends 'main.html' %}
+{% load static %}
+{% csrf_token %}
+
+{% block content %}
+<html>
+  <head>
+    <title>UatPayments Form</title>
+    <script>
+      var hash = "{{ hash }}";
+      function formAutoSubmit() {
+        if (hash == '') {
+          return;
+        }
+        var payform = document.getElementById("uatForm");
+        payform.submit();
+      }
+      window.onload = formAutoSubmit;
+    </script>
+  </head>
+  <body>
+    <div class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+              <h2 class="mb-0">UatPayments Form</h2>
+            </div>
+            <div class="card-body">
+              <form action="{{ action }}" method="post" id="uatForm">
+                {% csrf_token %}
+                <input type="hidden" name="api_key" value="{{ API_KEY }}" />
+                <input type="hidden" name="hash" value="{{ hash }}"/>
+                
+                <div class="mb-3">
+                  <label class="form-label">Amount *</label>
+                  <input type="text" name="amount" class="form-control" value="{{ posted.amount }}" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Email *</label>
+                  <input type="email" name="email" class="form-control" value="{{ posted.email }}" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Name *</label>
+                  <input type="text" name="name" class="form-control" value="{{ posted.name }}" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Phone *</label>
+                  <input type="text" name="phone" class="form-control" value="{{ posted.phone }}" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Address Line 1 *</label>
+                  <input type="text" name="address_line_1" class="form-control" value="{{ posted.address_line_1 }}" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Address Line 2</label>
+                  <input type="text" name="address_line_2" class="form-control" value="{{ posted.address_line_2 }}">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Order ID *</label>
+                  <input type="text" name="order_id" class="form-control" value="{{ posted.order_id }}" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Currency *</label>
+                  <input type="text" name="currency" class="form-control" value="INR" required readonly>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Description *</label>
+                  <input type="text" name="description" class="form-control" value="{{ posted.description|default:'Membership Payment' }}" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">City *</label>
+                  <input type="text" name="city" class="form-control" value="{{ posted.city }}" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">State</label>
+                  <input type="text" name="state" class="form-control" value="{{ posted.state }}">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Zip Code *</label>
+                  <input type="text" name="zip_code" class="form-control" value="{{ posted.zip_code }}" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Country *</label>
+                  <input type="text" name="country" class="form-control" value="IND" required readonly>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Return URL *</label>
+                  <input type="text" name="return_url" class="form-control" value="{{ posted.return_url|default:'http://127.0.0.1:8000/payment_response/' }}" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Mode *</label>
+                  <select name="mode" class="form-control" required>
+                    <option value="TEST" {% if posted.mode == 'TEST' or not posted.mode %}selected{% endif %}>TEST</option>
+                    <option value="LIVE" {% if posted.mode == 'LIVE' %}selected{% endif %}>LIVE</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">UDF1</label>
+                  <input type="text" name="udf1" class="form-control" value="{{ posted.udf1 }}">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">UDF2</label>
+                  <input type="text" name="udf2" class="form-control" value="{{ posted.udf2 }}">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">UDF3</label>
+                  <input type="text" name="udf3" class="form-control" value="{{ posted.udf3 }}">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">UDF4</label>
+                  <input type="text" name="udf4" class="form-control" value="{{ posted.udf4 }}">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">UDF5</label>
+                  <input type="text" name="udf5" class="form-control" value="{{ posted.udf5 }}">
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary btn-lg">Submit Payment</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+{% endblock %}

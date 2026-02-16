@@ -65,7 +65,7 @@ if allowed_hosts_env:
 else:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1", "adams.org.in", "www.adams.org.in", "13.126.176.168"]
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https",)  # <-- Required if using HTTPS
-USE_X_FORWARDED_HOST = True  # Required for proper host header handling behind Nginx proxy
+USE_X_FORWARDED_HOST = False  # Required for proper host header handling behind Nginx proxy
 
 # Security settings for production (only when DEBUG=False)
 if not DEBUG:

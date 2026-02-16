@@ -1,0 +1,36 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg border-success">
+        <div class="card-header bg-success text-white text-center">
+          <h3 class="mb-0"><i class="bi bi-check-circle-fill"></i> Payment Successful</h3>
+        </div>
+        <div class="card-body text-center">
+          <div class="mb-4">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+          </div>
+          <h4 class="text-success mb-3">Thank You!</h4>
+          <p class="lead">Your order status is <strong>{{ status }}</strong></p>
+          <hr>
+          <div class="text-start">
+            <p><strong>Transaction ID:</strong> <span class="text-primary">{{ txnid }}</span></p>
+            <p><strong>Amount Paid:</strong> <span class="text-success">Rs {{ amount }}</span></p>
+          </div>
+          <hr>
+          <div class="alert alert-info">
+            <small>Please save your transaction ID for future reference.</small>
+          </div>
+          <div class="mt-4">
+            <a href="{% url 'home' %}" class="btn btn-primary">Return to Home</a>
+            <a href="{% url 'user_profile' %}" class="btn btn-outline-secondary">View Profile</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

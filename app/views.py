@@ -3,6 +3,7 @@ import os
 import base64
 import json
 import time
+import hashlib
 from io import BytesIO
 from datetime import timedelta
 
@@ -3527,3 +3528,115 @@ def refund_policy(request):
     
     data = {"user": user}
     return render(request, "refund_policy.html", {"data": data})
+
+
+# Payment Gateway Integration - UatPayments
+def payment_request(request):
+    """
+    Handle payment request and redirect to payment gateway.
+    """
+    # UatPayments API credentials
+    API_KEY = "fb6bca86-b429-4abf-a42f-824bdd29022e"
+    SALT = "80c67bfdf027da08de88ab5ba903fecafaab8f6d"
+    URL = "https://pgbiz.omniware.in/v2/paymentrequest"
+    
+    posted = {}
+    for i in request.POST:
+        posted[i] = request.POST[i]
+    
+    # Hash sequence for payment request
+    hash_sequence = "address_line_1|address_line_2|amount|api_key|city|country|currency|description|email|mode|name|order_id|phone|return_url|state|udf1|udf2|udf3|udf4|udf5|zip_code"
+    
+    # Add API_KEY to posted data for hash generation
+    posted['api_key'] = API_KEY
+    
+    hash_string = SALT
+    hash_vars_seq = hash_sequence.split('|')
+    
+    for i in hash_vars_seq:
+        if i in posted.keys():
+            if len(str(posted[i])) > 0:
+                hash_string += '|'
+                hash_string += str(posted[i])
+    
+    hash_value = hashlib.sha512(hash_string.encode()).hexdigest().upper()
+    action = URL
+    
+    # Validate required fields
+    required_fields = [
+        'amount', 'address_line_1', 'city', 'name', 'email', 
+        'phone', 'order_id', 'currency', 'description', 
+        'country', 'return_url'
+    ]
+    
+    if all(posted.get(field) and posted.get(field) != '' for field in required_fields):
+        return render(request, 'payment_request.html', {
+            "posted": posted,
+            "hash": hash_value,
+            "API_KEY": API_KEY,
+            "action": action
+        })
+    else:
+        hash_value = ''
+        return render(request, 'payment_request.html', {
+            "posted": posted,
+            "hash": hash_value,
+            "API_KEY": API_KEY,
+            "action": "."
+        })
+
+
+@csrf_exempt
+def payment_response(request):
+    """
+    Handle payment response from payment gateway.
+    """
+    if request.method != 'POST':
+        return render(request, 'payment_failure.html', {
+            "response_message": "Invalid request method"
+        })
+    
+    try:
+        response_code = request.POST.get("response_code", "")
+        transaction_id = request.POST.get("transaction_id", "")
+        response_message = request.POST.get("response_message", "")
+        amount = request.POST.get("amount", "")
+        hash_value = request.POST.get("hash", "")
+        
+        # UatPayments SALT for response verification
+        SALT = "80c67bfdf027da08de88ab5ba903fecafaab8f6d"
+        hash_string = SALT
+        
+        # Build hash string from POST data (excluding hash itself)
+        for i in sorted(request.POST):
+            if i != 'hash':
+                if len(request.POST[i]) > 0:
+                    hash_string += '|'
+                    hash_string += request.POST[i]
+        
+        calculated_hash = hashlib.sha512(hash_string.encode()).hexdigest().upper()
+        
+        # Verify hash
+        if hash_value == calculated_hash:
+            if response_code == '0':
+                # Payment successful
+                return render(request, 'payment_success.html', {
+                    "txnid": transaction_id,
+                    "status": response_message,
+                    "amount": amount
+                })
+            else:
+                # Payment failed
+                return render(request, 'payment_failure.html', {
+                    "response_message": response_message or "Transaction Failed"
+                })
+        else:
+            # Hash mismatch
+            return render(request, 'payment_failure.html', {
+                "response_message": "Hash Mismatched, Transaction Failed"
+            })
+    except Exception as e:
+        logger.error(f"Error processing payment response: {e}")
+        return render(request, 'payment_failure.html', {
+            "response_message": "Error processing payment response"
+        })
