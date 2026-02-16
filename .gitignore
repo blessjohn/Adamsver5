@@ -72,4 +72,6 @@ test1
 # OneDrive
 */OneDrive/*
 ../*
-logs/app.log
+
+logs/
+*.log
