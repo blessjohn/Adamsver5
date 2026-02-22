@@ -72,6 +72,7 @@ urlpatterns = [
     path("api/approve-member/<int:user_id>/", views.approve_member, name="approve_member"),
     path("api/reject-member/<int:user_id>/", views.reject_member, name="reject_member"),
     path("api/change-member-status/<int:user_id>/", views.change_member_status, name="change_member_status"),
+    path("api/change-user-role/<int:user_id>/", views.change_user_role, name="change_user_role"),
     
     # Notice Board URLs
     path("api/get-notices/", views.get_notices, name="get_notices"),

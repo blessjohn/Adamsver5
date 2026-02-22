@@ -70,6 +70,9 @@ if allowed_hosts_env:
             ALLOWED_HOSTS.append(host)
 else:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1", "adams.org.in", "www.adams.org.in", "13.126.176.168"]
+# Add testserver for Django test client
+if "testserver" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append("testserver")
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https",)  # <-- Required if using HTTPS
 USE_X_FORWARDED_HOST = False  # Required for proper host header handling behind Nginx proxy
 
@@ -97,6 +100,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Add WhiteNoise for static file serving
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -231,6 +235,9 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # For production collectstatic
+
+# WhiteNoise configuration for serving static files
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files (user uploads)
 MEDIA_URL = "/media/"

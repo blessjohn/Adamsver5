@@ -757,6 +757,7 @@
                     <th>Status</th>
                     <th>Action</th>
                     <th>Change Status</th>
+                    <th>Change Role</th>
                     <th>Generate QR</th>
                     <th>Update</th>
                     <th>Delete</th>
@@ -790,6 +791,11 @@
                         <i class="bi bi-pencil-square text-primary d-flex justify-content-center align-items-center rounded cursor-pointer"
                             onclick="openChangeStatusModal({{ user.id }}, '{{ user.first_name }} {{ user.last_name }}', '{{ user.status }}')"
                             title="Change Status"></i>
+                    </td>
+                    <td>
+                        <i class="bi bi-person-badge text-info d-flex justify-content-center align-items-center rounded cursor-pointer"
+                            onclick="openChangeRoleModal({{ user.id }}, '{{ user.first_name }} {{ user.last_name }}', '{{ user.role }}')"
+                            title="Change Role"></i>
                     </td>
                     <td>
                         <a href="{% url 'generate-qr-code' user.id %}" download="qr_code.png">
@@ -942,16 +948,27 @@
     async function loadFile(fileField, userId) {
         try {
             const response = await fetch(`/api/user/${userId}/file/${fileField}/`);
-            if (!response.ok) throw new Error("File not found");
+            if (!response.ok) {
+                // Check if it's a 404 for optional fields (like state_nmc)
+                if (response.status === 404) {
+                    const errorData = await response.json().catch(() => ({}));
+                    if (errorData.error === "File not provided" || errorData.error === "File not found") {
+                        // Return a special indicator for missing optional files
+                        return { url: null, type: null, missing: true };
+                    }
+                }
+                throw new Error("File not found");
+            }
             const blob = await response.blob();
 
             // Determine file type
             const fileType = blob.type;
             const url = URL.createObjectURL(blob);
 
-            return { url, type: fileType };
-        } catch {
-            return { url: "/static/images/placeholder.png", type: "image/png" }; // Placeholder for missing files
+            return { url, type: fileType, missing: false };
+        } catch (error) {
+            console.log(`File ${fileField} not available:`, error);
+            return { url: null, type: null, missing: true }; // Return null for missing files
         }
     }
 
@@ -989,7 +1006,12 @@
                 //     `;
                 // };
 
-                const renderFile = ({ url, type }) => {
+                const renderFile = ({ url, type, missing }) => {
+                    // Handle missing/optional files (like state_nmc)
+                    if (missing || !url || !type) {
+                        return `<p class="text-muted"><em>Not provided</em></p>`;
+                    }
+                    
                     if (type === "application/pdf") {
                         return `<a href="${url}" target="_blank" class="btn btn-link">View PDF</a>`;
                     } else if (type.startsWith("image/")) {
@@ -1861,6 +1883,58 @@
         bootstrap.Modal.getInstance(document.getElementById('changeStatusModal')).hide();
     }
 
+    // Role Change Functions
+    let changeRoleUserId = null;
+
+    function openChangeRoleModal(userId, userName, currentRole) {
+        changeRoleUserId = userId;
+        document.getElementById('changeRoleMemberName').textContent = userName;
+        document.getElementById('newRole').value = currentRole;
+        document.getElementById('roleNote').value = '';
+        const modal = new bootstrap.Modal(document.getElementById('changeRoleModal'));
+        modal.show();
+    }
+
+    async function changeRole() {
+        if (!changeRoleUserId) return;
+
+        const newRole = document.getElementById('newRole').value;
+        const roleNote = document.getElementById('roleNote').value.trim();
+
+        if (!newRole) {
+            alert('Please select a role');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/change-user-role/${changeRoleUserId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    role: newRole,
+                    note: roleNote
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Role updated successfully!');
+                location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error changing role: ' + error.message);
+        }
+
+        bootstrap.Modal.getInstance(document.getElementById('changeRoleModal')).hide();
+    }
+
     // Notice Board Functions
     let editingNoticeId = null;
 
@@ -2471,6 +2545,40 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="changeStatus()">Update Status</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Role Modal -->
+<div class="modal fade" id="changeRoleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">Change User Role</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Change role for <strong id="changeRoleMemberName"></strong></p>
+                <div class="mb-3">
+                    <label for="newRole" class="form-label">New Role *</label>
+                    <select class="form-select" id="newRole" required>
+                        <option value="">-- Select Role --</option>
+                        <option value="admin">Admin</option>
+                        <option value="student">Student</option>
+                        <option value="intern">Intern</option>
+                        <option value="doctor">Doctor</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="roleNote" class="form-label">Admin Note (Optional)</label>
+                    <textarea class="form-control" id="roleNote" rows="3" 
+                        placeholder="Add a note about this role change..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-info" onclick="changeRole()">Update Role</button>
             </div>
         </div>
     </div>

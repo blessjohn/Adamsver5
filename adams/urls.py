@@ -16,9 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+import os
 from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app.urls'))
 ]
+
+# Serve static files in development and Docker
+# In Docker/production, we need to serve static files even when DEBUG=False
+# This is acceptable for Docker deployments where nginx is not used
+if settings.DEBUG or os.getenv('SERVE_STATIC', 'true').lower() == 'true':
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

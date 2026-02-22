@@ -133,35 +133,65 @@ def register_user_view(request):
 
             upload_success = True
             uploaded_files = {}
+            from django.conf import settings
+            import os
+            from pathlib import Path
 
             for field_name, folder_path in file_fields:
                 file = request.FILES.get(field_name)
                 if file:
                     logger.debug(f"Processing upload for {field_name}")
                     file_name = f"{folder_path}{file.name}"
-                    if upload_image_to_minio(file, file_name):
+                    
+                    # Try MinIO upload first
+                    # Reset file pointer before upload
+                    file.seek(0)
+                    minio_success = upload_image_to_minio(file, file_name)
+                    
+                    if minio_success:
                         logger.info(
-                            f"Successfully uploaded {field_name} to {file_name}"
+                            f"Successfully uploaded {field_name} to MinIO: {file_name}"
                         )
                         uploaded_files[field_name] = file_name
                     else:
-                        logger.error(f"Failed to upload {field_name} to MinIO")
-                        form.add_error(field_name, f"Failed to upload {field_name}.")
+                        # MinIO upload failed - files must be stored in MinIO
+                        error_msg = f"Failed to upload {field_name} to MinIO. MinIO is required for file storage."
+                        logger.error(error_msg)
+                        form.add_error(field_name, f"File upload failed. Please ensure MinIO server is running and accessible.")
                         upload_success = False
 
             if upload_success:
                 # Assign uploaded file paths to the user model fields
-                user.photo = uploaded_files.get("photo")
-                user.state_nmc = uploaded_files.get("state_nmc")
-                user.passport = uploaded_files.get("passport")
-                user.medical_qualification = uploaded_files.get("medical_qualification")
+                # Ensure required fields have values
+                user.photo = uploaded_files.get("photo") or ""
+                user.state_nmc = uploaded_files.get("state_nmc") or ""
+                user.passport = uploaded_files.get("passport") or ""
+                user.medical_qualification = uploaded_files.get("medical_qualification") or ""
                 user.payment_transaction_proof = uploaded_files.get(
                     "payment_transaction_proof"
-                )
-                user.save()
+                ) or ""
+                
+                # Validate required fields are not empty
+                required_fields = {
+                    "photo": user.photo,
+                    "passport": user.passport,
+                    "medical_qualification": user.medical_qualification,
+                    "payment_transaction_proof": user.payment_transaction_proof,
+                }
+                
+                missing_fields = [field for field, value in required_fields.items() if not value]
+                if missing_fields:
+                    logger.error(f"Missing required file fields: {missing_fields}")
+                    for field in missing_fields:
+                        form.add_error(field, f"{field.replace('_', ' ').title()} is required.")
+                    upload_success = False
+                
+                if upload_success:
+                    # All files uploaded successfully, proceed with user save
+                    user.save()
 
-                # Map question text to User model field names for backward compatibility
-                question_to_field_map = {
+                    # Map question text to User model field names for backward compatibility
+                    question_to_field_map = {
                     'First Name': 'first_name',
                     'Middle Name': 'middle_name',
                     'Last Name': 'last_name',
@@ -189,99 +219,99 @@ def register_user_view(request):
                     'Are you in any district group of AKFMA? If yes mention your MID': 'mid',
                     'Agreement for Joining Association of Doctors And Medical Students (ADAMS)': 'agreement',
                     'I agree to the terms and conditions of the association and I hereby submit my application for membership in ADAMS': 'application',
-                }
-                
-                # Save custom question answers and map to User model fields
-                custom_questions = RegistrationQuestion.objects.filter(is_active=True)
-                for question in custom_questions:
-                    answer_key = f"custom_question_{question.id}"
+                    }
                     
-                    # Handle file uploads
-                    if question.question_type == 'file':
-                        uploaded_file = request.FILES.get(answer_key)
-                        if uploaded_file:
-                            # Validate file type (PDF or JPG)
-                            file_ext = uploaded_file.name.split('.')[-1].lower()
-                            if file_ext not in ['pdf', 'jpg', 'jpeg', 'png']:
-                                continue  # Skip invalid file types
+                    # Save custom question answers and map to User model fields
+                    custom_questions = RegistrationQuestion.objects.filter(is_active=True)
+                    for question in custom_questions:
+                        answer_key = f"custom_question_{question.id}"
+                        
+                        # Handle file uploads
+                        if question.question_type == 'file':
+                            uploaded_file = request.FILES.get(answer_key)
+                            if uploaded_file:
+                                # Validate file type (PDF or JPG)
+                                file_ext = uploaded_file.name.split('.')[-1].lower()
+                                if file_ext not in ['pdf', 'jpg', 'jpeg', 'png']:
+                                    continue  # Skip invalid file types
+                                
+                                # Upload to MinIO
+                                folder_path = f"users/{user.username}/custom_questions/"
+                                file_name = f"{folder_path}{uploaded_file.name}"
+                                
+                                if upload_image_to_minio(uploaded_file, file_name):
+                                    answer, created = RegistrationAnswer.objects.get_or_create(
+                                        user=user,
+                                        question=question,
+                                        defaults={}
+                                    )
+                                    answer.answer_file = file_name
+                                    answer.save()
+                                    
+                                    # Map to User model field if mapping exists
+                                    user_field = question_to_field_map.get(question.question_text)
+                                    if user_field:
+                                        setattr(user, user_field, file_name)
+                            elif question.is_required:
+                                # Required file but not provided - validation should catch this
+                                continue
+                        else:
+                            # Handle text-based answers
+                            answer_value = request.POST.get(answer_key, '').strip()
                             
-                            # Upload to MinIO
-                            folder_path = f"users/{user.username}/custom_questions/"
-                            file_name = f"{folder_path}{uploaded_file.name}"
+                            if question.is_required and not answer_value:
+                                continue  # Skip if required but empty (form validation should catch this)
                             
-                            if upload_image_to_minio(uploaded_file, file_name):
+                            if answer_value:  # Only save if there's an answer
                                 answer, created = RegistrationAnswer.objects.get_or_create(
                                     user=user,
                                     question=question,
                                     defaults={}
                                 )
-                                answer.answer_file = file_name
+                                
+                                # Set answer based on question type
+                                if question.question_type == 'date':
+                                    try:
+                                        from datetime import datetime
+                                        answer.answer_date = datetime.strptime(answer_value, '%Y-%m-%d').date()
+                                    except:
+                                        pass
+                                elif question.question_type == 'number':
+                                    try:
+                                        answer.answer_number = float(answer_value)
+                                    except:
+                                        pass
+                                elif question.question_type in ['checkbox', 'radio']:
+                                    answer.answer_boolean = answer_value.lower() in ['true', '1', 'on', 'yes']
+                                else:
+                                    answer.answer_text = answer_value
+                                
                                 answer.save()
                                 
                                 # Map to User model field if mapping exists
                                 user_field = question_to_field_map.get(question.question_text)
                                 if user_field:
-                                    setattr(user, user_field, file_name)
-                        elif question.is_required:
-                            # Required file but not provided - validation should catch this
-                            continue
-                    else:
-                        # Handle text-based answers
-                        answer_value = request.POST.get(answer_key, '').strip()
-                        
-                        if question.is_required and not answer_value:
-                            continue  # Skip if required but empty (form validation should catch this)
-                        
-                        if answer_value:  # Only save if there's an answer
-                            answer, created = RegistrationAnswer.objects.get_or_create(
-                                user=user,
-                                question=question,
-                                defaults={}
-                            )
-                            
-                            # Set answer based on question type
-                            if question.question_type == 'date':
-                                try:
-                                    from datetime import datetime
-                                    answer.answer_date = datetime.strptime(answer_value, '%Y-%m-%d').date()
-                                except:
-                                    pass
-                            elif question.question_type == 'number':
-                                try:
-                                    answer.answer_number = float(answer_value)
-                                except:
-                                    pass
-                            elif question.question_type in ['checkbox', 'radio']:
-                                answer.answer_boolean = answer_value.lower() in ['true', '1', 'on', 'yes']
-                            else:
-                                answer.answer_text = answer_value
-                            
-                            answer.save()
-                            
-                            # Map to User model field if mapping exists
-                            user_field = question_to_field_map.get(question.question_text)
-                            if user_field:
-                                if question.question_type == 'date':
-                                    setattr(user, user_field, str(answer.answer_date) if answer.answer_date else '')
-                                elif question.question_type in ['checkbox']:
-                                    setattr(user, user_field, answer.answer_boolean)
-                                else:
-                                    setattr(user, user_field, answer.answer_text or '')
-                
-                # Save user after mapping all fields
-                user.save()
+                                    if question.question_type == 'date':
+                                        setattr(user, user_field, str(answer.answer_date) if answer.answer_date else '')
+                                    elif question.question_type in ['checkbox']:
+                                        setattr(user, user_field, answer.answer_boolean)
+                                    else:
+                                        setattr(user, user_field, answer.answer_text or '')
+                    
+                    # Save user after mapping all fields (if any custom questions updated fields)
+                    user.save()
 
-                logger.info(
-                    f"New user registered successfully - username: {form.cleaned_data['username']}"
-                )
+                    logger.info(
+                        f"New user registered successfully - username: {form.cleaned_data['username']}"
+                    )
 
-                send_email_with_attachments(
-                    subject="Memebership Register Successfull",
-                    recipient_list=[user.email],
-                )
+                    send_email_with_attachments(
+                        subject="Memebership Register Successfull",
+                        recipient_list=[user.email],
+                    )
 
-                messages.success(request, "Registration successful. Please log in.")
-                return redirect("login")
+                    messages.success(request, "Registration successful. Please log in.")
+                    return redirect("login")
             else:
                 logger.error(
                     f"Registration failed due to file upload errors: {form.errors}"
@@ -1592,7 +1622,34 @@ def admin_panel(request):
     users = User.objects.all()
     logger.debug(f"Retrieved {len(users)} users from database")
 
-    data = {"user": user, "users": users}
+    # Calculate statistics
+    total_users = User.objects.count()
+    approved_count = User.objects.filter(status='approved').count()
+    pending_count = User.objects.filter(status='pending').count()
+    rejected_count = User.objects.filter(status='rejected').count()
+    
+    # Calculate category statistics
+    from django.db.models import Count
+    category_stats = User.objects.values('category').annotate(count=Count('id')).order_by('category')
+    by_category = {item['category']: item['count'] for item in category_stats if item['category']}
+    
+    statistics = {
+        'total_users': total_users,
+        'by_status': {
+            'approved': approved_count,
+            'pending': pending_count,
+            'rejected': rejected_count,
+        },
+        'by_category': by_category,
+    }
+    
+    logger.debug(f"Statistics calculated - Total: {total_users}, Approved: {approved_count}, Pending: {pending_count}, Rejected: {rejected_count}")
+
+    data = {
+        "user": user, 
+        "users": users,
+        "statistics": statistics
+    }
     logger.debug("Rendering admin panel")
     return render(request, "admin_panel.html", {"data": data})
 
@@ -1825,11 +1882,12 @@ def fetch_image_from_minio(bucket_name, object_name):
 @login_required(login_url="/login/")
 def serve_user_file(request, user_id, file_field):
     """
-    Serve a user's file (image or PDF) from MinIO storage.
+    Serve a user's file (image or PDF) from MinIO storage or local filesystem.
 
     This view retrieves and serves files associated with a user by:
     - Fetching the user object and requested file field
-    - Getting the file from MinIO storage
+    - Checking if file is stored locally (media/) or in MinIO
+    - Getting the file from appropriate storage location
     - Setting appropriate content type headers
     - Returning file data as HTTP response
 
@@ -1858,31 +1916,81 @@ def serve_user_file(request, user_id, file_field):
     user = get_object_or_404(User, id=user_id)
     file_path = getattr(user, file_field, None)
 
-    if not file_path:
-        logger.warning(f"File field {file_field} is empty for user {user_id}")
-        return JsonResponse({"error": "File not found"}, status=404)
+    # Handle empty/None file paths (especially for optional fields like state_nmc)
+    if not file_path or file_path == "" or str(file_path).strip() == "" or str(file_path) == "None":
+        logger.debug(f"File field {file_field} is empty for user {user_id} (optional field may not be provided)")
+        return JsonResponse({"error": "File not provided"}, status=404)
 
-    bucket_name = os.getenv("MINIO_BUCKET_NAME")
-    logger.debug(f"Fetching file {file_path} from bucket {bucket_name}")
-
-    file_data = fetch_image_from_minio(bucket_name, file_path)
-    if not file_data:
-        logger.error(f"Failed to fetch file {file_path} from MinIO")
-        return HttpResponse(status=500, content="Error fetching file")
-
-    # Set content type based on the file extension
-    if file_path.endswith(".pdf"):
-        content_type = "application/pdf"
-    elif file_path.endswith((".jpg", ".jpeg")):
-        content_type = "image/jpeg"
-    elif file_path.endswith(".png"):
-        content_type = "image/png"
+    # Check if file is stored locally (starts with "media/") or in MinIO
+    file_path_str = str(file_path)
+    if file_path_str.startswith("media/"):
+        # File is stored locally - serve from filesystem
+        logger.debug(f"Serving local file: {file_path_str}")
+        try:
+            
+            # Construct full file path
+            # BASE_DIR is a Path object, convert to string
+            base_dir = str(settings.BASE_DIR)
+            full_path = os.path.join(base_dir, file_path_str)
+            
+            # Normalize path separators for Windows
+            full_path = os.path.normpath(full_path)
+            
+            # Security check: ensure file is within MEDIA_ROOT
+            media_root = os.path.normpath(settings.MEDIA_ROOT)
+            if not full_path.startswith(media_root):
+                logger.error(f"Security violation: File path outside MEDIA_ROOT: {file_path_str}")
+                return HttpResponse(status=403, content="Access denied")
+            
+            if not os.path.exists(full_path):
+                logger.error(f"Local file not found: {full_path}")
+                return JsonResponse({"error": "File not found"}, status=404)
+            
+            # Read file
+            with open(full_path, 'rb') as f:
+                file_data = f.read()
+            
+            logger.info(f"Successfully read local file: {full_path} (size: {len(file_data)} bytes)")
+            
+            # Determine content type
+            if file_path_str.endswith(".pdf"):
+                content_type = "application/pdf"
+            elif file_path.endswith((".jpg", ".jpeg")):
+                content_type = "image/jpeg"
+            elif file_path.endswith(".png"):
+                content_type = "image/png"
+            else:
+                content_type = "application/octet-stream"
+            
+            logger.info(f"Successfully serving local {content_type} file for user {user_id}")
+            return HttpResponse(file_data, content_type=content_type)
+            
+        except Exception as e:
+            logger.exception(f"Error serving local file {file_path}: {e}")
+            return HttpResponse(status=500, content=f"Error serving file: {str(e)}")
+    
     else:
-        logger.error(f"Unsupported file type for {file_path}")
-        return HttpResponse(status=400, content="Unsupported file type")
+        # File is stored in MinIO - fetch from MinIO
+        logger.debug(f"Fetching file {file_path_str} from MinIO")
+        bucket_name = settings.MINIO_BUCKET_NAME
+        
+        file_data = fetch_image_from_minio(bucket_name, file_path_str)
+        if not file_data:
+            logger.error(f"Failed to fetch file {file_path_str} from MinIO")
+            return HttpResponse(status=500, content="Error fetching file from MinIO")
 
-    logger.info(f"Successfully serving {content_type} file for user {user_id}")
-    return HttpResponse(file_data, content_type=content_type)
+        # Set content type based on the file extension
+        if file_path_str.endswith(".pdf"):
+            content_type = "application/pdf"
+        elif file_path_str.endswith((".jpg", ".jpeg")):
+            content_type = "image/jpeg"
+        elif file_path_str.endswith(".png"):
+            content_type = "image/png"
+        else:
+            content_type = "application/octet-stream"
+
+        logger.info(f"Successfully serving MinIO {content_type} file for user {user_id} (size: {len(file_data)} bytes)")
+        return HttpResponse(file_data, content_type=content_type)
 
 
 @csrf_exempt
@@ -3004,6 +3112,74 @@ def change_member_status(request, user_id):
         }, status=400)
     except Exception as e:
         logger.exception(f"Error changing status: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=500)
+
+
+@csrf_exempt
+@login_required(login_url="/login/")
+@admin_required
+@require_POST
+def change_user_role(request, user_id):
+    """
+    Change user role with admin note.
+    """
+    logger.debug(f"Changing role for user ID: {user_id}")
+    
+    try:
+        data = json.loads(request.body)
+        new_role = data.get('role', '').strip()
+        note = data.get('note', '').strip()
+        
+        # Validate role
+        valid_roles = ['admin', 'student', 'intern', 'doctor']
+        if not new_role or new_role not in valid_roles:
+            return JsonResponse({
+                'success': False,
+                'message': f'Invalid role. Must be one of: {", ".join(valid_roles)}'
+            }, status=400)
+        
+        user = User.objects.get(id=user_id)
+        old_role = user.role
+        
+        # Prevent changing own role from admin (security measure)
+        if user.id == request.user.id and old_role == 'admin' and new_role != 'admin':
+            return JsonResponse({
+                'success': False,
+                'message': 'You cannot change your own role from admin'
+            }, status=400)
+        
+        # Update user role
+        user.role = new_role
+        if note:
+            user.admin_remarks = f"Role changed from {old_role} to {new_role}: {note}"
+        else:
+            user.admin_remarks = f"Role changed from {old_role} to {new_role}"
+        user.save()
+        
+        logger.info(f"User {user.username} role changed from {old_role} to {new_role} by {request.user.username}")
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Role updated successfully',
+            'new_role': new_role
+        })
+        
+    except User.DoesNotExist:
+        logger.error(f"User with ID {user_id} not found")
+        return JsonResponse({
+            'success': False,
+            'message': 'User not found'
+        }, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        logger.exception(f"Error changing role: {str(e)}")
         return JsonResponse({
             'success': False,
             'message': str(e)

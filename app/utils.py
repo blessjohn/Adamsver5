@@ -1,6 +1,7 @@
 from io import BytesIO
 import random
 import string
+import os
 
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -15,27 +16,97 @@ from .models import OTP
 
 # Initialize the Minio client (lazy initialization to avoid connection errors at startup)
 _minio_client = None
+_minio_client_failed = False  # Track if client initialization failed
 _bucket_name = settings.MINIO_BUCKET_NAME
 
 def get_minio_client():
     """Get or create MinIO client instance (lazy initialization)"""
-    global _minio_client
+    global _minio_client, _minio_client_failed
+    
+    # Reset failed flag to retry connection
+    # This allows retrying if MinIO becomes available
+    if _minio_client_failed:
+        _minio_client = None
+        _minio_client_failed = False
+    
     if _minio_client is None:
-        _minio_client = Minio(
-            settings.MINIO_URL,
-            access_key=settings.MINIO_ACCESS_KEY,
-            secret_key=settings.MINIO_SECRET_KEY,
-            secure=False,
-        )
-        # Try to ensure bucket exists (non-blocking, won't fail if MinIO is down)
         try:
-            if not _minio_client.bucket_exists(_bucket_name):
-                _minio_client.make_bucket(_bucket_name)
-                logger.info(f"Bucket '{_bucket_name}' created successfully.")
-            else:
-                logger.info(f"Bucket '{_bucket_name}' already exists.")
+            # Only create client if MinIO is enabled
+            if not settings.MINIO_ENABLED:
+                if settings.DEBUG:
+                    logger.warning("MinIO is not fully configured. File uploads will use local storage fallback.")
+                else:
+                    logger.error("MinIO is not fully configured. Required for production deployment.")
+                return None
+            
+            # Determine if connection should be secure (HTTPS)
+            # Check if URL contains https:// or if MINIO_SECURE env var is set
+            minio_url = settings.MINIO_URL
+            secure = False
+            if minio_url.startswith('https://'):
+                secure = True
+                minio_url = minio_url.replace('https://', '')
+            elif minio_url.startswith('http://'):
+                minio_url = minio_url.replace('http://', '')
+            
+            # Check for secure flag in environment
+            minio_secure = os.getenv("MINIO_SECURE", "false").lower() == "true"
+            if minio_secure:
+                secure = True
+            
+            logger.info(f"Initializing MinIO client - URL: {minio_url}, Secure: {secure}")
+            
+            # Create MinIO client with timeout settings for faster failure detection
+            from urllib3 import PoolManager
+            from urllib3.util.retry import Retry
+            
+            # Configure retry strategy with shorter timeouts
+            retry_strategy = Retry(
+                total=2,  # Only 2 retries instead of default
+                backoff_factor=0.5,  # Shorter backoff
+                status_forcelist=[500, 502, 503, 504],
+            )
+            
+            # Create HTTP client with timeout
+            http_client = PoolManager(
+                retries=retry_strategy,
+                timeout=5.0,  # 5 second timeout instead of default 30+
+                maxsize=10
+            )
+            
+            _minio_client = Minio(
+                minio_url,
+                access_key=settings.MINIO_ACCESS_KEY,
+                secret_key=settings.MINIO_SECRET_KEY,
+                secure=secure,
+                http_client=http_client,
+            )
+            
+            # Test connection and ensure bucket exists (with timeout)
+            try:
+                # Test connection by listing buckets (with timeout)
+                _minio_client.list_buckets()
+                logger.info("MinIO connection successful")
+                
+                # Ensure bucket exists
+                if not _minio_client.bucket_exists(_bucket_name):
+                    _minio_client.make_bucket(_bucket_name)
+                    logger.info(f"Bucket '{_bucket_name}' created successfully.")
+                else:
+                    logger.info(f"Bucket '{_bucket_name}' already exists and is accessible.")
+            except Exception as e:
+                logger.error(f"MinIO connection or bucket verification failed: {e}")
+                # Always require MinIO - don't allow fallback
+                logger.critical(f"MinIO connection failed. Files must be stored in MinIO. Please start MinIO server.")
+                _minio_client = None  # Set to None so upload function knows MinIO is not available
+                _minio_client_failed = True  # Mark as failed
+                # Don't raise exception here - let upload function handle it
         except Exception as e:
-            logger.warning(f"Could not verify MinIO bucket (MinIO may not be running): {e}")
+            logger.error(f"Could not initialize MinIO client: {e}")
+            logger.critical(f"MinIO initialization failed. Files must be stored in MinIO. Please check MinIO server is running.")
+            _minio_client = None
+            _minio_client_failed = True  # Mark as failed
+            # Don't raise exception - let upload function handle it gracefully
     return _minio_client
 
 # Lazy MinIO client class for backward compatibility
@@ -99,21 +170,57 @@ def upload_image_to_minio(file, file_name):
         ...     success = upload_image_to_minio(f, 'images/image.jpg')
     """
     try:
+        # Check if MinIO is enabled
+        if not settings.MINIO_ENABLED:
+            if settings.DEBUG:
+                logger.debug(f"MinIO not enabled, skipping upload for {file_name}")
+            else:
+                logger.error(f"MinIO not enabled. Required for production deployment.")
+            return False
+        
         # Upload file to MinIO
-        logger.info(f"Uploading image {file_name} to MinIO")
+        logger.info(f"Uploading {file_name} to MinIO (size: {file.size} bytes)")
         client = get_minio_client()
+        
+        if client is None:
+            error_msg = f"MinIO client not available for {file_name}"
+            if settings.DEBUG:
+                logger.debug(error_msg + " - will use local fallback")
+            else:
+                logger.error(error_msg)
+            return False
+        
+        # Ensure file pointer is at the beginning
+        if hasattr(file, 'seek'):
+            file.seek(0)
+        
+        # Upload to MinIO (with timeout handled by http_client)
         client.put_object(
             bucket_name=settings.MINIO_BUCKET_NAME,
             object_name=file_name,
             data=file,
             length=file.size,
-            content_type=file.content_type,
+            content_type=getattr(file, 'content_type', 'application/octet-stream'),
         )
 
-        logger.info(f"Image {file_name} uploaded successfully")
+        logger.info(f"Successfully uploaded {file_name} to MinIO bucket '{settings.MINIO_BUCKET_NAME}'")
         return True
+    except S3Error as e:
+        logger.error(f"MinIO S3 error uploading {file_name}: {e}")
+        return False
     except Exception as e:
-        logger.exception(f"Error uploading image {file_name}: {e}")
+        # Check if it's a connection/timeout error
+        error_str = str(e).lower()
+        if any(keyword in error_str for keyword in ['connection', 'timeout', 'refused', 'resolve']):
+            if settings.DEBUG:
+                logger.debug(f"MinIO connection failed for {file_name}: {e} - will use local fallback")
+            else:
+                logger.error(f"MinIO connection failed for {file_name}: {e}")
+        else:
+            logger.exception(f"Error uploading {file_name} to MinIO: {e}")
+        if not settings.DEBUG:
+            # In production, log critical errors
+            logger.critical(f"Critical: File upload failed in production mode: {e}")
         return False
 
 
