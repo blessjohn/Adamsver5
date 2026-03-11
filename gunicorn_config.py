@@ -7,7 +7,7 @@ import multiprocessing
 import os
 
 # Server socket
-# Use 0.0.0.0 for Docker, 127.0.0.1 for local development
+# Use 0.0.0.0 for production, 127.0.0.1 for local development
 bind = os.getenv("GUNICORN_BIND", "0.0.0.0:8000")
 backlog = 2048
 

@@ -24,20 +24,17 @@ from django.http import HttpResponse
 
 # Third party imports
 from loguru import logger
-from minio import S3Error
+# from minio import S3Error  # Commented out - no longer using MinIO
 
 # Local application imports
 from .forms import UserLoginForm, UserRegistrationForm, UserUpdateForm
 from .models import Announcement, OTP, User, CategoryChangeRequest, RegistrationQuestion, RegistrationAnswer, SystemSettings
 from .utils import (
-    delete_image_from_minio,
     generate_qr_code_live,
     generate_random_password,
     get_gallery_images,
     send_email_with_attachments,
     send_otp_via_email,
-    upload_image_to_minio,
-    minio_client,
 )
 from app.decorators import admin_required
 
@@ -141,23 +138,31 @@ def register_user_view(request):
                 file = request.FILES.get(field_name)
                 if file:
                     logger.debug(f"Processing upload for {field_name}")
+                    # Save file to local media directory
                     file_name = f"{folder_path}{file.name}"
+                    media_path = os.path.join(settings.MEDIA_ROOT, file_name)
                     
-                    # Try MinIO upload first
-                    # Reset file pointer before upload
+                    # Ensure directory exists
+                    os.makedirs(os.path.dirname(media_path), exist_ok=True)
+                    
+                    # Reset file pointer before saving
                     file.seek(0)
-                    minio_success = upload_image_to_minio(file, file_name)
                     
-                    if minio_success:
+                    # Save file to local storage
+                    try:
+                        with open(media_path, 'wb+') as destination:
+                            for chunk in file.chunks():
+                                destination.write(chunk)
+                        
+                        # Store relative path (media/...) for database
+                        uploaded_files[field_name] = f"media/{file_name}"
                         logger.info(
-                            f"Successfully uploaded {field_name} to MinIO: {file_name}"
+                            f"Successfully uploaded {field_name} to local storage: {file_name}"
                         )
-                        uploaded_files[field_name] = file_name
-                    else:
-                        # MinIO upload failed - files must be stored in MinIO
-                        error_msg = f"Failed to upload {field_name} to MinIO. MinIO is required for file storage."
+                    except Exception as e:
+                        error_msg = f"Failed to upload {field_name} to local storage: {str(e)}"
                         logger.error(error_msg)
-                        form.add_error(field_name, f"File upload failed. Please ensure MinIO server is running and accessible.")
+                        form.add_error(field_name, f"File upload failed: {str(e)}")
                         upload_success = False
 
             if upload_success:
@@ -235,18 +240,36 @@ def register_user_view(request):
                                 if file_ext not in ['pdf', 'jpg', 'jpeg', 'png']:
                                     continue  # Skip invalid file types
                                 
-                                # Upload to MinIO
+                                # Upload to local storage
                                 folder_path = f"users/{user.username}/custom_questions/"
                                 file_name = f"{folder_path}{uploaded_file.name}"
+                                media_path = os.path.join(settings.MEDIA_ROOT, file_name)
                                 
-                                if upload_image_to_minio(uploaded_file, file_name):
+                                # Ensure directory exists
+                                os.makedirs(os.path.dirname(media_path), exist_ok=True)
+                                
+                                # Reset file pointer
+                                uploaded_file.seek(0)
+                                
+                                try:
+                                    # Save file to local storage
+                                    with open(media_path, 'wb+') as destination:
+                                        for chunk in uploaded_file.chunks():
+                                            destination.write(chunk)
+                                    
+                                    # Store relative path for database
+                                    db_file_name = f"media/{file_name}"
                                     answer, created = RegistrationAnswer.objects.get_or_create(
                                         user=user,
                                         question=question,
                                         defaults={}
                                     )
-                                    answer.answer_file = file_name
+                                    answer.answer_file = db_file_name
                                     answer.save()
+                                    logger.info(f"Successfully uploaded custom question file to local storage: {file_name}")
+                                except Exception as e:
+                                    logger.error(f"Failed to upload custom question file: {e}")
+                                    continue  # Skip this file and continue with next
                                     
                                     # Map to User model field if mapping exists
                                     user_field = question_to_field_map.get(question.question_text)
@@ -403,11 +426,29 @@ def update_user_view(request, user_id):
                     logger.debug(f"Processing file upload for {field_name}")
                     # If a file is uploaded, handle the upload process
                     file_name = f"{folder_path}{file.name}"
-                    if upload_image_to_minio(file, file_name):
-                        uploaded_files[field_name] = file_name
+                    media_path = os.path.join(settings.MEDIA_ROOT, file_name)
+                    
+                    # Ensure directory exists
+                    os.makedirs(os.path.dirname(media_path), exist_ok=True)
+                    
+                    # Reset file pointer
+                    file.seek(0)
+                    
+                    try:
+                        # Save file to local storage
+                        with open(media_path, 'wb+') as destination:
+                            for chunk in file.chunks():
+                                destination.write(chunk)
+                        
+                        # Store relative path for database
+                        uploaded_files[field_name] = f"media/{file_name}"
                         logger.info(
-                            f"Successfully uploaded {field_name} to {file_name}"
+                            f"Successfully uploaded {field_name} to local storage: {file_name}"
                         )
+                    except Exception as e:
+                        logger.error(f"Failed to upload {field_name}: {e}")
+                        form.add_error(field_name, f"File upload failed: {str(e)}")
+                        upload_success = False
                     else:
                         form.add_error(field_name, f"Failed to upload {field_name}.")
                         logger.error(f"Failed to upload {field_name}")
@@ -486,13 +527,26 @@ def delete_user_view(request, user_id):
             file_path = getattr(user, field)
             if file_path:
                 logger.debug(f"Attempting to delete {field} file: {file_path}")
-                if not delete_image_from_minio(file_path):
-                    logger.error(
-                        f"Failed to delete {field} file for user {user.username}"
-                    )
+                try:
+                    # Delete from local storage
+                    pdf_path = str(file_path)
+                    if not pdf_path.startswith("media/"):
+                        pdf_path = f"media/{pdf_path}"
+                    
+                    full_path = os.path.join(settings.BASE_DIR, pdf_path)
+                    full_path = os.path.normpath(full_path)
+                    
+                    # Security check
+                    media_root = os.path.normpath(settings.MEDIA_ROOT)
+                    if full_path.startswith(media_root) and os.path.exists(full_path):
+                        os.remove(full_path)
+                        logger.debug(f"Successfully deleted {field} file")
+                    else:
+                        logger.warning(f"File not found or outside media root: {full_path}")
+                except Exception as e:
+                    logger.error(f"Failed to delete {field} file for user {user.username}: {e}")
                     messages.error(request, f"Failed to delete {field}.")
                     return redirect("admin_panel")
-                logger.debug(f"Successfully deleted {field} file")
 
         # Delete the user instance
         try:
@@ -875,18 +929,43 @@ def serve_image(request, image_name):
     """
     logger.debug(f"Attempting to serve image: {image_name}")
     try:
-        # Get the image from MinIO
-        image_data = minio_client.get_object(settings.MINIO_BUCKET_NAME, image_name)
-        logger.info(f"Successfully retrieved image {image_name} from MinIO")
+        # Get the image from local storage
+        # If path doesn't start with "media/", add it
+        if not image_name.startswith("media/"):
+            image_name = f"media/{image_name}"
+        
+        full_path = os.path.join(settings.BASE_DIR, image_name)
+        full_path = os.path.normpath(full_path)
+        
+        # Security check
+        media_root = os.path.normpath(settings.MEDIA_ROOT)
+        if not full_path.startswith(media_root):
+            logger.error(f"Security violation: File path outside MEDIA_ROOT: {image_name}")
+            return HttpResponse(status=403, content="Access denied")
+        
+        if not os.path.exists(full_path):
+            logger.error(f"Image not found: {full_path}")
+            return HttpResponse(f"Image not found", status=404)
+        
+        with open(full_path, 'rb') as f:
+            image_data = f.read()
+        
+        logger.info(f"Successfully retrieved image {image_name} from local storage")
 
-        response = HttpResponse(
-            image_data, content_type="image/jpeg"
-        )  # Adjust content type based on image format
-        response["Content-Disposition"] = f"inline; filename={image_name}"
+        # Determine content type
+        if image_name.endswith(".png"):
+            content_type = "image/png"
+        elif image_name.endswith((".jpg", ".jpeg")):
+            content_type = "image/jpeg"
+        else:
+            content_type = "image/jpeg"
+        
+        response = HttpResponse(image_data, content_type=content_type)
+        response["Content-Disposition"] = f"inline; filename={os.path.basename(image_name)}"
         return response
 
-    except S3Error as e:
-        logger.exception(f"Error fetching image {image_name} from MinIO: {str(e)}")
+    except Exception as e:
+        logger.exception(f"Error fetching image {image_name} from local storage: {str(e)}")
         return HttpResponse(f"Error fetching image: {e}", status=500)
 
 
@@ -925,27 +1004,47 @@ def upload_image_view(request):
         )
 
         if file_type.startswith("image/"):
-            # Call the upload function
-            success = upload_image_to_minio(image, file_name)
+            # Save to local storage
+            media_path = os.path.join(settings.MEDIA_ROOT, file_name)
+            
+            # Ensure directory exists
+            os.makedirs(os.path.dirname(media_path), exist_ok=True)
+            
+            # Reset file pointer
+            image.seek(0)
+            
+            try:
+                # Save file to local storage
+                with open(media_path, 'wb+') as destination:
+                    for chunk in image.chunks():
+                        destination.write(chunk)
+                
+                # Store relative path for database
+                db_file_name = f"media/{file_name}"
+                success = True
+                logger.info(f"Successfully uploaded gallery image to local storage: {file_name}")
+            except Exception as e:
+                logger.error(f"Failed to upload gallery image: {e}")
+                success = False
 
             if success:
                 # Save to database
                 try:
                     user = request.user if request.user.is_authenticated else None
                     GalleryImage.objects.create(
-                        image_name=file_name,
+                        image_name=db_file_name,  # Store relative path with media/ prefix
                         title=title,
                         description=description,
                         uploaded_by=user
                     )
                     messages.success(request, f"Image '{file_name}' uploaded successfully.")
-                    logger.info(f"Image '{file_name}' uploaded to MinIO and saved to database.")
+                    logger.info(f"Image '{file_name}' uploaded to local storage and saved to database.")
                 except Exception as e:
                     logger.error(f"Error saving image to database: {str(e)}")
                     messages.success(request, f"Image uploaded but metadata not saved.")
             else:
                 messages.error(request, "Failed to upload the image. Please try again.")
-                logger.error(f"Failed to upload image '{file_name}' to MinIO.")
+                logger.error(f"Failed to upload image '{file_name}' to local storage.")
         else:
             messages.error(request, "Invalid file type. Please upload a valid image.")
             logger.warning(
@@ -979,16 +1078,34 @@ def delete_image_view(request, image_name):
     logger.debug(f"Processing delete request for image: {image_name}")
 
     if request.method == "POST":
-        # Attempt to delete the image from MinIO
-        success = delete_image_from_minio(image_name)
-        if success:
-            messages.success(request, f"Image '{image_name}' deleted successfully.")
-            logger.info(f"Image '{image_name}' deleted from MinIO.")
-        else:
+        # Attempt to delete the image from local storage
+        try:
+            # If path doesn't start with "media/", add it
+            if not image_name.startswith("media/"):
+                image_name = f"media/{image_name}"
+            
+            full_path = os.path.join(settings.BASE_DIR, image_name)
+            full_path = os.path.normpath(full_path)
+            
+            # Security check
+            media_root = os.path.normpath(settings.MEDIA_ROOT)
+            if full_path.startswith(media_root) and os.path.exists(full_path):
+                os.remove(full_path)
+                messages.success(request, f"Image '{image_name}' deleted successfully.")
+                logger.info(f"Image '{image_name}' deleted from local storage.")
+                success = True
+            else:
+                messages.error(
+                    request, f"Image file not found: '{image_name}'."
+                )
+                logger.error(f"Image file not found: '{image_name}'")
+                success = False
+        except Exception as e:
             messages.error(
                 request, f"Failed to delete image '{image_name}'. Please try again."
             )
-            logger.error(f"Failed to delete image '{image_name}' from MinIO.")
+            logger.error(f"Failed to delete image '{image_name}' from local storage: {e}")
+            success = False
 
     logger.debug("Redirecting to gallery page")
     return redirect("gallery")
@@ -1150,16 +1267,33 @@ def validate_qr_code(request):
             photo_data = None
             if user.photo:
                 logger.debug(f"Fetching photo for user: {username}")
-                image_path = user.photo
-                bucket_name = os.getenv("MINIO_BUCKET_NAME")
-                image_data = fetch_image_from_minio(bucket_name, image_path)
-
-                if not image_data:
-                    logger.error(f"Photo not found for user: {username}")
-                    return JsonResponse({"error": "Image not found"}, status=404)
-
-                photo_data = base64.b64encode(image_data).decode("utf-8")
-                logger.debug(f"Successfully encoded photo for user: {username}")
+                image_path = str(user.photo)
+                
+                # If path doesn't start with "media/", add it
+                if not image_path.startswith("media/"):
+                    image_path = f"media/{image_path}"
+                
+                full_path = os.path.join(settings.BASE_DIR, image_path)
+                full_path = os.path.normpath(full_path)
+                
+                # Security check
+                media_root = os.path.normpath(settings.MEDIA_ROOT)
+                if not full_path.startswith(media_root):
+                    logger.error(f"Security violation: File path outside MEDIA_ROOT: {image_path}")
+                    return JsonResponse({"error": "Access denied"}, status=403)
+                
+                try:
+                    if os.path.exists(full_path):
+                        with open(full_path, 'rb') as f:
+                            image_data = f.read()
+                        photo_data = base64.b64encode(image_data).decode("utf-8")
+                        logger.debug(f"Successfully encoded photo for user: {username}")
+                    else:
+                        logger.error(f"Photo not found for user: {username} at {full_path}")
+                        return JsonResponse({"error": "Image not found"}, status=404)
+                except Exception as e:
+                    logger.error(f"Error reading photo for user {username}: {e}")
+                    return JsonResponse({"error": "Error reading image"}, status=500)
 
             # Return user data
             logger.info(f"Successfully validated QR code for user: {username}")
@@ -1847,16 +1981,14 @@ def get_user_details(request, userId):
 
 def fetch_image_from_minio(bucket_name, object_name):
     """
-    Fetch an image file from MinIO storage.
-
-    This function retrieves a file from MinIO storage by:
-    - Connecting to MinIO using the configured client
-    - Fetching the file data as binary content
-    - Handling any errors during retrieval
+    Fetch an image file from local storage (backward compatibility function).
+    
+    This function now retrieves files from local storage instead of MinIO.
+    Kept for backward compatibility with existing code.
 
     Args:
-        bucket_name (str): Name of the MinIO bucket containing the file
-        object_name (str): Path/name of the file in the bucket
+        bucket_name (str): Ignored (kept for compatibility)
+        object_name (str): Path/name of the file
 
     Returns:
         bytes: Binary content of the file if successful, None if error
@@ -1865,17 +1997,32 @@ def fetch_image_from_minio(bucket_name, object_name):
         - Info: When file is successfully retrieved
         - Error: When file fetch fails
     """
-    logger.debug(f"Attempting to fetch file {object_name} from bucket {bucket_name}")
+    logger.debug(f"Attempting to fetch file {object_name} from local storage")
     try:
-        response = minio_client.get_object(bucket_name, object_name)
-        logger.info(
-            f"Successfully retrieved file {object_name} from bucket {bucket_name}"
-        )
-        return response.data  # Return binary content
+        # If path doesn't start with "media/", add it
+        if not object_name.startswith("media/"):
+            object_name = f"media/{object_name}"
+        
+        full_path = os.path.join(settings.BASE_DIR, object_name)
+        full_path = os.path.normpath(full_path)
+        
+        # Security check
+        media_root = os.path.normpath(settings.MEDIA_ROOT)
+        if not full_path.startswith(media_root):
+            logger.error(f"Security violation: File path outside MEDIA_ROOT: {object_name}")
+            return None
+        
+        if not os.path.exists(full_path):
+            logger.error(f"File not found: {full_path}")
+            return None
+        
+        with open(full_path, 'rb') as f:
+            file_data = f.read()
+        
+        logger.info(f"Successfully retrieved file {object_name} from local storage")
+        return file_data
     except Exception as e:
-        logger.error(
-            f"Error fetching file {object_name} from bucket {bucket_name}: {str(e)}"
-        )
+        logger.error(f"Error fetching file {object_name} from local storage: {str(e)}")
         return None
 
 
@@ -1921,65 +2068,40 @@ def serve_user_file(request, user_id, file_field):
         logger.debug(f"File field {file_field} is empty for user {user_id} (optional field may not be provided)")
         return JsonResponse({"error": "File not provided"}, status=404)
 
-    # Check if file is stored locally (starts with "media/") or in MinIO
+    # All files are stored locally now - serve from filesystem
     file_path_str = str(file_path)
-    if file_path_str.startswith("media/"):
-        # File is stored locally - serve from filesystem
-        logger.debug(f"Serving local file: {file_path_str}")
-        try:
-            
-            # Construct full file path
-            # BASE_DIR is a Path object, convert to string
-            base_dir = str(settings.BASE_DIR)
-            full_path = os.path.join(base_dir, file_path_str)
-            
-            # Normalize path separators for Windows
-            full_path = os.path.normpath(full_path)
-            
-            # Security check: ensure file is within MEDIA_ROOT
-            media_root = os.path.normpath(settings.MEDIA_ROOT)
-            if not full_path.startswith(media_root):
-                logger.error(f"Security violation: File path outside MEDIA_ROOT: {file_path_str}")
-                return HttpResponse(status=403, content="Access denied")
-            
-            if not os.path.exists(full_path):
-                logger.error(f"Local file not found: {full_path}")
-                return JsonResponse({"error": "File not found"}, status=404)
-            
-            # Read file
-            with open(full_path, 'rb') as f:
-                file_data = f.read()
-            
-            logger.info(f"Successfully read local file: {full_path} (size: {len(file_data)} bytes)")
-            
-            # Determine content type
-            if file_path_str.endswith(".pdf"):
-                content_type = "application/pdf"
-            elif file_path.endswith((".jpg", ".jpeg")):
-                content_type = "image/jpeg"
-            elif file_path.endswith(".png"):
-                content_type = "image/png"
-            else:
-                content_type = "application/octet-stream"
-            
-            logger.info(f"Successfully serving local {content_type} file for user {user_id}")
-            return HttpResponse(file_data, content_type=content_type)
-            
-        except Exception as e:
-            logger.exception(f"Error serving local file {file_path}: {e}")
-            return HttpResponse(status=500, content=f"Error serving file: {str(e)}")
     
-    else:
-        # File is stored in MinIO - fetch from MinIO
-        logger.debug(f"Fetching file {file_path_str} from MinIO")
-        bucket_name = settings.MINIO_BUCKET_NAME
+    # If path doesn't start with "media/", add it for backward compatibility
+    if not file_path_str.startswith("media/"):
+        file_path_str = f"media/{file_path_str}"
+    
+    logger.debug(f"Serving local file: {file_path_str}")
+    try:
+        # Construct full file path
+        # BASE_DIR is a Path object, convert to string
+        base_dir = str(settings.BASE_DIR)
+        full_path = os.path.join(base_dir, file_path_str)
         
-        file_data = fetch_image_from_minio(bucket_name, file_path_str)
-        if not file_data:
-            logger.error(f"Failed to fetch file {file_path_str} from MinIO")
-            return HttpResponse(status=500, content="Error fetching file from MinIO")
-
-        # Set content type based on the file extension
+        # Normalize path separators for Windows
+        full_path = os.path.normpath(full_path)
+        
+        # Security check: ensure file is within MEDIA_ROOT
+        media_root = os.path.normpath(settings.MEDIA_ROOT)
+        if not full_path.startswith(media_root):
+            logger.error(f"Security violation: File path outside MEDIA_ROOT: {file_path_str}")
+            return HttpResponse(status=403, content="Access denied")
+        
+        if not os.path.exists(full_path):
+            logger.error(f"Local file not found: {full_path}")
+            return JsonResponse({"error": "File not found"}, status=404)
+        
+        # Read file
+        with open(full_path, 'rb') as f:
+            file_data = f.read()
+        
+        logger.info(f"Successfully read local file: {full_path} (size: {len(file_data)} bytes)")
+        
+        # Determine content type
         if file_path_str.endswith(".pdf"):
             content_type = "application/pdf"
         elif file_path_str.endswith((".jpg", ".jpeg")):
@@ -1988,9 +2110,13 @@ def serve_user_file(request, user_id, file_field):
             content_type = "image/png"
         else:
             content_type = "application/octet-stream"
-
-        logger.info(f"Successfully serving MinIO {content_type} file for user {user_id} (size: {len(file_data)} bytes)")
+        
+        logger.info(f"Successfully serving local {content_type} file for user {user_id}")
         return HttpResponse(file_data, content_type=content_type)
+        
+    except Exception as e:
+        logger.exception(f"Error serving local file {file_path}: {e}")
+        return HttpResponse(status=500, content=f"Error serving file: {str(e)}")
 
 
 @csrf_exempt
@@ -3592,26 +3718,22 @@ def get_active_rulebook(request):
         
         if rulebook:
             try:
-                from .utils import minio_client
+                # Generate local file URL
+                pdf_path = str(rulebook.pdf_file)
                 
-                # Generate MinIO presigned URL
-                pdf_url = minio_client.presigned_get_object(
-                    settings.MINIO_BUCKET_NAME,
-                    rulebook.pdf_file,
-                    expires=timedelta(hours=1)
-                )
+                # If path doesn't start with "media/", add it
+                if not pdf_path.startswith("media/"):
+                    pdf_path = f"media/{pdf_path}"
                 
-                # Replace internal MinIO hostname with accessible URL
-                # For local: use localhost or the host from request
-                # For deployment: use the actual domain
+                # Generate URL using request host
                 host = request.get_host().split(':')[0]  # Get hostname without port
+                scheme = 'https' if request.is_secure() else 'http'
+                port = request.get_port()
                 
-                # Replace internal MinIO endpoint with the accessible host
-                # This handles cases where MINIO_URL is set to localhost/127.0.0.1
-                if 'minio:9000' in pdf_url or 'localhost:9000' in pdf_url or '127.0.0.1:9000' in pdf_url:
-                    pdf_url = pdf_url.replace('minio:9000', f'{host}:9000')
-                    pdf_url = pdf_url.replace('localhost:9000', f'{host}:9000')
-                    pdf_url = pdf_url.replace('127.0.0.1:9000', f'{host}:9000')
+                if port and port not in [80, 443]:
+                    pdf_url = f"{scheme}://{host}:{port}/{pdf_path}"
+                else:
+                    pdf_url = f"{scheme}://{host}/{pdf_path}"
                 
                 return JsonResponse({
                     'success': True,
@@ -3652,20 +3774,27 @@ def upload_rulebook(request):
         if not pdf_file.name.endswith('.pdf'):
             return JsonResponse({'success': False, 'message': 'File must be a PDF'}, status=400)
         
-        # Upload to MinIO
+        # Upload to local storage
         file_name = f"rulebooks/{uuid.uuid4()}_{pdf_file.name}"
+        media_path = os.path.join(settings.MEDIA_ROOT, file_name)
+        
+        # Ensure directory exists
+        os.makedirs(os.path.dirname(media_path), exist_ok=True)
         
         try:
-            minio_client.put_object(
-                settings.MINIO_BUCKET_NAME,
-                file_name,
-                pdf_file,
-                length=pdf_file.size,
-                content_type='application/pdf'
-            )
-            logger.info(f"Uploaded rulebook PDF to MinIO: {file_name}")
+            # Reset file pointer
+            pdf_file.seek(0)
+            
+            # Save file to local storage
+            with open(media_path, 'wb+') as destination:
+                for chunk in pdf_file.chunks():
+                    destination.write(chunk)
+            
+            # Store relative path for database
+            db_file_name = f"media/{file_name}"
+            logger.info(f"Uploaded rulebook PDF to local storage: {file_name}")
         except Exception as e:
-            logger.error(f"Error uploading to MinIO: {str(e)}")
+            logger.error(f"Error uploading to local storage: {str(e)}")
             return JsonResponse({'success': False, 'message': 'Error uploading file'}, status=500)
         
         # If setting as active, deactivate all other rulebooks
@@ -3677,7 +3806,7 @@ def upload_rulebook(request):
         rulebook = Rulebook.objects.create(
             title=title,
             description=description,
-            pdf_file=file_name,
+            pdf_file=db_file_name,  # Store relative path with media/ prefix
             is_active=is_active,
             uploaded_by=user
         )
@@ -3730,16 +3859,26 @@ def delete_rulebook(request, rulebook_id):
     """Delete a rulebook."""
     try:
         from .models import Rulebook
-        from .utils import minio_client
         
         rulebook = Rulebook.objects.get(id=rulebook_id)
         
-        # Delete from MinIO
+        # Delete from local storage
         try:
-            minio_client.remove_object(settings.MINIO_BUCKET_NAME, rulebook.pdf_file)
-            logger.info(f"Deleted rulebook PDF from MinIO: {rulebook.pdf_file}")
+            pdf_path = str(rulebook.pdf_file)
+            # If path doesn't start with "media/", add it
+            if not pdf_path.startswith("media/"):
+                pdf_path = f"media/{pdf_path}"
+            
+            full_path = os.path.join(settings.BASE_DIR, pdf_path)
+            full_path = os.path.normpath(full_path)
+            
+            # Security check
+            media_root = os.path.normpath(settings.MEDIA_ROOT)
+            if full_path.startswith(media_root) and os.path.exists(full_path):
+                os.remove(full_path)
+                logger.info(f"Deleted rulebook PDF from local storage: {rulebook.pdf_file}")
         except Exception as e:
-            logger.warning(f"Error deleting from MinIO: {str(e)}")
+            logger.warning(f"Error deleting from local storage: {str(e)}")
         
         # Delete from database
         rulebook.delete()
@@ -3759,7 +3898,6 @@ def serve_rulebook_pdf(request):
     """Serve the active rulebook PDF through Django as a proxy."""
     try:
         from .models import Rulebook
-        from .utils import minio_client
         from django.http import HttpResponse
         import io
         
@@ -3769,11 +3907,26 @@ def serve_rulebook_pdf(request):
             return HttpResponse('No active rulebook found', status=404)
         
         try:
-            # Get PDF from MinIO
-            response = minio_client.get_object(settings.MINIO_BUCKET_NAME, rulebook.pdf_file)
-            pdf_data = response.read()
-            response.close()
-            response.release_conn()
+            # Get PDF from local storage
+            pdf_path = str(rulebook.pdf_file)
+            # If path doesn't start with "media/", add it
+            if not pdf_path.startswith("media/"):
+                pdf_path = f"media/{pdf_path}"
+            
+            full_path = os.path.join(settings.BASE_DIR, pdf_path)
+            full_path = os.path.normpath(full_path)
+            
+            # Security check
+            media_root = os.path.normpath(settings.MEDIA_ROOT)
+            if not full_path.startswith(media_root):
+                return HttpResponse('Access denied', status=403)
+            
+            if not os.path.exists(full_path):
+                return HttpResponse('PDF file not found', status=404)
+            
+            # Read PDF file
+            with open(full_path, 'rb') as f:
+                pdf_data = f.read()
             
             # Return PDF
             http_response = HttpResponse(pdf_data, content_type='application/pdf')

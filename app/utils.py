@@ -15,9 +15,11 @@ import qrcode
 from .models import OTP
 
 # Initialize the Minio client (lazy initialization to avoid connection errors at startup)
+# COMMENTED OUT - Using local file storage instead of MinIO
 _minio_client = None
 _minio_client_failed = False  # Track if client initialization failed
-_bucket_name = settings.MINIO_BUCKET_NAME
+# _bucket_name = settings.MINIO_BUCKET_NAME  # Commented out - MinIO disabled
+_bucket_name = None  # Not used when MinIO is disabled
 
 def get_minio_client():
     """Get or create MinIO client instance (lazy initialization)"""
@@ -110,14 +112,14 @@ def get_minio_client():
     return _minio_client
 
 # Lazy MinIO client class for backward compatibility
-class LazyMinioClient:
-    """Lazy wrapper for MinIO client that initializes on first access"""
+# MinIO disabled - these are kept for backward compatibility but will raise errors if used
+class DisabledMinioClient:
+    """Dummy MinIO client that raises errors when accessed"""
     def __getattr__(self, name):
-        return getattr(get_minio_client(), name)
+        raise NotImplementedError("MinIO is disabled. Use local file storage instead.")
 
-# Module-level variables for backward compatibility
-minio_client = LazyMinioClient()
-bucket_name = _bucket_name
+minio_client = DisabledMinioClient()
+bucket_name = None
 
 
 def get_gallery_images():
@@ -194,14 +196,9 @@ def upload_image_to_minio(file, file_name):
         if hasattr(file, 'seek'):
             file.seek(0)
         
-        # Upload to MinIO (with timeout handled by http_client)
-        client.put_object(
-            bucket_name=settings.MINIO_BUCKET_NAME,
-            object_name=file_name,
-            data=file,
-            length=file.size,
-            content_type=getattr(file, 'content_type', 'application/octet-stream'),
-        )
+        # MinIO disabled - this function should not be called
+        # Files are now saved directly to local storage in views.py
+        raise NotImplementedError("MinIO upload is disabled. Use local file storage instead.")
 
         logger.info(f"Successfully uploaded {file_name} to MinIO bucket '{settings.MINIO_BUCKET_NAME}'")
         return True
@@ -241,9 +238,9 @@ def delete_image_from_minio(file_name):
         # Delete file from MinIO
         logger.info(f"Deleting image {file_name} from MinIO")
         client = get_minio_client()
-        client.remove_object(
-            bucket_name=settings.MINIO_BUCKET_NAME, object_name=file_name
-        )
+        # MinIO disabled - this function should not be called
+        # Files are now deleted directly from local storage in views.py
+        raise NotImplementedError("MinIO delete is disabled. Use local file storage instead.")
 
         logger.info(f"Image {file_name} deleted successfully")
         return True

@@ -26,9 +26,8 @@ urlpatterns = [
     path('', include('app.urls'))
 ]
 
-# Serve static files in development and Docker
-# In Docker/production, we need to serve static files even when DEBUG=False
-# This is acceptable for Docker deployments where nginx is not used
-if settings.DEBUG or os.getenv('SERVE_STATIC', 'true').lower() == 'true':
+# Serve static files and media files in development
+# In production, static files should be served by nginx or a web server
+if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
