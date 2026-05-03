@@ -16,6 +16,7 @@ The application is now configured to work with MinIO for production deployment. 
 Set these environment variables in your production environment:
 
 ```bash
+MINIO_ENABLED=true                 # Enable MinIO usage in the app (required)
 MINIO_URL=localhost:9000          # MinIO server URL (or IP:port)
 MINIO_ACCESS_KEY=your_access_key   # MinIO access key
 MINIO_SECRET_KEY=your_secret_key   # MinIO secret key

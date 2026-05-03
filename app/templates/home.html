@@ -4,16 +4,16 @@
 {% block content %}
 
 <!-- this is new banner -->
-<section class="newBannerHome position-relative">
+<section class="newBannerHome position-relative luxury-hero-section">
   {% if not user.is_authenticated %}
   <!-- For Non-Logged In Users -->
-  <div class="AdminLoginPortal p-3 d-none d-lg-block">
+  <div class="AdminLoginPortal luxury-hero-card p-3 d-none d-lg-block">
     <div class="adminLoginMain ">
-      <h3 class="text-center fw-semibold mt-2">Association Of Doctors and <br> Medical Students </h3>
+      <h3 class="text-center fw-semibold mt-2">Association of Doctors and<br>Medical Students</h3>
       <div class="loginMiddle">
-        <p class="">ADAMS, Association of Doctors And Medical Students is a registered association (non-profit), dedicated for serving Doctors and Medical Students who are abroad trained, Indian nationals. It operates as a part of All Kerala Foreign Medical Association-AKFMA, with the aim of bringing together all FMGs.</p>
+        <p class="text-center">ADAMS is a registered non-profit society for Indian doctors and medical students trained abroad. Together with the All Kerala Foreign Medical Association (AKFMA), we build community, share guidance, and advocate for foreign medical graduates (FMGs).</p>
       </div>
-      <div class="d-flex gap-2">
+      <div class="d-flex flex-column flex-sm-row gap-2 public-hero-actions">
         <a href="{% url 'registration' %}">Register</a>
         <a href="{% url 'login' %}">Login</a>
       </div>
@@ -21,11 +21,11 @@
   </div>
   {% else %}
   <!-- For Logged In Users -->
-  <div class="AdminLoginPortal p-3 d-none d-lg-block">
+  <div class="AdminLoginPortal luxury-hero-card p-3 d-none d-lg-block">
     <div class="adminLoginMain ">
-      <h3 class="text-center fw-semibold mt-2">Welcome Back, {{ user.first_name }}!</h3>
+      <h3 class="text-center fw-semibold mt-2">Welcome back, {{ user.first_name }}</h3>
       <div class="loginMiddle">
-        <p class="text-center"><strong>Membership Status: </strong>
+        <p class="text-center"><strong>Membership status:</strong>
           {% if user.status == 'approved' %}
           <span class="badge bg-success">✓ Verified</span>
           {% elif user.status == 'pending' %}
@@ -37,9 +37,9 @@
         {% if user.status == 'approved' and user.mid %}
         <p class="text-center"><strong>Member ID:</strong> <span class="badge bg-primary">{{ user.mid }}</span></p>
         {% endif %}
-        <p class="text-center mt-3">Access all your member benefits through the navigation menu above.</p>
+        <p class="text-center mt-3">Your member resources and society updates — use the navigation above.</p>
       </div>
-      <div class="d-flex gap-2 justify-content-center">
+      <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center align-items-stretch align-items-sm-center">
         <a href="{% url 'user_profile' %}" class="btn btn-primary">My Profile</a>
         <a href="{% url 'notice_board' %}" class="btn btn-info">Notice Board</a>
         {% if user.status == 'approved' %}
@@ -55,13 +55,13 @@
         <div class="col-12 col-lg-4 d-flex justify-content-center my-3">
           {% if not user.is_authenticated %}
           <!-- For Non-Logged In Users (Mobile) -->
-          <div class="AdminLoginPortal p-3 d-lg-none">
+          <div class="AdminLoginPortal luxury-hero-card p-3 d-lg-none">
             <div class="adminLoginMain ">
-              <h3 class="text-center fw-semibold">Association Of Doctors and <br> Medical Students </h3>
+              <h3 class="text-center fw-semibold">Association of Doctors and<br>Medical Students</h3>
               <div class="loginMiddle">
-                <p>ADAMS, Association of Doctors And Medical Students is a registered association (non-profit), dedicated for serving Doctors and Medical Students who are abroad trained, Indian nationals. It operates as a part of All Kerala Foreign Medical Association-AKFMA, with the aim of bringing together all FMGs.</p>
+                <p class="text-center">ADAMS is a registered non-profit for Indian doctors and medical students trained abroad. With AKFMA, we foster community and advocate for FMGs.</p>
               </div>
-              <div class="d-flex gap-2">
+              <div class="d-flex flex-column flex-sm-row gap-2 public-hero-actions">
                 <a href="{% url 'registration' %}">Register</a>
                 <a href="{% url 'login' %}">Login</a>
               </div>
@@ -69,9 +69,9 @@
           </div>
           {% else %}
           <!-- For Logged In Users (Mobile) -->
-          <div class="AdminLoginPortal p-3 d-lg-none">
+          <div class="AdminLoginPortal luxury-hero-card p-3 d-lg-none">
             <div class="adminLoginMain ">
-              <h3 class="text-center fw-semibold">Welcome, {{ user.first_name }}!</h3>
+              <h3 class="text-center fw-semibold">Welcome, {{ user.first_name }}</h3>
               <div class="loginMiddle">
                 <p class="text-center"><strong>Status: </strong>
                   {% if user.status == 'approved' %}
@@ -86,7 +86,7 @@
                 <p class="text-center"><strong>MID:</strong> {{ user.mid }}</p>
                 {% endif %}
               </div>
-              <div class="d-flex gap-2 flex-wrap justify-content-center">
+              <div class="d-flex flex-column flex-sm-row gap-2 flex-wrap justify-content-center align-items-stretch align-items-sm-center">
                 <a href="{% url 'user_profile' %}" class="btn btn-primary btn-sm">Profile</a>
                 <a href="{% url 'notice_board' %}" class="btn btn-info btn-sm">Notices</a>
                 {% if user.status == 'approved' %}
@@ -99,9 +99,9 @@
           
         </div>
         <div class="col-12 col-lg-4">
-          <div id="hero" class="newsHead" style="background-color: #243c71; overflow: hidden;">
+          <div id="hero" class="newsHead luxury-news-panel" style="overflow: hidden;">
             <div class="d-flex justify-content-between align-items-center py-2 px-3 newsBoxMain">
-              <h2 class="text-center" style="margin: 0; color: white;">What's New</h2>
+              <h2 class="text-center luxury-news-title">What's New</h2>
               {% if user.is_authenticated and user.role == 'admin' %}
               <i data-bs-toggle="modal" data-bs-target="#announcementModal"
                 class="bi bi-plus fs-3 d-flex justify-content-center align-items-center rounded "></i>
@@ -132,6 +132,8 @@
                     {% endif %}
                   </div>
                 </li>
+                {% empty %}
+                <li class="ticker-item px-3 py-2 small" style="color: rgba(255,255,255,0.8);">No announcements yet. Check back soon.</li>
                 {% endfor %}
 
               

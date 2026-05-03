@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADAMS — Payment receipt</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 2rem; color: #212529; background: #f8f9fa; }
+    .sheet { max-width: 640px; margin: 0 auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+    h1 { font-size: 1.35rem; color: #0d6efd; margin: 0 0 0.25rem; }
+    .sub { color: #6c757d; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { text-align: left; padding: 0.5rem 0; border-bottom: 1px solid #e9ecef; vertical-align: top; }
+    th { width: 38%; color: #495057; font-weight: 600; }
+    .mono { font-family: ui-monospace, monospace; font-size: 0.85rem; word-break: break-all; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+    .paid { background: #d1e7dd; color: #0f5132; }
+    .pending { background: #fff3cd; color: #664d03; }
+    .failed { background: #f8d7da; color: #842029; }
+    .actions { margin-top: 1.5rem; }
+    .btn { display: inline-block; padding: 0.5rem 1rem; background: #0d6efd; color: #fff; text-decoration: none; border-radius: 6px; font-size: 0.9rem; border: none; cursor: pointer; }
+    .btn:hover { background: #0b5ed7; color: #fff; }
+    .muted { color: #6c757d; font-size: 0.8rem; margin-top: 1.5rem; }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .no-print { display: none !important; }
+      .sheet { box-shadow: none; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <h1>ADAMS — Payment receipt</h1>
+    <p class="sub">Association of Doctors and Medical Students</p>
+
+    <table>
+      <tr>
+        <th>Member</th>
+        <td>{{ member.first_name }} {{ member.last_name }} ({{ member.username }})</td>
+      </tr>
+      <tr>
+        <th>Payment type</th>
+        <td>{{ kind_label }}</td>
+      </tr>
+      <tr>
+        <th>Status</th>
+        <td>
+          {% if payment.payment_status == 'paid' %}
+          <span class="badge paid">Paid</span>
+          {% elif payment.payment_status == 'pending' %}
+          <span class="badge pending">Pending</span>
+          {% else %}
+          <span class="badge failed">Failed</span>
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <th>Amount</th>
+        <td>₹{% widthratio payment.amount 100 1 %} (INR)</td>
+      </tr>
+      <tr>
+        <th>Receipt / reference</th>
+        <td class="mono">{{ payment.receipt }}</td>
+      </tr>
+      {% if payment.razorpay_order_id %}
+      <tr>
+        <th>Razorpay order</th>
+        <td class="mono">{{ payment.razorpay_order_id }}</td>
+      </tr>
+      {% endif %}
+      {% if payment.razorpay_payment_id %}
+      <tr>
+        <th>Razorpay payment</th>
+        <td class="mono">{{ payment.razorpay_payment_id }}</td>
+      </tr>
+      {% endif %}
+      <tr>
+        <th>Payer (record)</th>
+        <td>{{ payment.name }} — {{ payment.email }}</td>
+      </tr>
+      <tr>
+        <th>Issued / updated</th>
+        <td>{{ payment.updated_at|date:"F j, Y H:i" }}</td>
+      </tr>
+    </table>
+
+    <p class="muted">This document is a payment acknowledgment for your records. For tax or legal use, follow instructions from ADAMS.</p>
+
+    <div class="actions no-print">
+      <button type="button" class="btn" onclick="window.print()">Print / Save as PDF</button>
+    </div>
+  </div>
+</body>
+</html>

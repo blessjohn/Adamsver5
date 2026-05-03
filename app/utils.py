@@ -14,16 +14,14 @@ import qrcode
 
 from .models import OTP
 
-# Initialize the Minio client (lazy initialization to avoid connection errors at startup)
-# COMMENTED OUT - Using local file storage instead of MinIO
+# Initialize the MinIO client (lazy initialization to avoid connection errors at startup)
 _minio_client = None
 _minio_client_failed = False  # Track if client initialization failed
-# _bucket_name = settings.MINIO_BUCKET_NAME  # Commented out - MinIO disabled
-_bucket_name = None  # Not used when MinIO is disabled
+_bucket_name = None
 
 def get_minio_client():
     """Get or create MinIO client instance (lazy initialization)"""
-    global _minio_client, _minio_client_failed
+    global _minio_client, _minio_client_failed, _bucket_name
     
     # Reset failed flag to retry connection
     # This allows retrying if MinIO becomes available
@@ -35,26 +33,17 @@ def get_minio_client():
         try:
             # Only create client if MinIO is enabled
             if not settings.MINIO_ENABLED:
-                if settings.DEBUG:
-                    logger.warning("MinIO is not fully configured. File uploads will use local storage fallback.")
-                else:
-                    logger.error("MinIO is not fully configured. Required for production deployment.")
                 return None
             
             # Determine if connection should be secure (HTTPS)
             # Check if URL contains https:// or if MINIO_SECURE env var is set
             minio_url = settings.MINIO_URL
-            secure = False
+            secure = bool(getattr(settings, "MINIO_SECURE", False))
             if minio_url.startswith('https://'):
                 secure = True
                 minio_url = minio_url.replace('https://', '')
             elif minio_url.startswith('http://'):
                 minio_url = minio_url.replace('http://', '')
-            
-            # Check for secure flag in environment
-            minio_secure = os.getenv("MINIO_SECURE", "false").lower() == "true"
-            if minio_secure:
-                secure = True
             
             logger.info(f"Initializing MinIO client - URL: {minio_url}, Secure: {secure}")
             
@@ -91,6 +80,7 @@ def get_minio_client():
                 logger.info("MinIO connection successful")
                 
                 # Ensure bucket exists
+                _bucket_name = settings.MINIO_BUCKET_NAME
                 if not _minio_client.bucket_exists(_bucket_name):
                     _minio_client.make_bucket(_bucket_name)
                     logger.info(f"Bucket '{_bucket_name}' created successfully.")
@@ -98,28 +88,103 @@ def get_minio_client():
                     logger.info(f"Bucket '{_bucket_name}' already exists and is accessible.")
             except Exception as e:
                 logger.error(f"MinIO connection or bucket verification failed: {e}")
-                # Always require MinIO - don't allow fallback
-                logger.critical(f"MinIO connection failed. Files must be stored in MinIO. Please start MinIO server.")
                 _minio_client = None  # Set to None so upload function knows MinIO is not available
                 _minio_client_failed = True  # Mark as failed
                 # Don't raise exception here - let upload function handle it
         except Exception as e:
             logger.error(f"Could not initialize MinIO client: {e}")
-            logger.critical(f"MinIO initialization failed. Files must be stored in MinIO. Please check MinIO server is running.")
             _minio_client = None
             _minio_client_failed = True  # Mark as failed
             # Don't raise exception - let upload function handle it gracefully
     return _minio_client
 
-# Lazy MinIO client class for backward compatibility
-# MinIO disabled - these are kept for backward compatibility but will raise errors if used
-class DisabledMinioClient:
-    """Dummy MinIO client that raises errors when accessed"""
-    def __getattr__(self, name):
-        raise NotImplementedError("MinIO is disabled. Use local file storage instead.")
+def upload_file_to_minio(file_obj, object_name: str, content_type: str | None = None) -> bool:
+    """
+    Upload a file-like object (Django UploadedFile) to MinIO.
+    Returns True on success, False on failure.
+    """
+    if not settings.MINIO_ENABLED:
+        logger.error("MinIO upload attempted but MINIO_ENABLED is false")
+        return False
 
-minio_client = DisabledMinioClient()
-bucket_name = None
+    client = get_minio_client()
+    if client is None:
+        logger.error("MinIO client not available")
+        return False
+
+    bucket = settings.MINIO_BUCKET_NAME
+    try:
+        if hasattr(file_obj, "seek"):
+            file_obj.seek(0)
+
+        # Prefer known size if available (Django UploadedFile has `.size`)
+        length = getattr(file_obj, "size", None)
+        if length is None:
+            # Fallback: read into memory
+            data = file_obj.read()
+            length = len(data)
+            file_obj = BytesIO(data)
+            file_obj.seek(0)
+
+        client.put_object(
+            bucket,
+            object_name,
+            file_obj,
+            length=length,
+            content_type=content_type or "application/octet-stream",
+        )
+        logger.info(f"Uploaded object to MinIO: bucket={bucket}, object={object_name}, bytes={length}")
+        return True
+    except Exception as e:
+        logger.exception(f"MinIO upload failed for object={object_name}: {e}")
+        return False
+
+
+def fetch_file_from_minio(object_name: str) -> bytes | None:
+    """Fetch an object from MinIO and return its bytes, or None on failure."""
+    if not settings.MINIO_ENABLED:
+        return None
+
+    client = get_minio_client()
+    if client is None:
+        return None
+
+    bucket = settings.MINIO_BUCKET_NAME
+    response = None
+    try:
+        response = client.get_object(bucket, object_name)
+        return response.read()
+    except Exception as e:
+        logger.exception(f"MinIO fetch failed for object={object_name}: {e}")
+        return None
+    finally:
+        try:
+            if response is not None:
+                response.close()
+                response.release_conn()
+        except Exception:
+            pass
+
+
+def delete_file_from_minio(object_name: str) -> bool:
+    """Delete an object from MinIO. Returns True on success, False on failure."""
+    if not settings.MINIO_ENABLED:
+        logger.error("MinIO delete attempted but MINIO_ENABLED is false")
+        return False
+
+    client = get_minio_client()
+    if client is None:
+        logger.error("MinIO client not available")
+        return False
+
+    bucket = settings.MINIO_BUCKET_NAME
+    try:
+        client.remove_object(bucket, object_name)
+        logger.info(f"Deleted object from MinIO: bucket={bucket}, object={object_name}")
+        return True
+    except Exception as e:
+        logger.exception(f"MinIO delete failed for object={object_name}: {e}")
+        return False
 
 
 def get_gallery_images():
@@ -157,68 +222,8 @@ def get_gallery_images():
 
 
 def upload_image_to_minio(file, file_name):
-    """
-    Upload an image to MinIO storage.
-
-    Args:
-        file: File object containing the image data
-        file_name (str): Name to use when storing the file
-
-    Returns:
-        bool: True if upload was successful, False otherwise
-
-    Example:
-        >>> with open('image.jpg', 'rb') as f:
-        ...     success = upload_image_to_minio(f, 'images/image.jpg')
-    """
-    try:
-        # Check if MinIO is enabled
-        if not settings.MINIO_ENABLED:
-            if settings.DEBUG:
-                logger.debug(f"MinIO not enabled, skipping upload for {file_name}")
-            else:
-                logger.error(f"MinIO not enabled. Required for production deployment.")
-            return False
-        
-        # Upload file to MinIO
-        logger.info(f"Uploading {file_name} to MinIO (size: {file.size} bytes)")
-        client = get_minio_client()
-        
-        if client is None:
-            error_msg = f"MinIO client not available for {file_name}"
-            if settings.DEBUG:
-                logger.debug(error_msg + " - will use local fallback")
-            else:
-                logger.error(error_msg)
-            return False
-        
-        # Ensure file pointer is at the beginning
-        if hasattr(file, 'seek'):
-            file.seek(0)
-        
-        # MinIO disabled - this function should not be called
-        # Files are now saved directly to local storage in views.py
-        raise NotImplementedError("MinIO upload is disabled. Use local file storage instead.")
-
-        logger.info(f"Successfully uploaded {file_name} to MinIO bucket '{settings.MINIO_BUCKET_NAME}'")
-        return True
-    except S3Error as e:
-        logger.error(f"MinIO S3 error uploading {file_name}: {e}")
-        return False
-    except Exception as e:
-        # Check if it's a connection/timeout error
-        error_str = str(e).lower()
-        if any(keyword in error_str for keyword in ['connection', 'timeout', 'refused', 'resolve']):
-            if settings.DEBUG:
-                logger.debug(f"MinIO connection failed for {file_name}: {e} - will use local fallback")
-            else:
-                logger.error(f"MinIO connection failed for {file_name}: {e}")
-        else:
-            logger.exception(f"Error uploading {file_name} to MinIO: {e}")
-        if not settings.DEBUG:
-            # In production, log critical errors
-            logger.critical(f"Critical: File upload failed in production mode: {e}")
-        return False
+    """Backward-compatible wrapper used by older scripts."""
+    return upload_file_to_minio(file, file_name, getattr(file, "content_type", None))
 
 
 def delete_image_from_minio(file_name):
@@ -234,19 +239,7 @@ def delete_image_from_minio(file_name):
     Example:
         >>> success = delete_image_from_minio('images/image.jpg')
     """
-    try:
-        # Delete file from MinIO
-        logger.info(f"Deleting image {file_name} from MinIO")
-        client = get_minio_client()
-        # MinIO disabled - this function should not be called
-        # Files are now deleted directly from local storage in views.py
-        raise NotImplementedError("MinIO delete is disabled. Use local file storage instead.")
-
-        logger.info(f"Image {file_name} deleted successfully")
-        return True
-    except Exception as e:
-        logger.exception(f"Error deleting image {file_name}: {e}")
-        return False
+    return delete_file_from_minio(file_name)
 
 
 def generate_qr_code_live(user):
@@ -418,6 +411,99 @@ def send_otp_via_email(user):
         return False
 
 
+def send_new_account_credentials_email(
+    *,
+    username,
+    email,
+    password_plain,
+    login_url="",
+    profile_url="",
+    upload_url="",
+):
+    """
+    Email a newly created user their username, email, and plaintext password (registration or bulk).
+    Includes reminders to change password regularly and to upload missing profile documents.
+    """
+    from django.utils.html import escape
+
+    u = escape(username or "")
+    em = escape(email or "")
+    pw = escape(password_plain or "")
+    login_href = escape(login_url or "")
+    profile_href = escape(profile_url or "")
+    upload_href = escape(upload_url or "")
+
+    login_block = (
+        f'<p style="margin:12px 0;"><a href="{login_href}" style="color:#0d6efd;">Open login page</a></p>'
+        if login_href
+        else "<p style=\"margin:12px 0;\">Log in through your ADAMS portal.</p>"
+    )
+    profile_block = (
+        f'<p style="margin:8px 0;"><a href="{profile_href}" style="color:#0d6efd;">Your profile</a></p>'
+        if profile_href
+        else ""
+    )
+    if upload_href:
+        upload_sentence = (
+            f'If anything is still missing, use '
+            f'<a href="{upload_href}" style="color:#0d6efd;">Upload missing files</a> from your profile.'
+        )
+    else:
+        upload_sentence = (
+            'If anything is still missing, open your profile and use "Upload missing files".'
+        )
+
+    html = f"""
+    <html>
+    <body style="font-family:Arial,sans-serif;background:#f4f6f9;margin:0;padding:24px;">
+      <table width="100%" style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,.08);">
+        <tr>
+          <td style="padding:20px;background:#243c71;color:#fff;text-align:center;">
+            <h1 style="margin:0;font-size:1.25rem;">ADAMS — Account created</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:24px;color:#333;line-height:1.55;">
+            <p>Your ADAMS member account is ready. Use the credentials below to sign in.</p>
+            <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:0.95rem;">
+              <tr><td style="padding:8px 0;font-weight:600;width:140px;">Username</td>
+                  <td style="padding:8px 0;font-family:ui-monospace,monospace;">{u}</td></tr>
+              <tr><td style="padding:8px 0;font-weight:600;">Email</td>
+                  <td style="padding:8px 0;">{em}</td></tr>
+              <tr><td style="padding:8px 0;font-weight:600;">Password</td>
+                  <td style="padding:8px 0;font-family:ui-monospace,monospace;">{pw}</td></tr>
+            </table>
+            <p style="margin:16px 0 8px;"><strong>Security:</strong> Please change your password regularly
+              and do not share it with anyone.</p>
+            <p style="margin:8px 0 16px;"><strong>Documents:</strong> {upload_sentence}
+              <em>You may ignore this notice if you have already uploaded everything in the portal.</em></p>
+            {login_block}
+            {profile_block}
+            <p style="margin-top:20px;color:#6c757d;font-size:0.9rem;">— ADAMS</p>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+    """
+
+    try:
+        msg = EmailMessage(
+            subject="ADAMS — Your account has been created",
+            body=html,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[email],
+        )
+        msg.content_subtype = "html"
+        msg.send(fail_silently=False)
+        logger.info("Sent new-account credentials email to %s (username=%s)", email, username)
+        return True
+    except Exception as e:
+        logger.exception("Failed to send new-account email to %s: %s", email, e)
+        return False
+
+
 def send_email_with_attachments(
     subject,
     recipient_list,
@@ -583,3 +669,36 @@ def send_email_with_attachments(
     except Exception as e:
         logger.exception(f"Error sending email to {recipient_list}: {e}")
         return False
+
+
+# Paths used when bulk-import did not supply real files (see bulk_user_import.DOC_PLACEHOLDER).
+MEMBER_PROFILE_FILE_FIELDS = (
+    "photo",
+    "passport",
+    "medical_qualification",
+    "payment_transaction_proof",
+    "state_nmc",
+)
+
+
+def stored_file_is_missing(value):
+    """
+    True when no real member file is stored (empty/whitespace, or bulk placeholder path).
+    """
+    if value is None:
+        return True
+    s = str(value).strip()
+    if not s:
+        return True
+    normalized = s.replace("\\", "/").lower()
+    if "bulk-import/pending" in normalized:
+        return True
+    return False
+
+
+def member_profile_file_gaps(user):
+    """Map each profile file field to whether the member still needs to upload it."""
+    return {
+        field: stored_file_is_missing(getattr(user, field, None))
+        for field in MEMBER_PROFILE_FILE_FIELDS
+    }

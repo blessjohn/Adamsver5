@@ -449,12 +449,12 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                {% for category, count in data.statistics.by_category.items %}
+                                {% for row in data.statistics.by_category %}
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="d-flex justify-content-between align-items-center p-3 border rounded">
                                         <div>
-                                            <h6 class="mb-0 text-muted">{{ category }}</h6>
-                                            <h4 class="mb-0 mt-1">{{ count }}</h4>
+                                            <h6 class="mb-0 text-muted">{{ row.label }}</h6>
+                                            <h4 class="mb-0 mt-1">{{ row.count }}</h4>
                                         </div>
                                         <div>
                                             <i class="bi bi-person-badge" style="font-size: 2rem; color: #6c757d; opacity: 0.5;"></i>
@@ -511,6 +511,38 @@
                                 </div>
                                 <div>
                                     <i class="bi bi-shield-lock" style="font-size: 3rem; color: #198754; opacity: 0.3;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mb-3">
+                    <div class="card shadow-sm border-warning">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h5 class="card-title mb-2">
+                                        <i class="bi bi-people-fill text-warning"></i> Bulk user import (Excel)
+                                    </h5>
+                                    <p class="card-text text-muted mb-2">
+                                        Download the official <strong>.xlsx</strong> template (column headers match the registration form fields).
+                                        Fill one row per member, then upload. Password can be left blank to auto-generate.
+                                        Document uploads (photo, passport, etc.) are set to a placeholder path
+                                        <code>bulk-import/pending</code> — ask members to upload real files from their profile when needed.
+                                    </p>
+                                    <a href="{% url 'admin_bulk_users_template' %}" class="btn btn-outline-warning me-2 mb-2">
+                                        <i class="bi bi-download"></i> Download template (.xlsx)
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <form action="{% url 'admin_bulk_users_upload' %}" method="post" enctype="multipart/form-data" class="mb-0">
+                                        {% csrf_token %}
+                                        <label class="form-label small text-muted">Upload completed spreadsheet</label>
+                                        <input type="file" name="bulk_users_xlsx" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="form-control form-control-sm mb-2" required>
+                                        <button type="submit" class="btn btn-warning w-100">
+                                            <i class="bi bi-upload"></i> Import users
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -714,11 +746,9 @@
                             <select class="form-select" id="categoryFilter">
                                 <option value="">Select a category</option>
                                 <option value="All">All Categories</option>
-                                <option value="Student">Student</option>
-                                <option value="Graduate/Trying FMGE">Graduate/Trying FMGE</option>
-                                <option value="FMGE passed">FMGE passed</option>
-                                <option value="Working Doctor">Working Doctor (With SMC/NMC Registration)</option>
-                                <option value="PG Doctor">Working PG Doctor (With SMC/NMC Registration)</option>
+                                {% for value, label in data.category_choices %}
+                                <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="col-md-8 mb-3">
@@ -750,15 +780,20 @@
                     <th>Username</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Payment Status</th>
+                    <th>AMC</th>
+                    <th>Receipt (if completed)</th>
                     <th>Gender</th>
                     <th>Mobile Number</th>
                     <th>District</th>
                     <th>Role</th>
                     <th>Status</th>
+                    <th>ADAMS no.</th>
+                    <th>Payments</th>
                     <th>Action</th>
                     <th>Change Status</th>
                     <th>Change Role</th>
-                    <th>Generate QR</th>
+                    <th>Member ID</th>
                     <th>Update</th>
                     <th>Delete</th>
                 </tr>
@@ -770,6 +805,40 @@
                     <td>{{ user.username }}</td>
                     <td>{{ user.first_name }} {{ user.last_name }}</td>
                     <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.latest_payment %}
+                            {% if user.latest_payment.payment_status == 'paid' %}
+                                <span class="badge bg-success">Completed</span>
+                            {% elif user.latest_payment.payment_status == 'failed' %}
+                                <span class="badge bg-danger">Failed</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="badge bg-secondary">Not paid</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.amc_payment %}
+                            {% if user.amc_payment.payment_status == 'paid' %}
+                                <span class="badge bg-success">Paid</span>
+                            {% elif user.amc_payment.payment_status == 'failed' %}
+                                <span class="badge bg-danger">Failed</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% endif %}
+                            <div class="small text-muted mt-1 font-monospace">{{ user.amc_payment.receipt }}</div>
+                        {% else %}
+                            <span class="badge bg-secondary">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.latest_payment and user.latest_payment.payment_status == 'paid' %}
+                            {{ user.latest_payment.receipt }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
                     <td>{{ user.gender }}</td>
                     <td>{{ user.mobile_number }}</td>
                     <td>{{ user.district }}</td>
@@ -782,6 +851,15 @@
                         {% else %}
                             <span class="badge bg-warning">Pending</span>
                         {% endif %}
+                    </td>
+                    <td>
+                        <span class="font-monospace small">{{ user.display_membership_id }}</span>
+                    </td>
+                    <td class="text-center">
+                        <a href="{% url 'admin_member_payment_history' user.id %}" class="text-decoration-none text-secondary"
+                            title="Payment history">
+                            <i class="bi bi-clock-history"></i>
+                        </a>
                     </td>
                     <td>
                         <i class="view-details bi bi-eye-fill d-flex justify-content-center align-items-center rounded cursor-pointer"
@@ -798,9 +876,10 @@
                             title="Change Role"></i>
                     </td>
                     <td>
-                        <a href="{% url 'generate-qr-code' user.id %}" download="qr_code.png">
+                        <a href="{% url 'admin_member_id_card' user.id %}" target="_blank" rel="noopener noreferrer"
+                            title="Open printable membership ID card (print or download PNG)">
                             <i
-                                class="bi bi-download d-flex justify-content-center align-items-center rounded cursor-pointer"></i>
+                                class="bi bi-person-vcard d-flex justify-content-center align-items-center rounded cursor-pointer text-primary"></i>
                         </a>
                     </td>
                     <td>
@@ -886,11 +965,9 @@
                             <select class="form-select" id="emailCategory" required>
                                 <option value="">Select Category</option>
                                 <option value="All">All Categories</option>
-                                <option value="Student">Student</option>
-                                <option value="Graduate/Trying FMGE">Graduate/Trying FMGE</option>
-                                <option value="FMGE passed">FMGE passed</option>
-                                <option value="Working Doctor">Working Doctor (With SMC/NMC Registration)</option>
-                                <option value="PG Doctor">Working PG Doctor (With SMC/NMC Registration)</option>
+                                {% for value, label in data.category_choices %}
+                                <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="mb-3">
@@ -1104,7 +1181,11 @@
                         </div>
                         <div class="col-12 col-md-3 mb-2">
                             <label><strong>Category:</strong></label>
-                            <div class="dataValues">${user.category}</div>
+                            <div class="dataValues">${user.category_display || user.category}</div>
+                        </div>
+                        <div class="col-12 col-md-3 mb-2">
+                            <label><strong>ADAMS membership no.:</strong></label>
+                            <div class="dataValues">${user.membership_id || "—"}</div>
                         </div>
                         <div class="col-12 col-md-3 mb-2">
                             <label><strong>University Name:</strong></label>
@@ -1129,10 +1210,6 @@
                         <div class="col-12 col-md-3 mb-2">
                             <label><strong>Willing To Be Donor:</strong></label>
                             <div class="dataValues">${user.willing_to_be_donor}</div>
-                        </div>
-                        <div class="col-12 col-md-3 mb-2">
-                            <label><strong>MID:</strong></label>
-                            <div class="dataValues">${user.mid}</div>
                         </div>
                     </div>
                     <div class="row mt-3">
@@ -1247,6 +1324,8 @@
             const data = await response.json();
 
             if (data.success && data.requests.length > 0) {
+                const catLabels = data.category_label_map || {};
+                const lbl = (code) => catLabels[code] || code;
                 let html = '<div class="table-responsive"><table class="table table-hover">';
                 html += `
                     <thead class="table-light">
@@ -1268,8 +1347,8 @@
                                 <strong>${request.first_name} ${request.last_name}</strong><br>
                                 <small class="text-muted">${request.username}</small>
                             </td>
-                            <td><span class="badge bg-secondary">${request.current_category}</span></td>
-                            <td><span class="badge bg-primary">${request.requested_category}</span></td>
+                            <td><span class="badge bg-secondary" title="${request.current_category}">${lbl(request.current_category)}</span></td>
+                            <td><span class="badge bg-primary" title="${request.requested_category}">${lbl(request.requested_category)}</span></td>
                             <td><small>${request.request_date}</small></td>
                             <td>
                                 <button class="btn btn-success btn-sm me-1" onclick="handleCategoryRequest(${request.id}, 'approved')">

@@ -36,7 +36,24 @@ urlpatterns = [
     path('contact/', views.contact_view, name='contact'),
 
     path('admin_panel', views.admin_panel, name='admin_panel'),
+    # Must NOT use prefix "admin/" — that path is reserved for django.contrib.admin in adams/urls.py
+    path('staff/bulk-users/template.xlsx', views.admin_bulk_users_template, name='admin_bulk_users_template'),
+    path('staff/bulk-users/upload/', views.admin_bulk_users_upload, name='admin_bulk_users_upload'),
+    path('staff/member-id-card/<int:user_id>/', views.admin_member_id_card, name='admin_member_id_card'),
+    path('staff/member-id-card/<int:user_id>/download.png', views.admin_member_id_card_png, name='admin_member_id_card_png'),
     path('user_profile', views.user_profile, name='user_profile'),
+    path('profile/complete-uploads', views.member_complete_uploads, name='member_complete_uploads'),
+    path('member/pay-amc/', views.member_pay_amc, name='member_pay_amc'),
+    path('member/payment-history/', views.member_payment_history, name='member_payment_history'),
+    path('member/receipt/<int:payment_id>/', views.member_payment_receipt, name='member_payment_receipt'),
+    path('staff/member-payments/<int:user_id>/', views.admin_member_payment_history, name='admin_member_payment_history'),
+    path(
+        'staff/member-receipt/<int:user_id>/<int:payment_id>/',
+        views.admin_member_payment_receipt,
+        name='admin_member_payment_receipt',
+    ),
+    path('member/id-card/', views.member_id_card, name='member_id_card'),
+    path('member/id-card/download.png', views.member_id_card_png, name='member_id_card_png'),
     path('notice_board', views.notice_board_view, name='notice_board'),
     path('rulebook-viewer/', views.rulebook_viewer, name='rulebook_viewer'),
     path('reset_password', views.reset_password, name='reset_password'),
@@ -49,8 +66,8 @@ urlpatterns = [
     path('api/get-user-details/<int:userId>/', views.get_user_details, name='get_user_details'),
     # path('api/user/<int:user_id>/image/<str:image_field>/', views.serve_user_image, name='serve_user_image'),
     path('api/user/<int:user_id>/file/<str:file_field>/', views.serve_user_file, name='serve_user_image'),
-    path('media/image/<str:image_name>/', views.serve_image, name='serve_image'),
-    path('delete/image/<str:image_name>/', views.delete_image_view, name='delete_image'),
+    path('media/image/<path:image_name>/', views.serve_image, name='serve_image'),
+    path('delete/image/<path:image_name>/', views.delete_image_view, name='delete_image'),
     path("api/update-user-status/<int:user_id>/", views.update_user_status, name="update_user_status"),
     path("about-us/", views.render_about_us, name="about_us"),
     path("contact-us", views.render_contact_us, name="contact_us"),
@@ -98,6 +115,15 @@ urlpatterns = [
     # Payment Gateway URLs
     path('payment_request/', views.payment_request, name='payment_request'),
     path('payment_response/', views.payment_response, name='payment_response'),
+    path('create_order/', views.create_order, name='create_order'),
+    path('verify_payment/', views.verify_payment, name='verify_payment'),
+    path('registration-payment/', views.registration_payment_redirect, name='registration_payment_redirect'),
+    path('payment/success/', views.payment_success, name='payment_success'),
+    path('payment/failure/', views.payment_failure, name='payment_failure'),
+    # Short aliases (same views) for integrations expecting /success/ and /failure/
+    path('success/', views.payment_success, name='payment_success_short'),
+    path('failure/', views.payment_failure, name='payment_failure_short'),
+    path('payment/retry/', views.retry_payment, name='retry_payment'),
     
     # Registration Questions Management URLs
     path('manage-registration-questions/', views.manage_registration_questions, name='manage_registration_questions'),

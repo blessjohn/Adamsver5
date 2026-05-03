@@ -1,0 +1,263 @@
+{% extends "main.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+      <h3>Redirecting to Payment...</h3>
+      <p class="text-muted">Please wait. Razorpay checkout will open automatically.</p>
+      <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
+    </div>
+  </div>
+</div>
+
+{% csrf_token %}
+{% if checkout_bootstrap %}
+{{ checkout_bootstrap|json_script:"rzp-checkout-bootstrap" }}
+{% endif %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  /**
+   * Single-flight Razorpay Standard Checkout (order_id flow).
+   * - At most one create_order per session (server session reuses pending order on refresh).
+   * - At most one Razorpay.open() per page load (guards below).
+   * - Handler is synchronous; verify uses fetch().then() (never async handler).
+   */
+  (function () {
+    "use strict";
+
+    if (window.__ADAMS_RZP_PAGE_LOAD__) {
+      console.warn("[Razorpay] duplicate script run blocked");
+      return;
+    }
+    window.__ADAMS_RZP_PAGE_LOAD__ = true;
+
+    var csrfInput = document.querySelector("[name=csrfmiddlewaretoken]");
+    var successUrl = "{% url 'payment_success' %}";
+    var failureUrl = "{% url 'payment_failure' %}";
+    var createOrderUrl = "{% url 'create_order' %}";
+    var verifyUrl = "{% url 'verify_payment' %}";
+
+    var orderCreateStarted = false;
+    var checkoutOpened = false;
+    var verifyInFlight = false;
+
+    function go(url) {
+      window.location.assign(url);
+    }
+
+    function getCsrfToken() {
+      if (csrfInput && csrfInput.value) {
+        return csrfInput.value;
+      }
+      var row = document.cookie.split("; ").find(function (r) {
+        return r.indexOf("csrftoken=") === 0;
+      });
+      return row ? decodeURIComponent(row.split("=").slice(1).join("=")) : "";
+    }
+
+    function parseJsonFromResponse(resp) {
+      return resp.text().then(function (text) {
+        try {
+          return JSON.parse(text || "{}");
+        } catch (e) {
+          console.warn("[Razorpay] non-JSON response", resp.status, text && text.slice(0, 200));
+          return {};
+        }
+      });
+    }
+
+    function readServerBootstrap() {
+      var el = document.getElementById("rzp-checkout-bootstrap");
+      if (!el) {
+        return null;
+      }
+      try {
+        return JSON.parse(el.textContent);
+      } catch (e) {
+        console.warn("[Razorpay] invalid bootstrap JSON", e);
+        return null;
+      }
+    }
+
+    var csrfToken = getCsrfToken();
+    if (!csrfToken) {
+      console.error("[Razorpay] CSRF token missing");
+      go(failureUrl);
+      return;
+    }
+
+    function postVerify(registrationId, expectedOrderId, response) {
+      if (verifyInFlight) {
+        console.warn("[Razorpay] verify already in flight — ignored duplicate handler call");
+        return;
+      }
+      verifyInFlight = true;
+
+      var r = response || {};
+      var pid = String(r.razorpay_payment_id || "").trim();
+      var oid = String(r.razorpay_order_id || "").trim();
+      var sig = String(r.razorpay_signature || "").trim();
+
+      console.log(
+        "[Razorpay] handler expected_order=%s response_order=%s payment_id_len=%s sig_len=%s",
+        expectedOrderId,
+        oid,
+        pid.length,
+        sig.length
+      );
+
+      if (!pid || !oid || !sig) {
+        console.error("[Razorpay] missing payment fields from checkout handler");
+        verifyInFlight = false;
+        go(failureUrl);
+        return;
+      }
+      if (expectedOrderId && oid !== expectedOrderId) {
+        console.error("[Razorpay] order_id mismatch handler vs expected", oid, expectedOrderId);
+        verifyInFlight = false;
+        go(failureUrl);
+        return;
+      }
+
+      var verifyBody = new URLSearchParams({
+        registration_id: String(registrationId),
+        razorpay_payment_id: pid,
+        razorpay_order_id: oid,
+        razorpay_signature: sig
+      });
+
+      fetch(verifyUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": csrfToken
+        },
+        body: verifyBody.toString(),
+        credentials: "same-origin"
+      })
+        .then(parseJsonFromResponse)
+        .then(function (payload) {
+          if (payload && payload.success === true) {
+            go(payload.redirect_url || successUrl);
+            return;
+          }
+          console.warn("[Razorpay] verify rejected", payload);
+          go(failureUrl);
+        })
+        .catch(function (err) {
+          console.error("[Razorpay] verify request failed", err);
+          go(failureUrl);
+        });
+    }
+
+    function openRazorpayCheckout(orderData) {
+      if (checkoutOpened) {
+        console.warn("[Razorpay] checkout already opened — skip");
+        return;
+      }
+
+      var registrationId = String(orderData.registration_id);
+      var orderId = String(orderData.order_id || "").trim();
+      var keyId = String(orderData.key || "").trim();
+      var amount = orderData.amount != null ? Number(orderData.amount) : null;
+      var currency = (orderData.currency || "INR").trim();
+
+      if (!keyId || !orderId || orderData.registration_id == null) {
+        console.error("[Razorpay] invalid order payload", orderData);
+        go(failureUrl);
+        return;
+      }
+
+      checkoutOpened = true;
+
+      console.log(
+        "[Razorpay] opening checkout registration_id=%s order_id=%s amount=%s",
+        registrationId,
+        orderId,
+        amount
+      );
+
+      var options = {
+        key: keyId,
+        amount: amount,
+        currency: currency,
+        name: "ADAMS Registration",
+        description: "{{ prefill.membership_label|default:'Membership'|escapejs }} — payment",
+        order_id: orderId,
+        prefill: {
+          name: "{{ prefill.name|escapejs }}",
+          email: "{{ prefill.email|escapejs }}",
+          contact: "{{ prefill.phone|escapejs }}"
+        },
+        handler: function (response) {
+          postVerify(registrationId, orderId, response);
+        },
+        theme: { color: "#0d6efd" }
+      };
+
+      var rzp = new Razorpay(options);
+      rzp.on("payment.failed", function (resp) {
+        if (resp && resp.error) {
+          console.error("[Razorpay] payment.failed", resp.error);
+        }
+        go(failureUrl);
+      });
+      rzp.open();
+    }
+
+    function fetchCreateOrderThenOpen() {
+      if (orderCreateStarted) {
+        return;
+      }
+      orderCreateStarted = true;
+
+      var orderPayload = new URLSearchParams({
+        name: "{{ prefill.name|escapejs }}",
+        email: "{{ prefill.email|escapejs }}",
+        phone: "{{ prefill.phone|escapejs }}",
+        membership_type: "{{ prefill.membership_type|escapejs }}"
+      });
+
+      fetch(createOrderUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": csrfToken
+        },
+        body: orderPayload.toString(),
+        credentials: "same-origin"
+      })
+        .then(function (resp) {
+          return parseJsonFromResponse(resp).then(function (data) {
+            return { ok: resp.ok, status: resp.status, data: data };
+          });
+        })
+        .then(function (ctx) {
+          if (!ctx.ok) {
+            throw new Error((ctx.data && ctx.data.error) || "create_order failed (" + ctx.status + ")");
+          }
+          var d = ctx.data;
+          if (!d.key || !d.order_id || d.registration_id == null) {
+            throw new Error("Invalid create_order JSON");
+          }
+          return d;
+        })
+        .then(openRazorpayCheckout)
+        .catch(function (err) {
+          console.error(err);
+          alert(err.message || "Unable to start payment");
+          go(failureUrl);
+        });
+    }
+
+    var bootstrap = readServerBootstrap();
+    if (bootstrap && bootstrap.order_id && bootstrap.registration_id != null) {
+      console.log("[Razorpay] using server bootstrap (no duplicate create_order)");
+      openRazorpayCheckout(bootstrap);
+    } else {
+      fetchCreateOrderThenOpen();
+    }
+  })();
+</script>
+{% endblock %}

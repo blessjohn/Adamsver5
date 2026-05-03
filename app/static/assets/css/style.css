@@ -1770,7 +1770,8 @@ table.dataTable thead td{
 }
 
 .newBannerHome{
-  background-image: url(../../assets/img/client-img/doctor04.jpeg)no-repeat;
+  background-image: url(../../assets/img/client-img/doctor04.jpeg);
+  background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
   height: calc(100dvh - 164.6px);

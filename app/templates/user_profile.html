@@ -207,9 +207,20 @@
         <div class="col-12">
             <!-- Profile Header -->
             <div class="profile-card">
+                {% if data.needs_any_upload %}
+                <div class="alert alert-warning d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4" role="alert">
+                    <div>
+                        <strong><i class="bi bi-exclamation-triangle-fill"></i> Action needed:</strong>
+                        Your profile photo or one or more required documents are still missing (or are placeholder entries from a bulk import). Upload them to complete your profile.
+                    </div>
+                    <a href="{% url 'member_complete_uploads' %}" class="btn btn-warning text-dark text-nowrap">
+                        <i class="bi bi-cloud-upload"></i> Upload missing files
+                    </a>
+                </div>
+                {% endif %}
                 <div class="profile-header">
                     <div style="display: flex; justify-content: center; width: 100%;">
-                        {% if data.user.photo %}
+                        {% if data.user and not data.upload_gaps.photo %}
                         <img src="{% url 'serve_user_image' data.user.id 'photo' %}" 
                              alt="{{ data.user.first_name }}'s Photo" 
                              class="profile-photo">
@@ -230,14 +241,22 @@
                     <span class="badge-status {% if data.user.status == 'approved' %}badge-approved{% elif data.user.status == 'pending' %}badge-pending{% else %}badge-rejected{% endif %}">
                         {{ data.user.get_status_display }}
                     </span>
+                    {% if data.user.status == 'approved' %}
+                    <div class="mt-3">
+                        <a href="{% url 'member_id_card' %}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                            <i class="bi bi-person-vcard"></i> Generate membership ID card
+                        </a>
+                        <p class="text-muted small mt-2 mb-0">Opens a printable page with your association heading, category, and membership ID number.</p>
+                    </div>
+                    {% endif %}
                 </div>
 
                 <!-- Pending Category Change Request Alert -->
                 {% if data.pending_category_request %}
                 <div class="pending-request-alert">
                     <h5><i class="bi bi-clock-history"></i> Category Change Request Pending</h5>
-                    <p><strong>Current Category:</strong> {{ data.pending_category_request.current_category }}</p>
-                    <p><strong>Requested Category:</strong> {{ data.pending_category_request.requested_category }}</p>
+                    <p><strong>Current Category:</strong> {% if data.pending_category_labels %}{{ data.pending_category_labels.current }}{% else %}{{ data.pending_category_request.current_category }}{% endif %}</p>
+                    <p><strong>Requested Category:</strong> {% if data.pending_category_labels %}{{ data.pending_category_labels.requested }}{% else %}{{ data.pending_category_request.requested_category }}{% endif %}</p>
                     <p><strong>Request Date:</strong> {{ data.pending_category_request.request_date|date:"M d, Y H:i" }}</p>
                     <p class="text-muted"><em>Your request is awaiting admin approval. You will be notified once a decision is made.</em></p>
                 </div>
@@ -298,7 +317,7 @@
                     <div class="profile-field">
                         <span class="field-label">Category:</span>
                         <span class="field-value">
-                            <strong>{% if data.user.category and data.user.category|default:""|stringformat:"s" != "None" %}{{ data.user.category }}{% else %}-{% endif %}</strong>
+                            <strong>{% if data.user.category and data.user.category|default:""|stringformat:"s" != "None" %}{{ data.user.get_category_display }}{% else %}-{% endif %}</strong>
                             {% if not data.pending_category_request %}
                             <button class="btn btn-sm btn-category-change ms-2" onclick="openCategoryChangeModal()">
                                 <i class="bi bi-pencil-square"></i> Change Category
@@ -324,53 +343,179 @@
                     </div>
                 </div>
 
+                <!-- Payment Status -->
+                <div class="profile-section">
+                    <h3 class="section-title"><i class="bi bi-credit-card"></i> Payment</h3>
+
+                    {% if data.latest_payment %}
+                    <div class="profile-field">
+                        <span class="field-label">Status:</span>
+                        <span class="field-value">
+                            <span class="badge-status {% if data.latest_payment.payment_status == 'paid' %}badge-approved{% elif data.latest_payment.payment_status == 'pending' %}badge-pending{% else %}badge-rejected{% endif %}">
+                                {% if data.latest_payment.payment_status == 'paid' %}Completed{% elif data.latest_payment.payment_status == 'pending' %}Pending{% else %}Failed{% endif %}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Reference:</span>
+                        <span class="field-value">
+                            {% if data.latest_payment.payment_status == 'paid' %}
+                                <span class="font-monospace">{{ data.latest_payment.receipt }}</span>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                            <span class="ms-2">
+                                <a href="{% url 'member_payment_receipt' data.latest_payment.id %}?download=1" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-download"></i> Download
+                                </a>
+                                <a href="{% url 'member_payment_receipt' data.latest_payment.id %}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener noreferrer">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Amount:</span>
+                        <span class="field-value">Rs {% widthratio data.latest_payment.amount 100 1 %}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Membership Type:</span>
+                        <span class="field-value">
+                            {% if data.latest_payment.notes.membership_label %}
+                                {{ data.latest_payment.notes.membership_label }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Last Updated:</span>
+                        <span class="field-value">{{ data.latest_payment.updated_at|date:"M d, Y H:i" }}</span>
+                    </div>
+
+                    {% if data.latest_payment.payment_status != 'paid' %}
+                    <div class="mt-3">
+                        <a href="{% url 'retry_payment' %}" class="btn btn-warning">
+                            <i class="bi bi-arrow-repeat"></i> Retry Payment
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <div class="alert alert-secondary mb-0">
+                        No membership payment record found yet.
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'retry_payment' %}" class="btn btn-warning">
+                            <i class="bi bi-arrow-repeat"></i> Make Payment
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    {% if data.amc_payment %}
+                    <hr class="my-4">
+                    <h4 class="h6 text-secondary mb-3"><i class="bi bi-receipt"></i> AMC (annual)</h4>
+                    <div class="profile-field">
+                        <span class="field-label">Status:</span>
+                        <span class="field-value">
+                            <span class="badge-status {% if data.amc_payment.payment_status == 'paid' %}badge-approved{% elif data.amc_payment.payment_status == 'pending' %}badge-pending{% else %}badge-rejected{% endif %}">
+                                {% if data.amc_payment.payment_status == 'paid' %}Completed{% elif data.amc_payment.payment_status == 'pending' %}Pending{% else %}Failed{% endif %}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Reference:</span>
+                        <span class="field-value">
+                            <span class="font-monospace">{{ data.amc_payment.receipt }}</span>
+                            <span class="ms-2">
+                                <a href="{% url 'member_payment_receipt' data.amc_payment.id %}?download=1" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-download"></i> Download
+                                </a>
+                                <a href="{% url 'member_payment_receipt' data.amc_payment.id %}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener noreferrer">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Amount:</span>
+                        <span class="field-value">Rs {% widthratio data.amc_payment.amount 100 1 %}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Type:</span>
+                        <span class="field-value">{{ data.amc_payment.notes.membership_label|default:"AMC" }}</span>
+                    </div>
+                    {% elif data.show_pay_amc_button %}
+                    <hr class="my-4">
+                    <h4 class="h6 text-secondary mb-2"><i class="bi bi-receipt"></i> AMC (annual)</h4>
+                    <p class="text-muted small mb-0">No AMC payment is on file yet. Use the button below to open Razorpay and pay.</p>
+                    {% endif %}
+
+                    <div class="d-flex flex-wrap gap-2 align-items-center mt-4">
+                        {% if data.show_pay_amc_button %}
+                        <a href="{% url 'member_pay_amc' %}" class="btn btn-primary">
+                            <i class="bi bi-cash-coin"></i> {% if data.amc_payment and data.amc_payment.payment_status != 'paid' %}Complete AMC payment{% else %}Pay AMC{% endif %} (₹{{ data.amc_pay_details.amount_rupees }})
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'member_payment_history' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-clock-history"></i> Payment history
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Documents -->
                 <div class="profile-section">
                     <h3 class="section-title"><i class="bi bi-file-earmark-text"></i> Documents</h3>
-                    {% if data.user.passport %}
+                    {% if data.needs_any_upload %}
+                    <p class="text-muted small mb-3">Items marked “Missing” can be added using <a href="{% url 'member_complete_uploads' %}">Upload missing files</a>.</p>
+                    {% endif %}
                     <div class="profile-field">
                         <span class="field-label">Passport:</span>
                         <span class="field-value">
-                            <a href="{% url 'serve_user_image' data.user.id 'passport' %}" 
-                               class="document-link" target="_blank">
-                                <i class="bi bi-file-pdf"></i> View Passport
+                            {% if not data.upload_gaps.passport %}
+                            <a href="{% url 'serve_user_image' data.user.id 'passport' %}" class="document-link" target="_blank" rel="noopener noreferrer">
+                                <i class="bi bi-file-earmark-arrow-up"></i> View file
                             </a>
+                            {% else %}
+                            <span class="text-muted">Missing — <a href="{% url 'member_complete_uploads' %}">upload</a></span>
+                            {% endif %}
                         </span>
                     </div>
-                    {% endif %}
-                    {% if data.user.medical_qualification %}
                     <div class="profile-field">
-                        <span class="field-label">Medical Qualification:</span>
+                        <span class="field-label">Medical qualification:</span>
                         <span class="field-value">
-                            <a href="{% url 'serve_user_image' data.user.id 'medical_qualification' %}" 
-                               class="document-link" target="_blank">
-                                <i class="bi bi-file-pdf"></i> View Medical Qualification
+                            {% if not data.upload_gaps.medical_qualification %}
+                            <a href="{% url 'serve_user_image' data.user.id 'medical_qualification' %}" class="document-link" target="_blank" rel="noopener noreferrer">
+                                <i class="bi bi-file-earmark-arrow-up"></i> View file
                             </a>
+                            {% else %}
+                            <span class="text-muted">Missing — <a href="{% url 'member_complete_uploads' %}">upload</a></span>
+                            {% endif %}
                         </span>
                     </div>
-                    {% endif %}
-                    {% if data.user.state_nmc %}
                     <div class="profile-field">
-                        <span class="field-label">State/NMC Registration:</span>
+                        <span class="field-label">State/NMC registration:</span>
                         <span class="field-value">
-                            <a href="{% url 'serve_user_image' data.user.id 'state_nmc' %}" 
-                               class="document-link" target="_blank">
-                                <i class="bi bi-file-pdf"></i> View State/NMC Certificate
+                            {% if not data.upload_gaps.state_nmc %}
+                            <a href="{% url 'serve_user_image' data.user.id 'state_nmc' %}" class="document-link" target="_blank" rel="noopener noreferrer">
+                                <i class="bi bi-file-earmark-arrow-up"></i> View file
                             </a>
+                            {% else %}
+                            <span class="text-muted">Missing (upload if you have registration) — <a href="{% url 'member_complete_uploads' %}">upload</a></span>
+                            {% endif %}
                         </span>
                     </div>
-                    {% endif %}
-                    {% if data.user.payment_transaction_proof %}
                     <div class="profile-field">
-                        <span class="field-label">Payment Proof:</span>
+                        <span class="field-label">Payment proof:</span>
                         <span class="field-value">
-                            <a href="{% url 'serve_user_image' data.user.id 'payment_transaction_proof' %}" 
-                               class="document-link" target="_blank">
-                                <i class="bi bi-file-pdf"></i> View Payment Proof
+                            {% if not data.upload_gaps.payment_transaction_proof %}
+                            <a href="{% url 'serve_user_image' data.user.id 'payment_transaction_proof' %}" class="document-link" target="_blank" rel="noopener noreferrer">
+                                <i class="bi bi-file-earmark-arrow-up"></i> View file
                             </a>
+                            {% else %}
+                            <span class="text-muted">Missing — <a href="{% url 'member_complete_uploads' %}">upload</a></span>
+                            {% endif %}
                         </span>
                     </div>
-                    {% endif %}
                 </div>
 
                 <!-- Additional Information -->
@@ -401,7 +546,12 @@
                 <!-- Actions -->
                 <div class="profile-section">
                     <h3 class="section-title"><i class="bi bi-gear"></i> Account Actions</h3>
-                    <div class="d-flex gap-3">
+                    <div class="d-flex flex-wrap gap-3">
+                        {% if data.needs_any_upload %}
+                        <a href="{% url 'member_complete_uploads' %}" class="btn btn-warning text-dark">
+                            <i class="bi bi-cloud-upload"></i> Upload missing photo / documents
+                        </a>
+                        {% endif %}
                         <a href="{% url 'reset_password' %}" class="btn btn-primary">
                             <i class="bi bi-key"></i> Change Password
                         </a>
@@ -421,6 +571,7 @@
     {% endif %}
 </div>
 
+{% if data.user %}
 <!-- Category Change Modal -->
 <div class="modal fade" id="categoryChangeModal" tabindex="-1" aria-labelledby="categoryChangeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -433,17 +584,17 @@
                 <form id="categoryChangeForm">
                     <div class="mb-3">
                         <label for="currentCategory" class="form-label">Current Category</label>
-                        <input type="text" class="form-control" id="currentCategory" value="{{ data.user.category }}" readonly>
+                        <input type="text" class="form-control" id="currentCategory" value="{{ data.user.get_category_display }}" readonly>
                     </div>
                     <div class="mb-3">
                         <label for="newCategory" class="form-label">New Category <span class="text-danger">*</span></label>
                         <select class="form-select" id="newCategory" required>
                             <option value="">Select New Category</option>
-                            <option value="Student">Student</option>
-                            <option value="Graduate/Trying FMGE">Graduate/Trying FMGE</option>
-                            <option value="FMGE passed">FMGE passed</option>
-                            <option value="Working Doctor">Working Doctor (With SMC/NMC Registration)</option>
-                            <option value="PG Doctor">Working PG Doctor (With SMC/NMC Registration)</option>
+                            {% for value, label in data.category_choices %}
+                            {% if value != data.user.category %}
+                            <option value="{{ value }}">{{ label }}</option>
+                            {% endif %}
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="alert alert-info">
@@ -458,6 +609,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 <script>
     function openCategoryChangeModal() {

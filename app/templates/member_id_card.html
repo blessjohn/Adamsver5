@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADAMS Membership ID — {{ membership_id }}</title>
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: #e8eef5;
+      min-height: 100vh;
+      padding: 1.5rem;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    #id-card-capture {
+      max-width: 420px;
+      margin: 0 auto;
+      background: linear-gradient(165deg, #ffffff 0%, #f0f6ff 100%);
+      border: 2px solid #0d6efd;
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(13, 110, 253, 0.15);
+      overflow: hidden;
+    }
+    .id-card-header {
+      background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+      color: #fff;
+      text-align: center;
+      padding: 1.25rem 1rem;
+    }
+    .id-card-header h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin: 0 0 0.35rem 0;
+      line-height: 1.3;
+    }
+    .id-card-header .sub {
+      font-size: 0.75rem;
+      opacity: 0.92;
+      margin: 0;
+    }
+    .id-card-body {
+      padding: 1.25rem 1.25rem 1.5rem;
+    }
+    .id-photo-block {
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .id-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #0d6efd;
+      display: block;
+      margin: 0 auto 0.75rem auto;
+      background: #fff;
+    }
+    .id-photo-placeholder {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #0d6efd;
+      margin: 0 auto 0.75rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e9ecef;
+      color: #6c757d;
+      font-size: 3rem;
+    }
+    .id-photo-placeholder-glyph {
+      font-size: 2.75rem;
+      font-weight: 700;
+      line-height: 1;
+      font-family: system-ui, sans-serif;
+      user-select: none;
+    }
+    .id-member-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #212529;
+      text-align: center;
+      line-height: 1.35;
+      padding: 0 0.25rem;
+    }
+    .id-row {
+      border-bottom: 1px solid #dee2e6;
+      padding: 0.75rem 0;
+    }
+    .id-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .id-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6c757d;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .id-value {
+      font-size: 1rem;
+      color: #212529;
+      font-weight: 600;
+    }
+    .id-value.id-number {
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: 1.15rem;
+      color: #0d6efd;
+    }
+    .id-qr-block {
+      margin-top: 0.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #dee2e6;
+      text-align: center;
+    }
+    .id-qr-block img {
+      width: 112px;
+      height: 112px;
+      object-fit: contain;
+      display: inline-block;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .id-qr-hint {
+      font-size: 0.7rem;
+      color: #6c757d;
+      margin-top: 0.35rem;
+    }
+    .actions {
+      text-align: center;
+      margin-top: 1.25rem;
+    }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .no-print { display: none !important; }
+      #id-card-capture { box-shadow: none; max-width: 100%; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="no-print actions mb-3 d-flex flex-wrap justify-content-center gap-2">
+    <a class="btn btn-success" id="downloadIdCardBtn" href="{{ id_card_png_url }}" download>
+      <i class="bi bi-download"></i> Download as PNG
+    </a>
+    <button type="button" class="btn btn-primary" onclick="window.print()">
+      <i class="bi bi-printer"></i> Print ID card
+    </button>
+    <a href="{% if id_card_back_url %}{{ id_card_back_url }}{% else %}{% url 'user_profile' %}{% endif %}" class="btn btn-outline-secondary">{% if id_card_back_label %}{{ id_card_back_label }}{% else %}Back to profile{% endif %}</a>
+  </div>
+
+  <div id="id-card-capture">
+    <div class="id-card-header">
+      <h1>Association of Doctors and Medical Students</h1>
+      <p class="sub">(ADAMS) — Membership identification</p>
+    </div>
+    <div class="id-card-body">
+      <div class="id-photo-block">
+        {% if has_real_photo %}
+        <img
+          class="id-photo"
+          src="{% url 'serve_user_image' member.id 'photo' %}"
+          alt=""
+        >
+        {% else %}
+        <div class="id-photo-placeholder" aria-hidden="true">
+          <span class="id-photo-placeholder-glyph">?</span>
+        </div>
+        {% endif %}
+        <div class="id-member-name">{{ member_display_name }}</div>
+      </div>
+      <div class="id-row">
+        <div class="id-label">Category</div>
+        <div class="id-value">{{ member.get_category_display }}</div>
+      </div>
+      <div class="id-row">
+        <div class="id-label">Membership ID no.</div>
+        <div class="id-value id-number">{{ membership_id }}</div>
+      </div>
+      {% if qr_data_uri %}
+      <div class="id-qr-block">
+        <div class="id-label">Verification QR</div>
+        <img src="{{ qr_data_uri }}" width="112" height="112" alt="Membership verification QR code">
+        <p class="id-qr-hint mb-0">Encodes your username for official ADAMS verification.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,8 +1,6 @@
 /* ============================================
-   ADAMS Modern Theme - Blue Color Palette
-   Primary: #243c71 (Deep Blue)
-   Secondary: #3498db (Bright Blue)
-   Accent: #5dade2 (Light Blue)
+   ADAMS — Brand blue theme
+   Primary: #243c71 · Secondary / accent blues preserved for templates
    ============================================ */
 
 :root {
@@ -19,10 +17,16 @@
     --white: #ffffff;
     --light-gray: #f8f9fa;
     --border-color: #e0e6ed;
-    --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-    --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* System “standard” stack — no webfont downloads */
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    --font-display: var(--font-sans);
+    --font-body: var(--font-sans);
+    --brand-blue-border: rgba(36, 60, 113, 0.22);
+    --brand-glass: rgba(255, 255, 255, 0.92);
 }
 
 /* ============================================
@@ -30,20 +34,23 @@
    ============================================ */
 
 body {
-    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-body);
     font-size: 16px;
-    line-height: 1.6;
+    line-height: 1.65;
     color: var(--text-dark);
     background-color: var(--light-gray);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    letter-spacing: 0.01em;
 }
 
 h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
     font-weight: 600;
-    line-height: 1.3;
+    line-height: 1.25;
     margin-bottom: 1rem;
     color: var(--primary-blue);
+    letter-spacing: 0.02em;
 }
 
 h1 { font-size: 2.5rem; }
@@ -83,6 +90,7 @@ h6 { font-size: 1rem; }
 #header {
     background: var(--white) !important;
     box-shadow: var(--shadow-md) !important;
+    border-bottom: 1px solid var(--border-color);
     padding: 1rem 0;
     position: sticky !important;
     top: 0 !important;
@@ -109,11 +117,61 @@ h6 { font-size: 1rem; }
     max-height: 50px;
 }
 
+/* Header: mobile title wraps in-place (no truncation); desktop unchanged */
+.header-brand-row {
+    --header-mobile-title-size: clamp(0.7rem, 2.85vw + 0.2rem, 0.9rem);
+}
+
+.header-mobile-brand {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-right: 0.25rem;
+}
+
+.header-mobile-brand-link {
+    transition: var(--transition);
+}
+
+.header-mobile-brand-link:active {
+    opacity: 0.85;
+}
+
+.header-mobile-title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--header-mobile-title-size);
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    color: var(--primary-blue);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: manual;
+}
+
+.header-mobile-tag {
+    display: block;
+    margin-top: 0.2rem;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text-light);
+}
+
+@media (max-width: 991.98px) {
+    #header .header-brand-row {
+        padding-top: 0.65rem;
+        padding-bottom: 0.65rem;
+    }
+}
+
 /* Modern Navigation */
 .navbar {
     background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
     padding: 0;
     box-shadow: var(--shadow-md);
+    border-bottom: 1px solid rgba(93, 173, 226, 0.28);
 }
 
 .navbar ul {
@@ -202,13 +260,34 @@ h6 { font-size: 1rem; }
         max-height: 50px !important;
     }
 
+    /* Bar keeps a visible strip behind the menu icon (icon was white on white when height collapsed). */
+    .navbar .container {
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 0.35rem;
+        padding-bottom: 0.35rem;
+        padding-right: 52px;
+        box-sizing: border-box;
+    }
+
     .mobile-nav-toggle {
         display: block;
         position: absolute;
-        right: 15px;
+        right: 12px;
         top: 50%;
         transform: translateY(-50%);
         z-index: 1001;
+        color: var(--white);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+        border-radius: 8px;
+        padding: 0.5rem !important;
+    }
+
+    .mobile-nav-toggle:focus-visible {
+        outline: 2px solid var(--accent-blue);
+        outline-offset: 2px;
     }
 
     .navbar {
@@ -226,11 +305,20 @@ h6 { font-size: 1rem; }
         flex-direction: column;
         align-items: stretch;
         box-shadow: var(--shadow-lg);
-        z-index: 998;
+        z-index: 1002;
+        max-height: min(70vh, 28rem);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .navbar ul.mobile-nav-active {
         display: flex;
+    }
+
+    .AdminLoginPortal {
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .navbar li {
@@ -249,7 +337,7 @@ h6 { font-size: 1rem; }
 
 .modern-card {
     background: var(--white);
-    border-radius: 12px;
+    border-radius: 14px;
     box-shadow: var(--shadow-sm);
     padding: 2rem;
     margin-bottom: 2rem;
@@ -361,11 +449,13 @@ h6 { font-size: 1rem; }
 }
 
 .modern-hero h1 {
+    font-family: var(--font-display);
     font-size: 3rem;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 1.5rem;
     color: var(--white);
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+    letter-spacing: 0.02em;
 }
 
 .modern-hero p {
@@ -444,7 +534,7 @@ h6 { font-size: 1rem; }
 
 .form-control-modern:focus {
     border-color: var(--secondary-blue);
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
     outline: none;
 }
 
@@ -563,7 +653,7 @@ h6 { font-size: 1rem; }
 }
 
 .footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
     padding-top: 2rem;
     margin-top: 3rem;
     text-align: center;
@@ -700,8 +790,188 @@ img {
 }
 
 *:focus-visible {
-    outline: 3px solid var(--secondary-blue);
+    outline: 3px solid var(--accent-blue);
     outline-offset: 2px;
+}
+
+/* ============================================
+   Luxury home (hero card, banner, news)
+   ============================================ */
+
+.luxury-hero-section {
+    position: relative;
+}
+
+.luxury-hero-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        165deg,
+        rgba(36, 60, 113, 0.06) 0%,
+        rgba(26, 45, 90, 0.28) 100%
+    );
+}
+
+.luxury-hero-section > .AdminLoginPortal,
+.luxury-hero-section > .container {
+    position: relative;
+    z-index: 1;
+}
+
+.luxury-hero-card.AdminLoginPortal {
+    background: var(--brand-glass) !important;
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    border: 1px solid var(--brand-blue-border) !important;
+    border-right: 1px solid var(--brand-blue-border) !important;
+    box-shadow: var(--shadow-lg) !important;
+    border-radius: 6px;
+}
+
+@media (max-width: 990.98px) {
+    .luxury-hero-card.AdminLoginPortal {
+        border-radius: 10px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.luxury-hero-card .adminLoginMain h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.35rem, 4vw, 1.85rem);
+    letter-spacing: 0.03em;
+    color: var(--primary-blue) !important;
+    line-height: 1.2;
+}
+
+.luxury-hero-card .loginMiddle p {
+    font-family: var(--font-body);
+    font-size: clamp(0.9rem, 2.8vw, 1rem);
+    line-height: 1.7;
+    color: var(--text-dark);
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.luxury-hero-card .public-hero-actions {
+    gap: 0.75rem !important;
+}
+
+.luxury-hero-card .public-hero-actions a {
+    min-height: 48px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 auto;
+    padding: 0.85rem 1.25rem !important;
+    font-family: var(--font-body) !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.14em !important;
+    text-transform: uppercase !important;
+    border-radius: 4px !important;
+    background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--primary-blue) 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(93, 173, 226, 0.45) !important;
+    text-decoration: none !important;
+    transition: var(--transition) !important;
+}
+
+.luxury-hero-card .public-hero-actions a:hover {
+    color: #fff !important;
+    border-color: var(--accent-blue) !important;
+    box-shadow: 0 8px 28px rgba(36, 60, 113, 0.28);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 575.98px) {
+    .luxury-hero-card .public-hero-actions a {
+        width: 100%;
+    }
+}
+
+#hero.newsHead.luxury-news-panel,
+.luxury-news-panel {
+    background: linear-gradient(
+        168deg,
+        #2d5085 0%,
+        var(--primary-blue) 50%,
+        var(--dark-blue) 100%
+    ) !important;
+    border: 1px solid rgba(93, 173, 226, 0.3);
+    box-shadow: var(--shadow-lg);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.luxury-news-panel .luxury-news-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+    color: #ffffff !important;
+    margin: 0;
+}
+
+.luxury-news-panel .newsBoxMain {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.luxury-news-panel .bi-plus {
+    color: var(--accent-blue) !important;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.luxury-news-panel .bi-plus:hover {
+    color: #fff !important;
+    transform: scale(1.06);
+}
+
+@media (max-width: 575.98px) {
+    .messages-container {
+        left: 10px;
+        right: 10px;
+        max-width: none;
+        width: auto;
+    }
+
+    .messages-container .alert {
+        font-size: 0.9rem;
+    }
+}
+
+.header-desktop-title {
+    font-family: var(--font-display) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em !important;
+}
+
+/* Bootstrap primary — brand blue */
+.btn-primary {
+    --bs-btn-bg: #243c71;
+    --bs-btn-border-color: #3498db;
+    --bs-btn-hover-bg: #1a2d5a;
+    --bs-btn-hover-border-color: #5dade2;
+    --bs-btn-active-bg: #1a2d5a;
+    --bs-btn-active-border-color: #5dade2;
+    --bs-btn-color: #fff;
+    --bs-btn-hover-color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.luxury-footer-line {
+    font-family: var(--font-body);
+    letter-spacing: 0.06em;
+    font-size: 0.9rem;
+    opacity: 0.95;
 }
 
 /* ============================================

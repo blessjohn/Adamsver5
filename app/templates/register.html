@@ -7,6 +7,13 @@
     <form method="POST" action="{% url 'register' %}" enctype="multipart/form-data" id="registerForm">
     {% csrf_token %}
     <h1>Create a New Account</h1>
+    {% if selected_membership_details %}
+    <div class="alert alert-info mt-3" role="alert">
+        Selected membership type: <strong>{{ selected_membership_details.label }}</strong>
+        (Rs {{ selected_membership_details.amount_rupees }})
+    </div>
+    {% endif %}
+    <input type="hidden" name="membership_type" value="{{ selected_membership }}">
     
     {% if form.errors %}
     <div class="alert alert-danger" role="alert">
@@ -183,7 +190,7 @@
             <div class="col-12 col-md-6">
                 <label for="id_category">Category You Belong To For Membership *</label>
                 <select id="id_category" name="category" required>
-                    <option value="" disabled selected>-- Select Category --</option>
+                    <option value="" disabled {% if not form.category.value %}selected{% endif %}>-- Select Category --</option>
                     {% for choice in form.category.field.choices %}
                         <option value="{{ choice.0 }}" {% if choice.0 == form.category.value %}selected{% endif %}>{{ choice.1 }}</option>
                     {% endfor %}
@@ -192,6 +199,15 @@
                     <p style="color: red;">{{ form.category.errors.0 }}</p>
                 {% endif %}
             </div>
+
+            {% if not selected_membership_details %}
+            <div class="col-12">
+                <div class="alert alert-warning">
+                    Please choose a membership type first.
+                    <a href="{% url 'get_registration' %}">Go back</a>
+                </div>
+            </div>
+            {% endif %}
 
             <div class="col-12 col-md-6">
                 <label for="id_university_name">University Name *</label>
@@ -233,6 +249,7 @@
                 {% endif %}
             </div>
             
+            {% if selected_membership != 'adhoc' %}
             <div class="col-12 col-md-6">
                 <label for="id_state_nmc">State/NMC registeration certificate For registered doctors</label>
                 <input type="file" id="id_state_nmc" name="state_nmc"></input>
@@ -240,6 +257,7 @@
                     <p style="color: red;">{{ form.state_nmc.errors.0 }}</p>
                 {% endif %}
             </div>
+            {% endif %}
 
             <div class="col-12 col-md-6">
                 <label for="id_passport">Passport (Front and Back) *</label>
@@ -258,21 +276,6 @@
                 {% endif %}
             </div>
 
-            <div class="col-12 col-md-6">
-                <label for="id_date_time_of_payment">Date and Time of Payment (Transaction) *</label>
-                <input type="datetime-local" id="id_date_time_of_payment" name="date_time_of_payment" required></input>
-                {% if form.date_time_of_payment.errors %}
-                    <p style="color: red;">{{ form.date_time_of_payment.errors.0 }}</p>
-                {% endif %}
-            </div>
-
-            <div class="col-12 col-md-6">
-                <label for="id_payment_transaction_proof">Payment Transaction Proof/Screenshot *</label>
-                <input type="file" id="id_payment_transaction_proof" name="payment_transaction_proof" accept="image/*,.pdf" required></input>
-                {% if form.payment_transaction_proof.errors %}
-                    <p style="color: red;">{{ form.payment_transaction_proof.errors.0 }}</p>
-                {% endif %}
-            </div>
 
             <div id="membership-info" class="my-3" style="padding: 30px; border: 1px solid #e0e0e0; border-radius: 10px; background: linear-gradient(135deg, #f5f7fa, #e4e5e9); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); font-family: 'Arial', sans-serif;">
                 <h3 style="text-align: center; color: #333; font-size: 20px; margin-bottom: 15px;">Membership Processing Information</h3>
@@ -300,8 +303,9 @@
             </div>
 
             <div class="col-12 col-md-6">
-                <label for="id_mid">Are you in any district group of AKFMA.If yes mention your MID.</label>
-                <input type="text" id="id_mid" name="mid"></input>
+                <label for="id_mid">ADAMS membership number</label>
+                <p class="text-muted small mb-1">Assigned automatically as <strong>ADAMS-######</strong> when your account is created (same as on your ID card and admin exports). You do not need to enter anything here.</p>
+                <input type="text" id="id_mid" name="mid" class="d-none" value="" autocomplete="off" aria-hidden="true">
                 {% if form.mid.errors %}
                     <p style="color: red;">{{ form.mid.errors.0 }}</p>
                 {% endif %}
@@ -433,8 +437,8 @@
         </div>
     </div>
     <div class="d-grid mt-3">
-        <button type="submit" id="registerBtn" class="btn btn-primary btn-block">
-            <span id="registerBtnText">Register</span>
+        <button type="submit" id="registerBtn" class="btn btn-primary btn-block" {% if not selected_membership_details %}disabled{% endif %}>
+            <span id="registerBtnText">Register &amp; Pay</span>
             <span id="registerBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
         </button>
     </div>
@@ -458,7 +462,7 @@
                 registerBtn.classList.remove('disabled');
             }
             if (registerBtnText) {
-                registerBtnText.textContent = 'Register';
+                registerBtnText.textContent = 'Register & Pay';
             }
             if (registerBtnSpinner) {
                 registerBtnSpinner.classList.add('d-none');
@@ -476,7 +480,7 @@
                 
                 // Show loading state
                 registerBtn.disabled = true;
-                registerBtnText.textContent = 'Registering...';
+                registerBtnText.textContent = 'Registering & Paying...';
                 registerBtnSpinner.classList.remove('d-none');
                 registerBtn.classList.add('disabled');
                 

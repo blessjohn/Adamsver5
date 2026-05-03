@@ -253,34 +253,29 @@ if DEBUG:
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # MinIO Configuration (S3-compatible object storage)
-# COMMENTED OUT - Using local file storage instead
-# MINIO_URL = os.getenv("MINIO_URL", "localhost:9000")
-# MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "")
-# MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "")
-# MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME", "adams")
+MINIO_URL = os.getenv("MINIO_URL", "").strip()
+MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "").strip()
+MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "").strip()
+MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME", "adams").strip() or "adams"
 
-# MinIO is optional for basic operations (migrate, runserver)
-# Validation will only warn in development, fail in production
-# MINIO_ENABLED = all([MINIO_URL, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_BUCKET_NAME])
-# if not MINIO_ENABLED and not DEBUG:
-#     # In production, MinIO should be configured
-#     missing = [k for k, v in {
-#         "MINIO_URL": MINIO_URL,
-#         "MINIO_ACCESS_KEY": MINIO_ACCESS_KEY,
-#         "MINIO_SECRET_KEY": MINIO_SECRET_KEY,
-#         "MINIO_BUCKET_NAME": MINIO_BUCKET_NAME
-#     }.items() if not v]
-#     raise ValueError(f"Missing required MinIO environment variables in production: {', '.join(missing)}")
-# elif not MINIO_ENABLED:
-#     # In development, just warn
-#     import warnings
-#     warnings.warn(
-#         "MinIO not fully configured. Some features may not work. Set MINIO_* environment variables.",
-#         UserWarning
-#     )
+# If true, Django will use MinIO for gallery uploads/serving.
+# Keep this explicit to avoid accidental enablement when env vars exist.
+MINIO_ENABLED = os.getenv("MINIO_ENABLED", "false").lower() == "true"
 
-# MinIO disabled - using local storage
-MINIO_ENABLED = False
+# Optional: mark MinIO as secure (https). If MINIO_URL includes scheme, that takes precedence.
+MINIO_SECURE = os.getenv("MINIO_SECURE", "false").lower() == "true"
+
+if MINIO_ENABLED:
+    missing = [k for k, v in {
+        "MINIO_URL": MINIO_URL,
+        "MINIO_ACCESS_KEY": MINIO_ACCESS_KEY,
+        "MINIO_SECRET_KEY": MINIO_SECRET_KEY,
+        "MINIO_BUCKET_NAME": MINIO_BUCKET_NAME,
+    }.items() if not v]
+    if missing:
+        raise ValueError(
+            f"MINIO_ENABLED=true but missing required MinIO environment variables: {', '.join(missing)}"
+        )
 
 
 AUTH_USER_MODEL = "app.User"

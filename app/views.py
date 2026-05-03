@@ -4,6 +4,7 @@ import base64
 import json
 import time
 import hashlib
+import secrets
 from io import BytesIO
 from datetime import timedelta
 
@@ -13,74 +14,505 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail, EmailMessage
+from django.db.models import Q
 from django.forms import ValidationError
 from django.http import Http404, HttpResponse, HttpResponseNotFound, JsonResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
+from django.utils.text import slugify
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 
 # Third party imports
 from loguru import logger
+import razorpay
+from razorpay.errors import SignatureVerificationError
 # from minio import S3Error  # Commented out - no longer using MinIO
 
 # Local application imports
 from .forms import UserLoginForm, UserRegistrationForm, UserUpdateForm
-from .models import Announcement, OTP, User, CategoryChangeRequest, RegistrationQuestion, RegistrationAnswer, SystemSettings
+from .models import Announcement, OTP, User, CategoryChangeRequest, RegistrationQuestion, RegistrationAnswer, SystemSettings, PaymentRegistration
 from .utils import (
+    delete_file_from_minio,
+    fetch_file_from_minio,
     generate_qr_code_live,
     generate_random_password,
     get_gallery_images,
+    member_profile_file_gaps,
+    MEMBER_PROFILE_FILE_FIELDS,
     send_email_with_attachments,
+    send_new_account_credentials_email,
     send_otp_via_email,
+    stored_file_is_missing,
+    upload_file_to_minio,
 )
+from .bulk_user_import import build_bulk_user_template_bytes, import_users_from_xlsx
+from .id_card_image import build_id_card_png_bytes, id_card_png_filename
 from app.decorators import admin_required
+
+# Prefer env so Dashboard key + secret always match (signature verify uses secret).
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "rzp_live_SeUfSkspvWpRZe")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "dIzu8wg41csqXnm7eBFy7Eik")
+
+MEMBERSHIP_TYPES = {
+    "adhoc": {
+        "label": "Adhoc",
+        "amount": 200000,  # ₹2,000 (paise for Razorpay)
+    },
+    "lifetime": {
+        "label": "Lifetime",
+        "amount": 250000,  # ₹2,500 (paise for Razorpay)
+    },
+    "amc": {
+        "label": "AMC",
+        "amount": 50000,  # ₹500 (paise for Razorpay)
+    },
+}
+
+
+def _is_amc_payment_registration(payment) -> bool:
+    """True for seeded AMC rows (receipt prefix) or notes flag."""
+    if not payment:
+        return False
+    r = (getattr(payment, "receipt", None) or "").strip().upper()
+    if r.startswith("AMC-"):
+        return True
+    notes = getattr(payment, "notes", None) or {}
+    if isinstance(notes, dict) and (notes.get("membership_type") or "").strip().lower() == "amc":
+        return True
+    return False
+
+
+def _user_category_choice_tuples():
+    """All valid User.category (value, label) pairs — legacy + adhoc + lifetime."""
+    return list(User._meta.get_field("category").choices)
+
+
+def _user_category_values():
+    return {c[0] for c in _user_category_choice_tuples()}
+
+
+def _portal_session_user(request):
+    """
+    Resolve the logged-in member the same way the portal home page does: session
+    username first (set at login), then Django authenticated user.
+    """
+    uname = request.session.get("username")
+    if uname:
+        u = User.objects.filter(username=uname).first()
+        if u:
+            return u
+    if request.user.is_authenticated:
+        return User.objects.filter(pk=request.user.pk).first()
+    return None
+
+
+def _payment_registration_visible_to_user(payment, user):
+    """True if this payment row belongs to the portal user (FK or same email for legacy rows)."""
+    if not user or not payment:
+        return False
+    if payment.user_id:
+        return int(payment.user_id) == int(user.pk)
+    uemail = (user.email or "").strip().lower()
+    pemail = (payment.email or "").strip().lower()
+    return bool(uemail and pemail and uemail == pemail)
+
+
+def _payment_registration_belongs_to_member(payment, member):
+    """True if this payment row is for the given User (FK or same email for legacy rows)."""
+    if not member or not payment:
+        return False
+    if payment.user_id:
+        return int(payment.user_id) == int(member.pk)
+    memail = (member.email or "").strip().lower()
+    pemail = (payment.email or "").strip().lower()
+    return bool(memail and pemail and memail == pemail)
+
+
+def _payment_receipt_kind_label(payment):
+    notes = payment.notes if isinstance(payment.notes, dict) else {}
+    if (notes.get("membership_type") or "").strip().lower() == "amc" or (
+        (payment.receipt or "").strip().upper().startswith("AMC-")
+    ):
+        return "AMC (annual)"
+    return (notes.get("membership_label") or "").strip() or "Membership / fee"
+
+
+def _category_display_name(value):
+    if value is None or value == "":
+        return ""
+    return dict(_user_category_choice_tuples()).get(value, value)
+
+
+def _get_membership_details(membership_type):
+    details = MEMBERSHIP_TYPES.get((membership_type or "").strip().lower())
+    if not details:
+        return None
+
+    return {
+        **details,
+        "amount_rupees": details["amount"] // 100,
+    }
+
+
+def _get_razorpay_client():
+    return razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+
+
+RZP_PENDING_SESSION_TTL_SEC = 15 * 60
+
+
+def _rzp_checkout_session_clear(request):
+    request.session.pop("rzp_pending_registration_id", None)
+    request.session.pop("rzp_pending_expires", None)
+
+
+def _rzp_checkout_session_set(request, registration_pk):
+    """Remember pending checkout so refresh does not create duplicate Razorpay orders."""
+    pk = int(registration_pk)
+    prev = request.session.get("rzp_pending_registration_id")
+    if prev is not None and int(prev) != pk:
+        PaymentRegistration.objects.filter(pk=int(prev), payment_status="pending").update(
+            payment_status="failed"
+        )
+    request.session["rzp_pending_registration_id"] = pk
+    request.session["rzp_pending_expires"] = timezone.now().timestamp() + RZP_PENDING_SESSION_TTL_SEC
+
 
 def health(request):
     return HttpResponse("OK")
 	
 def get_registration(request):
-    """
-    Handles GET requests for the registration page.
+    # AMC is paid from the member profile / pay-amc flow, not the public signup form.
+    membership_types = [
+        (value, details["label"], details["amount"] // 100)
+        for value, details in MEMBERSHIP_TYPES.items()
+        if value != "amc"
+    ]
+    return render(
+        request,
+        "registration.html",
+        {
+            "membership_types": membership_types,
+        },
+    )
 
-    This view function retrieves the user from the session if available and renders
-    the registration page. It performs the following:
-    - Gets username from session
-    - Attempts to fetch corresponding user object from database
-    - Logs relevant information about the request
-    - Returns rendered registration page with user data
 
-    Args:
-        request: HttpRequest object containing session and other metadata
+@require_POST
+def create_order(request):
+    name = request.POST.get("name", "").strip()
+    email = request.POST.get("email", "").strip()
+    phone = request.POST.get("phone", "").strip()
+    membership_type = request.POST.get("membership_type", "").strip().lower()
+    membership_details = _get_membership_details(membership_type)
 
-    Returns:
-        HttpResponse: Rendered registration.html template with user data in context
+    if not all([name, email, phone]):
+        return JsonResponse({"error": "Name, email and phone are required."}, status=400)
+    if not membership_details:
+        return JsonResponse({"error": "A valid membership type is required."}, status=400)
 
-    Logs:
-        - Info: When user is successfully retrieved
-        - Warning: When username exists in session but user not found in DB
-        - Debug: When no username found in session
-        - Info: When registration page is rendered
-    """
-    uname = request.session.get("username")
-    user = None
-    if uname:
-        try:
-            user = User.objects.get(username=uname)
-            logger.info(f"Retrieved user {uname} for registration page")
-        except User.DoesNotExist:
-            logger.warning(f"User {uname} not found when accessing registration page")
-            user = None
-    else:
-        logger.debug("No username found in session for registration page")
+    # Razorpay amounts must be integer paise (INR).
+    amount = int(membership_details["amount"])
+
+    linked_user = User.objects.filter(email=email).first()
+    # Placeholder receipt: model requires unique non-empty receipt before Razorpay receipt is assigned.
+    placeholder_receipt = f"pnd_{secrets.token_hex(12)}"[:40]
+    registration = PaymentRegistration.objects.create(
+        user=linked_user,
+        name=name,
+        email=email,
+        phone=phone,
+        amount=amount,
+        currency="INR",
+        receipt=placeholder_receipt,
+        payment_status="pending",
+        notes={
+            "membership_type": membership_type,
+            "membership_label": membership_details["label"],
+        },
+    )
+
+    # Receipt sent to Razorpay: unique, max 40 chars (API limit).
+    receipt = f"r{registration.pk}_{secrets.token_hex(3)}"[:40]
+
+    # Notes values must be strings for Razorpay.
+    rz_notes = {
+        "registration_id": str(registration.id),
+        "membership_type": str(membership_type),
+        "membership_label": str(membership_details["label"]),
+    }
 
     data = {
-        "user": user,
+        "amount": amount,
+        "currency": "INR",
+        "receipt": receipt,
+        "notes": rz_notes,
     }
-    logger.info("Rendering registration page")
-    return render(request, "registration.html", {"data": data})
+
+    try:
+        client = _get_razorpay_client()
+        order = client.order.create(data=data)
+    except Exception as exc:
+        logger.error(f"Razorpay order creation failed: {exc}")
+        registration.payment_status = "failed"
+        registration.receipt = receipt
+        registration.save(update_fields=["payment_status", "receipt", "updated_at"])
+        return JsonResponse({"error": "Unable to create payment order."}, status=500)
+
+    order_id = str(order.get("id") or "").strip()
+    if not order_id:
+        logger.error("Razorpay order.create returned no id: %s", order)
+        registration.payment_status = "failed"
+        registration.receipt = receipt
+        registration.save(update_fields=["payment_status", "receipt", "updated_at"])
+        return JsonResponse({"error": "Payment gateway returned an invalid order."}, status=500)
+
+    registration.razorpay_order_id = order_id
+    registration.receipt = receipt
+    registration.save(update_fields=["razorpay_order_id", "receipt", "updated_at"])
+
+    logger.info(
+        "Razorpay order created registration_id=%s order_id=%s amount_paise=%s receipt=%s",
+        registration.pk,
+        order_id,
+        amount,
+        receipt,
+    )
+
+    _rzp_checkout_session_set(request, registration.pk)
+
+    return JsonResponse(
+        {
+            "order_id": order_id,
+            "amount": int(order.get("amount") or amount),
+            "currency": order.get("currency") or "INR",
+            "key": RAZORPAY_KEY_ID,
+            "registration_id": registration.id,
+        }
+    )
+
+
+@require_POST
+def verify_payment(request):
+    registration_id = (request.POST.get("registration_id") or "").strip()
+    razorpay_payment_id = (request.POST.get("razorpay_payment_id") or "").strip()
+    razorpay_order_id = (request.POST.get("razorpay_order_id") or "").strip()
+    razorpay_signature = (request.POST.get("razorpay_signature") or "").strip()
+
+    logger.warning(
+        "DEBUG PAYMENT raw POST registration_id=%r order_id=%r payment_id=%r signature_len=%s",
+        registration_id,
+        razorpay_order_id,
+        razorpay_payment_id,
+        len(razorpay_signature),
+    )
+
+    if not all([registration_id, razorpay_payment_id, razorpay_order_id, razorpay_signature]):
+        return JsonResponse({"success": False, "error": "Missing payment verification fields."}, status=400)
+
+    try:
+        registration = PaymentRegistration.objects.get(pk=registration_id)
+    except (PaymentRegistration.DoesNotExist, ValueError, TypeError):
+        return JsonResponse({"success": False, "error": "Invalid or unknown registration."}, status=400)
+
+    logger.warning(
+        "DEBUG PAYMENT registration pk=%s status=%s stored_order=%r received_order=%r payment_id=%r",
+        registration.pk,
+        registration.payment_status,
+        registration.razorpay_order_id,
+        razorpay_order_id,
+        razorpay_payment_id,
+    )
+
+    # Idempotent success if client retries verify after payment already captured.
+    stored_pid = (registration.razorpay_payment_id or "").strip()
+    if registration.payment_status == "paid" and stored_pid == razorpay_payment_id:
+        logger.info("Razorpay verify idempotent OK registration_id=%s", registration_id)
+        _rzp_checkout_session_clear(request)
+        return JsonResponse({"success": True, "redirect_url": reverse("payment_success")})
+    if registration.payment_status == "paid":
+        _rzp_checkout_session_clear(request)
+        return JsonResponse(
+            {"success": False, "error": "This registration is already marked paid with a different payment id."},
+            status=400,
+        )
+
+    stored_oid = (registration.razorpay_order_id or "").strip()
+    if not stored_oid:
+        logger.error("DEBUG PAYMENT missing stored order on registration_id=%s", registration_id)
+        _rzp_checkout_session_clear(request)
+        return JsonResponse({"success": False, "error": "Missing stored order for this registration."}, status=400)
+    if stored_oid != razorpay_order_id:
+        logger.warning(
+            "Razorpay order mismatch: registration=%s stored=%r posted=%r",
+            registration_id,
+            registration.razorpay_order_id,
+            razorpay_order_id,
+        )
+        registration.payment_status = "failed"
+        registration.save(update_fields=["payment_status", "updated_at"])
+        _rzp_checkout_session_clear(request)
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "Order mismatch: this payment does not match the order created for your checkout session.",
+            },
+            status=400,
+        )
+
+    params_dict = {
+        "razorpay_order_id": razorpay_order_id,
+        "razorpay_payment_id": razorpay_payment_id,
+        "razorpay_signature": razorpay_signature,
+    }
+    client = _get_razorpay_client()
+    try:
+        client.utility.verify_payment_signature(params_dict)
+    except SignatureVerificationError as exc:
+        logger.warning(
+            "Razorpay signature verification failed (registration=%s order=%s payment=%s): %s",
+            registration_id,
+            razorpay_order_id,
+            razorpay_payment_id,
+            exc,
+        )
+        registration.payment_status = "failed"
+        registration.razorpay_payment_id = razorpay_payment_id
+        registration.razorpay_signature = razorpay_signature
+        registration.save(
+            update_fields=[
+                "payment_status",
+                "razorpay_payment_id",
+                "razorpay_signature",
+                "updated_at",
+            ]
+        )
+        _rzp_checkout_session_clear(request)
+        return JsonResponse(
+            {
+                "success": False,
+                "error": (
+                    "Signature verification failed. Use the same Razorpay Key Id and Key Secret "
+                    "as in your Dashboard (test keys with rzp_test_*, live with rzp_live_*)."
+                ),
+            },
+            status=400,
+        )
+    except Exception as exc:
+        logger.exception("Unexpected error during Razorpay verify: %s", exc)
+        registration.payment_status = "failed"
+        registration.razorpay_payment_id = razorpay_payment_id
+        registration.razorpay_signature = razorpay_signature
+        registration.save(
+            update_fields=[
+                "payment_status",
+                "razorpay_payment_id",
+                "razorpay_signature",
+                "updated_at",
+            ]
+        )
+        _rzp_checkout_session_clear(request)
+        return JsonResponse({"success": False, "error": "Payment verification error."}, status=500)
+
+    registration.payment_status = "paid"
+    registration.razorpay_payment_id = razorpay_payment_id
+    registration.razorpay_signature = razorpay_signature
+    registration.save(
+        update_fields=[
+            "payment_status",
+            "razorpay_payment_id",
+            "razorpay_signature",
+            "updated_at",
+        ]
+    )
+
+    # Keep user record aligned (optional legacy fields used elsewhere)
+    if registration.user_id:
+        User.objects.filter(id=registration.user_id).update(
+            date_time_of_payment=timezone.now().strftime("%Y-%m-%d %H:%M:%S"),
+        )
+
+    _rzp_checkout_session_clear(request)
+    logger.info(
+        "Razorpay verify OK registration_id=%s order_id=%s payment_id=%s",
+        registration_id,
+        razorpay_order_id,
+        razorpay_payment_id,
+    )
+    return JsonResponse(
+        {
+            "success": True,
+            "redirect_url": reverse("payment_success"),
+        }
+    )
+
+
+def payment_success(request):
+    return render(request, "success.html")
+
+
+def payment_failure(request):
+    return render(request, "failure.html")
+
+
+@ensure_csrf_cookie
+def registration_payment_redirect(request):
+    prefill = request.session.get("payment_prefill")
+    if not prefill:
+        messages.error(request, "Payment session expired. Start again from registration or your profile.")
+        if _portal_session_user(request):
+            return redirect("user_profile")
+        return redirect("register")
+
+    checkout_bootstrap = None
+    pending_id = request.session.get("rzp_pending_registration_id")
+    exp = request.session.get("rzp_pending_expires")
+    prefill_email = (prefill.get("email") or "").strip().lower()
+    prefill_mtype = (prefill.get("membership_type") or "").strip().lower()
+    try:
+        exp_ts = float(exp) if exp is not None else 0.0
+    except (TypeError, ValueError):
+        exp_ts = 0.0
+
+    if pending_id is not None and timezone.now().timestamp() < exp_ts:
+        reg = (
+            PaymentRegistration.objects.filter(pk=pending_id, payment_status="pending")
+            .exclude(razorpay_order_id__isnull=True)
+            .exclude(razorpay_order_id="")
+            .first()
+        )
+        if reg:
+            notes = reg.notes if isinstance(reg.notes, dict) else {}
+            reg_m = (notes.get("membership_type") or "").strip().lower()
+            if reg.email.strip().lower() == prefill_email and reg_m == prefill_mtype:
+                checkout_bootstrap = {
+                    "order_id": (reg.razorpay_order_id or "").strip(),
+                    "registration_id": reg.pk,
+                    "amount": int(reg.amount),
+                    "currency": (reg.currency or "INR").strip(),
+                    "key": RAZORPAY_KEY_ID,
+                }
+                logger.info(
+                    "Razorpay checkout bootstrap reuse registration_id=%s order_id=%s",
+                    reg.pk,
+                    checkout_bootstrap["order_id"],
+                )
+        if checkout_bootstrap is None:
+            _rzp_checkout_session_clear(request)
+    elif pending_id is not None:
+        _rzp_checkout_session_clear(request)
+
+    return render(
+        request,
+        "registration_payment_redirect.html",
+        {
+            "prefill": prefill,
+            "checkout_bootstrap": checkout_bootstrap,
+        },
+    )
 
 
 def register_user_view(request):
@@ -105,9 +537,16 @@ def register_user_view(request):
     """
     logger.debug("Starting user registration process")
 
+    selected_membership = request.GET.get("membership_type", "").strip().lower()
+
     if request.method == "POST":
         logger.info("Processing POST request for user registration")
-        form = UserRegistrationForm(request.POST, request.FILES)
+        selected_membership = request.POST.get("membership_type", "").strip().lower() or selected_membership
+        form = UserRegistrationForm(
+            request.POST,
+            request.FILES,
+            membership_type=selected_membership,
+        )
 
         if form.is_valid():
             logger.debug("Registration form is valid")
@@ -121,10 +560,6 @@ def register_user_view(request):
                 (
                     "medical_qualification",
                     f"users/{user.username}/medical_qualification/",
-                ),
-                (
-                    "payment_transaction_proof",
-                    f"users/{user.username}/payment_transaction_proof/",
                 ),
             ]
 
@@ -172,16 +607,13 @@ def register_user_view(request):
                 user.state_nmc = uploaded_files.get("state_nmc") or ""
                 user.passport = uploaded_files.get("passport") or ""
                 user.medical_qualification = uploaded_files.get("medical_qualification") or ""
-                user.payment_transaction_proof = uploaded_files.get(
-                    "payment_transaction_proof"
-                ) or ""
+                user.payment_transaction_proof = ""
                 
                 # Validate required fields are not empty
                 required_fields = {
                     "photo": user.photo,
                     "passport": user.passport,
                     "medical_qualification": user.medical_qualification,
-                    "payment_transaction_proof": user.payment_transaction_proof,
                 }
                 
                 missing_fields = [field for field, value in required_fields.items() if not value]
@@ -222,6 +654,7 @@ def register_user_view(request):
                     'Payment Transaction Proof/screenshot': 'payment_transaction_proof',
                     'Willing to be a blood donor?': 'willing_to_be_donor',
                     'Are you in any district group of AKFMA? If yes mention your MID': 'mid',
+                    'ADAMS membership number': 'mid',
                     'Agreement for Joining Association of Doctors And Medical Students (ADAMS)': 'agreement',
                     'I agree to the terms and conditions of the association and I hereby submit my application for membership in ADAMS': 'application',
                     }
@@ -328,13 +761,39 @@ def register_user_view(request):
                         f"New user registered successfully - username: {form.cleaned_data['username']}"
                     )
 
-                    send_email_with_attachments(
-                        subject="Memebership Register Successfull",
-                        recipient_list=[user.email],
-                    )
+                    plain_password = (form.cleaned_data.get("password1") or "").strip()
+                    try:
+                        ok_mail = send_new_account_credentials_email(
+                            username=user.username,
+                            email=user.email,
+                            password_plain=plain_password,
+                            login_url=request.build_absolute_uri(reverse("login")),
+                            profile_url=request.build_absolute_uri(reverse("user_profile")),
+                            upload_url=request.build_absolute_uri(
+                                reverse("member_complete_uploads")
+                            ),
+                        )
+                        if not ok_mail:
+                            logger.warning(
+                                "Welcome email was not sent for new user %s",
+                                user.email,
+                            )
+                    except Exception:
+                        logger.exception(
+                            "Welcome email failed for new user %s",
+                            user.email,
+                        )
 
-                    messages.success(request, "Registration successful. Please log in.")
-                    return redirect("login")
+                    request.session["payment_prefill"] = {
+                        "name": f"{user.first_name} {user.last_name}".strip() or user.username,
+                        "email": user.email,
+                        "phone": user.mobile_number,
+                        "membership_type": selected_membership,
+                        "membership_label": _get_membership_details(selected_membership)["label"] if _get_membership_details(selected_membership) else "",
+                        "amount": _get_membership_details(selected_membership)["amount"] if _get_membership_details(selected_membership) else MEMBERSHIP_TYPES["adhoc"]["amount"],
+                    }
+                    messages.success(request, "Registration completed. Redirecting to payment...")
+                    return redirect("registration_payment_redirect")
             else:
                 logger.error(
                     f"Registration failed due to file upload errors: {form.errors}"
@@ -346,14 +805,20 @@ def register_user_view(request):
             )
     else:
         logger.debug("Displaying empty registration form")
-        form = UserRegistrationForm()
+        initial_data = {}
+        form = UserRegistrationForm(
+            initial=initial_data,
+            membership_type=selected_membership,
+        )
     
     # Get active custom questions for registration form
     custom_questions = RegistrationQuestion.objects.filter(is_active=True).order_by('order', 'created_at')
 
     return render(request, "register.html", {
         "form": form,
-        "custom_questions": custom_questions
+        "custom_questions": custom_questions,
+        "selected_membership": selected_membership,
+        "selected_membership_details": _get_membership_details(selected_membership),
     })
 
 
@@ -929,44 +1394,64 @@ def serve_image(request, image_name):
     """
     logger.debug(f"Attempting to serve image: {image_name}")
     try:
-        # Get the image from local storage
-        # If path doesn't start with "media/", add it
+        # Preferred: serve from MinIO when enabled
+        if getattr(settings, "MINIO_ENABLED", False):
+            from .utils import fetch_file_from_minio
+
+            image_data = fetch_file_from_minio(image_name)
+            if image_data is None:
+                logger.error(f"MinIO image not found or fetch failed: {image_name}")
+                return HttpResponse("Image not found", status=404)
+
+            if image_name.lower().endswith(".png"):
+                content_type = "image/png"
+            elif image_name.lower().endswith((".jpg", ".jpeg")):
+                content_type = "image/jpeg"
+            elif image_name.lower().endswith(".webp"):
+                content_type = "image/webp"
+            else:
+                content_type = "application/octet-stream"
+
+            response = HttpResponse(image_data, content_type=content_type)
+            response["Content-Disposition"] = f"inline; filename={os.path.basename(image_name)}"
+            return response
+
+        # Fallback: local storage (backward compatibility)
         if not image_name.startswith("media/"):
             image_name = f"media/{image_name}"
-        
+
         full_path = os.path.join(settings.BASE_DIR, image_name)
         full_path = os.path.normpath(full_path)
-        
+
         # Security check
         media_root = os.path.normpath(settings.MEDIA_ROOT)
         if not full_path.startswith(media_root):
             logger.error(f"Security violation: File path outside MEDIA_ROOT: {image_name}")
             return HttpResponse(status=403, content="Access denied")
-        
+
         if not os.path.exists(full_path):
             logger.error(f"Image not found: {full_path}")
-            return HttpResponse(f"Image not found", status=404)
-        
-        with open(full_path, 'rb') as f:
-            image_data = f.read()
-        
-        logger.info(f"Successfully retrieved image {image_name} from local storage")
+            return HttpResponse("Image not found", status=404)
 
-        # Determine content type
-        if image_name.endswith(".png"):
+        with open(full_path, "rb") as f:
+            image_data = f.read()
+
+        if image_name.lower().endswith(".png"):
             content_type = "image/png"
-        elif image_name.endswith((".jpg", ".jpeg")):
+        elif image_name.lower().endswith((".jpg", ".jpeg")):
             content_type = "image/jpeg"
+        elif image_name.lower().endswith(".webp"):
+            content_type = "image/webp"
         else:
-            content_type = "image/jpeg"
-        
+            content_type = "application/octet-stream"
+
         response = HttpResponse(image_data, content_type=content_type)
         response["Content-Disposition"] = f"inline; filename={os.path.basename(image_name)}"
         return response
 
     except Exception as e:
-        logger.exception(f"Error fetching image {image_name} from local storage: {str(e)}")
-        return HttpResponse(f"Error fetching image: {e}", status=500)
+        logger.exception(f"Error serving image {image_name}: {str(e)}")
+        return HttpResponse(f"Error serving image: {e}", status=500)
 
 
 @login_required(login_url="/login/")
@@ -993,7 +1478,7 @@ def upload_image_view(request):
         from .models import GalleryImage
         
         image = request.FILES["image"]
-        title = request.POST.get("title", "").strip()
+        title = request.POST.get("title", "").strip()[:200]
         description = request.POST.get("description", "").strip()
         file_name = image.name
         file_size = image.size
@@ -1004,47 +1489,74 @@ def upload_image_view(request):
         )
 
         if file_type.startswith("image/"):
-            # Save to local storage
-            media_path = os.path.join(settings.MEDIA_ROOT, file_name)
-            
-            # Ensure directory exists
-            os.makedirs(os.path.dirname(media_path), exist_ok=True)
-            
-            # Reset file pointer
-            image.seek(0)
-            
-            try:
-                # Save file to local storage
-                with open(media_path, 'wb+') as destination:
-                    for chunk in image.chunks():
-                        destination.write(chunk)
-                
-                # Store relative path for database
-                db_file_name = f"media/{file_name}"
-                success = True
-                logger.info(f"Successfully uploaded gallery image to local storage: {file_name}")
-            except Exception as e:
-                logger.error(f"Failed to upload gallery image: {e}")
-                success = False
+            success = False
+            db_file_name = None
+            local_media_path = None
+
+            # Preferred: upload to MinIO when enabled
+            if getattr(settings, "MINIO_ENABLED", False):
+                from uuid import uuid4
+                from django.utils.text import get_valid_filename
+                from .utils import upload_file_to_minio
+
+                safe_name = get_valid_filename(file_name) or "image"
+                object_name = f"gallery-{uuid4().hex}-{safe_name}"
+
+                success = upload_file_to_minio(image, object_name, content_type=file_type)
+                if success:
+                    db_file_name = object_name
+                    logger.info(f"Successfully uploaded gallery image to MinIO: {object_name}")
+                else:
+                    logger.error(f"Failed to upload gallery image to MinIO: {object_name}")
+            else:
+                # Local fallback: unique object name (image_name is unique in DB)
+                from uuid import uuid4
+                from django.utils.text import get_valid_filename
+
+                safe_name = get_valid_filename(file_name) or "image"
+                relative_name = f"gallery-{uuid4().hex}-{safe_name}"
+                local_media_path = os.path.join(settings.MEDIA_ROOT, relative_name)
+                os.makedirs(os.path.dirname(local_media_path), exist_ok=True)
+                image.seek(0)
+                try:
+                    with open(local_media_path, "wb+") as destination:
+                        for chunk in image.chunks():
+                            destination.write(chunk)
+                    db_file_name = f"media/{relative_name}"
+                    success = True
+                    logger.info(
+                        f"Successfully uploaded gallery image to local storage: {relative_name}"
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to upload gallery image locally: {e}")
+                    success = False
 
             if success:
                 # Save to database
                 try:
                     user = request.user if request.user.is_authenticated else None
                     GalleryImage.objects.create(
-                        image_name=db_file_name,  # Store relative path with media/ prefix
-                        title=title,
-                        description=description,
+                        image_name=db_file_name,
+                        title=title or None,
+                        description=description or None,
                         uploaded_by=user
                     )
                     messages.success(request, f"Image '{file_name}' uploaded successfully.")
-                    logger.info(f"Image '{file_name}' uploaded to local storage and saved to database.")
+                    logger.info(f"Image '{file_name}' uploaded and saved to database as '{db_file_name}'.")
                 except Exception as e:
-                    logger.error(f"Error saving image to database: {str(e)}")
-                    messages.success(request, f"Image uploaded but metadata not saved.")
+                    logger.exception(f"Error saving image metadata to database: {e}")
+                    if local_media_path and os.path.isfile(local_media_path):
+                        try:
+                            os.remove(local_media_path)
+                        except OSError:
+                            pass
+                    messages.warning(
+                        request,
+                        "Could not save image details after upload. Please try again or contact support.",
+                    )
             else:
                 messages.error(request, "Failed to upload the image. Please try again.")
-                logger.error(f"Failed to upload image '{file_name}' to local storage.")
+                logger.error(f"Failed to upload image '{file_name}'.")
         else:
             messages.error(request, "Invalid file type. Please upload a valid image.")
             logger.warning(
@@ -1078,34 +1590,36 @@ def delete_image_view(request, image_name):
     logger.debug(f"Processing delete request for image: {image_name}")
 
     if request.method == "POST":
-        # Attempt to delete the image from local storage
         try:
-            # If path doesn't start with "media/", add it
-            if not image_name.startswith("media/"):
-                image_name = f"media/{image_name}"
-            
-            full_path = os.path.join(settings.BASE_DIR, image_name)
-            full_path = os.path.normpath(full_path)
-            
-            # Security check
-            media_root = os.path.normpath(settings.MEDIA_ROOT)
-            if full_path.startswith(media_root) and os.path.exists(full_path):
-                os.remove(full_path)
-                messages.success(request, f"Image '{image_name}' deleted successfully.")
-                logger.info(f"Image '{image_name}' deleted from local storage.")
-                success = True
+            # Preferred: delete from MinIO when enabled
+            if getattr(settings, "MINIO_ENABLED", False):
+                from .utils import delete_file_from_minio
+
+                if delete_file_from_minio(image_name):
+                    messages.success(request, f"Image '{image_name}' deleted successfully.")
+                    logger.info(f"Image '{image_name}' deleted from MinIO.")
+                else:
+                    messages.error(request, f"Failed to delete image '{image_name}'. Please try again.")
+                    logger.error(f"Failed to delete image '{image_name}' from MinIO.")
             else:
-                messages.error(
-                    request, f"Image file not found: '{image_name}'."
-                )
-                logger.error(f"Image file not found: '{image_name}'")
-                success = False
+                # Local fallback (backward compatibility)
+                if not image_name.startswith("media/"):
+                    image_name = f"media/{image_name}"
+
+                full_path = os.path.join(settings.BASE_DIR, image_name)
+                full_path = os.path.normpath(full_path)
+
+                media_root = os.path.normpath(settings.MEDIA_ROOT)
+                if full_path.startswith(media_root) and os.path.exists(full_path):
+                    os.remove(full_path)
+                    messages.success(request, f"Image '{image_name}' deleted successfully.")
+                    logger.info(f"Image '{image_name}' deleted from local storage.")
+                else:
+                    messages.error(request, f"Image file not found: '{image_name}'.")
+                    logger.error(f"Image file not found: '{image_name}'")
         except Exception as e:
-            messages.error(
-                request, f"Failed to delete image '{image_name}'. Please try again."
-            )
-            logger.error(f"Failed to delete image '{image_name}' from local storage: {e}")
-            success = False
+            messages.error(request, f"Failed to delete image '{image_name}'. Please try again.")
+            logger.error(f"Failed to delete image '{image_name}': {e}")
 
     logger.debug("Redirecting to gallery page")
     return redirect("gallery")
@@ -1535,6 +2049,8 @@ def verify_otp_view(request):
 
             if otp_record.is_valid():
                 login(request, user)
+                request.session["user_id"] = user.id
+                request.session["username"] = user.username
                 messages.success(request, "Login successful.")
                 logger.info(f"User {user.username} logged in successfully.")
                 return redirect("home")
@@ -1756,17 +2272,46 @@ def admin_panel(request):
     users = User.objects.all()
     logger.debug(f"Retrieved {len(users)} users from database")
 
+    # Latest membership (etc.) payment vs AMC — keep separate so AMC seed does not hide membership row
+    latest_by_user_id = {}
+    amc_by_user_id = {}
+    for payment in (
+        PaymentRegistration.objects.filter(user__isnull=False)
+        .order_by("user_id", "-created_at")
+        .only("id", "user_id", "payment_status", "receipt", "amount", "notes", "updated_at", "created_at")
+    ):
+        uid = payment.user_id
+        if _is_amc_payment_registration(payment):
+            if uid not in amc_by_user_id:
+                amc_by_user_id[uid] = payment
+        else:
+            if uid not in latest_by_user_id:
+                latest_by_user_id[uid] = payment
+
+    for u in users:
+        u.latest_payment = latest_by_user_id.get(u.id)
+        u.amc_payment = amc_by_user_id.get(u.id)
+
     # Calculate statistics
     total_users = User.objects.count()
     approved_count = User.objects.filter(status='approved').count()
     pending_count = User.objects.filter(status='pending').count()
     rejected_count = User.objects.filter(status='rejected').count()
     
-    # Calculate category statistics
+    # Calculate category statistics (human-readable labels from model choices)
     from django.db.models import Count
     category_stats = User.objects.values('category').annotate(count=Count('id')).order_by('category')
-    by_category = {item['category']: item['count'] for item in category_stats if item['category']}
-    
+    cat_labels = dict(_user_category_choice_tuples())
+    by_category = [
+        {
+            "key": item["category"],
+            "label": cat_labels.get(item["category"], item["category"]),
+            "count": item["count"],
+        }
+        for item in category_stats
+        if item["category"]
+    ]
+
     statistics = {
         'total_users': total_users,
         'by_status': {
@@ -1780,12 +2325,75 @@ def admin_panel(request):
     logger.debug(f"Statistics calculated - Total: {total_users}, Approved: {approved_count}, Pending: {pending_count}, Rejected: {rejected_count}")
 
     data = {
-        "user": user, 
+        "user": user,
         "users": users,
-        "statistics": statistics
+        "statistics": statistics,
+        "category_choices": _user_category_choice_tuples(),
     }
     logger.debug("Rendering admin panel")
     return render(request, "admin_panel.html", {"data": data})
+
+
+@login_required(login_url="/login/")
+@admin_required
+def admin_bulk_users_template(request):
+    """Download blank XLSX matching bulk user import column layout."""
+    bio = build_bulk_user_template_bytes()
+    resp = HttpResponse(
+        bio.read(),
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    resp["Content-Disposition"] = 'attachment; filename="adams_bulk_users_template.xlsx"'
+    return resp
+
+
+@login_required(login_url="/login/")
+@admin_required
+@require_POST
+def admin_bulk_users_upload(request):
+    """Create users from uploaded XLSX (same columns as template)."""
+    f = request.FILES.get("bulk_users_xlsx")
+    if not f:
+        messages.error(request, "Please choose an .xlsx file to upload.")
+        return redirect("admin_panel")
+    if not f.name.lower().endswith(".xlsx"):
+        messages.error(request, "Only .xlsx files are accepted.")
+        return redirect("admin_panel")
+    try:
+        created, errs, created_accounts = import_users_from_xlsx(f)
+    except Exception as e:
+        logger.exception("Bulk user import failed")
+        messages.error(request, f"Could not read the spreadsheet: {e}")
+        return redirect("admin_panel")
+    if created_accounts:
+        login_url = request.build_absolute_uri(reverse("login"))
+        profile_url = request.build_absolute_uri(reverse("user_profile"))
+        upload_url = request.build_absolute_uri(reverse("member_complete_uploads"))
+        for acc in created_accounts:
+            try:
+                send_new_account_credentials_email(
+                    username=acc["username"],
+                    email=acc["email"],
+                    password_plain=acc.get("plain_password") or "",
+                    login_url=login_url,
+                    profile_url=profile_url,
+                    upload_url=upload_url,
+                )
+            except Exception:
+                logger.exception(
+                    "Welcome email failed for bulk-created user %s",
+                    acc.get("email"),
+                )
+    if created:
+        messages.success(request, f"Successfully created {created} user(s).")
+    if errs:
+        preview = " | ".join(errs[:20])
+        if len(errs) > 20:
+            preview += f" …and {len(errs) - 20} more (see logs)."
+        messages.warning(request, f"Some rows were skipped ({len(errs)}): {preview}")
+    if not created and not errs:
+        messages.info(request, "No data rows found below the header.")
+    return redirect("admin_panel")
 
 
 @login_required(login_url="/login/")
@@ -1815,6 +2423,9 @@ def user_profile(request):
     # Initialize user and role variables in case user is not logged in
     user = None
     pending_category_request = None
+    pending_category_labels = None
+    latest_payment = None
+    amc_payment = None
 
     # Check if username exists in session and fetch user and role
     if uname:
@@ -1827,6 +2438,30 @@ def user_profile(request):
                 user=user, 
                 request_status='pending'
             ).first()
+
+            if pending_category_request:
+                cmap = dict(_user_category_choice_tuples())
+                pending_category_labels = {
+                    "current": cmap.get(
+                        pending_category_request.current_category,
+                        pending_category_request.current_category,
+                    ),
+                    "requested": cmap.get(
+                        pending_category_request.requested_category,
+                        pending_category_request.requested_category,
+                    ),
+                }
+
+            _pay_qs = PaymentRegistration.objects.filter(user=user).order_by("-created_at")
+            for p in _pay_qs:
+                if _is_amc_payment_registration(p):
+                    if amc_payment is None:
+                        amc_payment = p
+                else:
+                    if latest_payment is None:
+                        latest_payment = p
+                if latest_payment is not None and amc_payment is not None:
+                    break
             
         except User.DoesNotExist:
             logger.warning(f"User {uname} from session not found in database")
@@ -1834,12 +2469,414 @@ def user_profile(request):
     else:
         logger.debug("No username found in session")
 
+    upload_gaps = {}
+    needs_any_upload = False
+    amc_pay_details = None
+    show_pay_amc_button = False
+    if user:
+        upload_gaps = member_profile_file_gaps(user)
+        needs_any_upload = any(upload_gaps.values())
+        amc_pay_details = _get_membership_details("amc")
+        # Offer checkout whenever AMC is not recorded as paid (missing, pending, or failed).
+        show_pay_amc_button = bool(
+            amc_pay_details
+            and (amc_payment is None or amc_payment.payment_status != "paid")
+        )
+
     data = {
         "user": user,
-        "pending_category_request": pending_category_request
+        "pending_category_request": pending_category_request,
+        "pending_category_labels": pending_category_labels,
+        "latest_payment": latest_payment,
+        "amc_payment": amc_payment,
+        "amc_pay_details": amc_pay_details,
+        "show_pay_amc_button": show_pay_amc_button,
+        "category_choices": _user_category_choice_tuples(),
+        "upload_gaps": upload_gaps,
+        "needs_any_upload": needs_any_upload,
     }
     logger.debug("Rendering user profile page")
     return render(request, "user_profile.html", {"data": data})
+
+
+def _save_user_media_file_to_disk(user, field_name, uploaded_file):
+    """Write an uploaded file under MEDIA_ROOT and return the stored path (media/...)."""
+    folder_path = {
+        "photo": f"users/{user.username}/photo/",
+        "state_nmc": f"users/{user.username}/state_nmc/",
+        "passport": f"users/{user.username}/passport/",
+        "medical_qualification": f"users/{user.username}/medical_qualification/",
+        "payment_transaction_proof": f"users/{user.username}/payment_transaction_proof/",
+    }[field_name]
+    file_name = f"{folder_path}{uploaded_file.name}"
+    media_path = os.path.join(settings.MEDIA_ROOT, file_name)
+    os.makedirs(os.path.dirname(media_path), exist_ok=True)
+    uploaded_file.seek(0)
+    with open(media_path, "wb+") as destination:
+        for chunk in uploaded_file.chunks():
+            destination.write(chunk)
+    return f"media/{file_name}"
+
+
+def member_complete_uploads(request):
+    """
+    Let the logged-in member upload a profile photo and/or required documents
+    only for fields that are still missing or bulk placeholders.
+    """
+    uname = request.session.get("username")
+    if not uname:
+        messages.error(request, "Please log in to upload files.")
+        return redirect("login")
+
+    try:
+        user = User.objects.get(username=uname)
+    except User.DoesNotExist:
+        messages.error(request, "Account not found.")
+        return redirect("login")
+
+    field_labels = {
+        "photo": "Passport-size photo (used on your membership ID card)",
+        "passport": "Passport (front and back)",
+        "medical_qualification": "Medical qualification / student ID (PDF or image)",
+        "payment_transaction_proof": "Payment transaction proof / screenshot",
+        "state_nmc": "State / NMC registration certificate (if applicable)",
+    }
+
+    gaps = member_profile_file_gaps(user)
+
+    if request.method == "POST":
+        gaps_now = member_profile_file_gaps(user)
+        saved = 0
+        for field_name in request.FILES:
+            if field_name not in MEMBER_PROFILE_FILE_FIELDS:
+                continue
+            if not gaps_now.get(field_name):
+                messages.warning(
+                    request,
+                    f"{field_name.replace('_', ' ').title()} is already on file and was not changed.",
+                )
+                continue
+            uploaded = request.FILES[field_name]
+            try:
+                rel_path = _save_user_media_file_to_disk(user, field_name, uploaded)
+                setattr(user, field_name, rel_path)
+                user.save(update_fields=[field_name])
+                saved += 1
+                logger.info(
+                    "Member %s uploaded missing file field=%s path=%s",
+                    user.username,
+                    field_name,
+                    rel_path,
+                )
+            except Exception as e:
+                logger.exception("Member upload failed for %s: %s", field_name, e)
+                messages.error(
+                    request,
+                    f"Could not save {field_name.replace('_', ' ')}: {e}",
+                )
+        if saved:
+            messages.success(
+                request,
+                f"Saved {saved} file(s). Thank you for completing your profile.",
+            )
+            return redirect("user_profile")
+
+        messages.error(
+            request,
+            "No new files were saved. Choose a file for at least one item that still shows as required.",
+        )
+        gaps = member_profile_file_gaps(user)
+
+    if not any(gaps.values()):
+        messages.info(request, "Your profile photo and documents are already on file.")
+        return redirect("user_profile")
+
+    missing_fields = [
+        (field_name, field_labels[field_name])
+        for field_name in MEMBER_PROFILE_FILE_FIELDS
+        if gaps.get(field_name)
+    ]
+    return render(
+        request,
+        "member_complete_uploads.html",
+        {
+            "user": user,
+            "missing_fields": missing_fields,
+        },
+    )
+
+
+def member_pay_amc(request):
+    """Start Razorpay checkout for AMC (₹500) for the logged-in portal user."""
+    user = _portal_session_user(request)
+    if not user:
+        messages.error(request, "Please log in to pay AMC.")
+        return redirect("login")
+    phone = (user.mobile_number or "").strip()
+    if not phone:
+        messages.error(request, "Add a mobile number on your profile before paying AMC.")
+        return redirect("user_profile")
+    details = _get_membership_details("amc")
+    if not details:
+        messages.error(request, "AMC payment is not available right now.")
+        return redirect("user_profile")
+    request.session["payment_prefill"] = {
+        "name": f"{user.first_name} {user.last_name}".strip() or user.username,
+        "email": user.email,
+        "phone": phone,
+        "membership_type": "amc",
+        "membership_label": details["label"],
+        "amount": details["amount"],
+    }
+    return redirect("registration_payment_redirect")
+
+
+def member_payment_history(request):
+    """All Razorpay / payment rows for the current portal user."""
+    user = _portal_session_user(request)
+    if not user:
+        messages.error(request, "Please log in to view payment history.")
+        return redirect("login")
+    q = Q(user=user)
+    if (user.email or "").strip():
+        q |= Q(user__isnull=True, email__iexact=user.email.strip())
+    payments = list(
+        PaymentRegistration.objects.filter(q).order_by("-created_at")
+    )
+    return render(
+        request,
+        "member_payment_history.html",
+        {"user": user, "payments": payments},
+    )
+
+
+def member_payment_receipt(request, payment_id):
+    """HTML receipt for one payment (view or download). Only the owning member may access."""
+    user = _portal_session_user(request)
+    if not user:
+        messages.error(request, "Please log in to download your receipt.")
+        return redirect("login")
+    payment = get_object_or_404(PaymentRegistration, pk=payment_id)
+    if not _payment_registration_visible_to_user(payment, user):
+        raise Http404("Receipt not found.")
+
+    kind_label = _payment_receipt_kind_label(payment)
+
+    as_download = request.GET.get("download") in ("1", "true", "yes")
+    response = render(
+        request,
+        "payment_receipt.html",
+        {
+            "payment": payment,
+            "member": user,
+            "kind_label": kind_label,
+            "as_download": as_download,
+        },
+    )
+    if as_download:
+        stem = slugify(payment.receipt or f"payment-{payment.pk}")[:80] or "receipt"
+        response["Content-Disposition"] = f'attachment; filename="adams-receipt-{stem}.html"'
+    return response
+
+
+@login_required(login_url="/login/")
+@admin_required
+def admin_member_payment_history(request, user_id):
+    """Admin: full payment history for one member."""
+    member = get_object_or_404(User, pk=user_id)
+    q = Q(user=member)
+    if (member.email or "").strip():
+        q |= Q(user__isnull=True, email__iexact=member.email.strip())
+    payments = list(
+        PaymentRegistration.objects.filter(q).order_by("-created_at")
+    )
+    return render(
+        request,
+        "admin_member_payment_history.html",
+        {"member": member, "payments": payments},
+    )
+
+
+@login_required(login_url="/login/")
+@admin_required
+def admin_member_payment_receipt(request, user_id, payment_id):
+    """Admin: download/view receipt for one of a member's payments (same HTML as member receipt)."""
+    member = get_object_or_404(User, pk=user_id)
+    payment = get_object_or_404(PaymentRegistration, pk=payment_id)
+    if not _payment_registration_belongs_to_member(payment, member):
+        raise Http404("Receipt not found.")
+
+    kind_label = _payment_receipt_kind_label(payment)
+    as_download = request.GET.get("download") in ("1", "true", "yes")
+    response = render(
+        request,
+        "payment_receipt.html",
+        {
+            "payment": payment,
+            "member": member,
+            "kind_label": kind_label,
+            "as_download": as_download,
+        },
+    )
+    if as_download:
+        stem = slugify(f"{member.username}-{payment.receipt or payment.pk}")[:80] or "receipt"
+        response["Content-Disposition"] = f'attachment; filename="adams-receipt-{stem}.html"'
+    return response
+
+
+def _id_card_render_context(user, *, id_card_png_url=None):
+    """Shared context for member_id_card.html (photo, name, category, membership id, QR data URI)."""
+    if id_card_png_url is None:
+        id_card_png_url = reverse("member_id_card_png")
+    membership_id = user.display_membership_id
+    name_parts = [
+        (user.first_name or "").strip(),
+        (user.middle_name or "").strip(),
+        (user.last_name or "").strip(),
+    ]
+    member_display_name = " ".join(p for p in name_parts if p) or user.username
+    qr_data_uri = None
+    try:
+        qr_buf = generate_qr_code_live(user)
+        qr_data_uri = "data:image/png;base64," + base64.b64encode(qr_buf.getvalue()).decode(
+            "ascii"
+        )
+    except Exception as e:
+        logger.warning(f"Could not embed QR on ID card for {user.username}: {e}")
+    return {
+        "member": user,
+        "membership_id": membership_id,
+        "member_display_name": member_display_name,
+        "qr_data_uri": qr_data_uri,
+        # Bulk (and other) accounts may still have a placeholder path in `photo`; avoid a broken <img>.
+        "has_real_photo": not stored_file_is_missing(user.photo),
+        "id_card_png_url": id_card_png_url,
+    }
+
+
+def member_id_card(request):
+    """
+    Printable / downloadable membership ID card for approved members (photo, name, heading, category, ID, QR).
+    Uses portal session (same as home page), not only Django's login_required user.
+    """
+    user = _portal_session_user(request)
+    if not user:
+        messages.error(request, "Please log in to view your ID card.")
+        return redirect("login")
+    if user.status != "approved":
+        messages.warning(
+            request,
+            "Your membership ID card will be available after your application is approved.",
+        )
+        return redirect("user_profile")
+    return render(request, "member_id_card.html", _id_card_render_context(user))
+
+
+def member_id_card_png(request):
+    """Download membership ID card as PNG (server-rendered; works for bulk-import placeholders)."""
+    user = _portal_session_user(request)
+    if not user:
+        return HttpResponse(status=401, content="Please log in (session expired).")
+    if user.status != "approved":
+        return HttpResponse(
+            status=403,
+            content="Membership ID card download is available after your application is approved.",
+        )
+    try:
+        data = build_id_card_png_bytes(user)
+    except Exception as e:
+        logger.exception("member_id_card_png failed for %s: %s", uname, e)
+        return HttpResponse(status=500, content="Could not generate image")
+    fn = id_card_png_filename(user)
+    resp = HttpResponse(data, content_type="image/png")
+    resp["Content-Disposition"] = f'attachment; filename="{fn}"'
+    return resp
+
+
+@login_required(login_url="/login/")
+@admin_required
+def admin_member_id_card_png(request, user_id):
+    """Admin: download member ID card PNG (server-rendered)."""
+    member = get_object_or_404(User, pk=user_id)
+    try:
+        data = build_id_card_png_bytes(member)
+    except Exception as e:
+        logger.exception("admin_member_id_card_png failed for user_id=%s: %s", user_id, e)
+        return HttpResponse(status=500, content="Could not generate image")
+    fn = id_card_png_filename(member)
+    resp = HttpResponse(data, content_type="image/png")
+    resp["Content-Disposition"] = f'attachment; filename="{fn}"'
+    return resp
+
+
+@login_required(login_url="/login/")
+@admin_required
+def admin_member_id_card(request, user_id):
+    """Admin: open printable/downloadable ID card for any member (same layout as self-service ID card)."""
+    member = get_object_or_404(User, pk=user_id)
+    logger.info(
+        "Admin %s opened member ID card for user_id=%s username=%s",
+        getattr(request.user, "username", ""),
+        user_id,
+        member.username,
+    )
+    ctx = _id_card_render_context(
+        member,
+        id_card_png_url=reverse("admin_member_id_card_png", args=[member.pk]),
+    )
+    ctx["id_card_back_url"] = reverse("admin_panel")
+    ctx["id_card_back_label"] = "Back to admin panel"
+    return render(request, "member_id_card.html", ctx)
+
+
+@login_required(login_url="/login/")
+def retry_payment(request):
+    uname = request.session.get("username")
+    if not uname:
+        messages.error(request, "Please login to retry payment.")
+        return redirect("login")
+
+    try:
+        user = User.objects.get(username=uname)
+    except User.DoesNotExist:
+        messages.error(request, "User not found.")
+        return redirect("login")
+
+    latest_payment = (
+        PaymentRegistration.objects.filter(user=user)
+        .order_by("-created_at")
+    )
+    latest_payment = next(
+        (p for p in latest_payment if not _is_amc_payment_registration(p)),
+        None,
+    )
+
+    membership_type = None
+    membership_label = ""
+    amount = MEMBERSHIP_TYPES["adhoc"]["amount"]
+
+    if latest_payment and isinstance(latest_payment.notes, dict):
+        membership_type = (latest_payment.notes.get("membership_type") or "").strip().lower() or None
+
+    membership_details = _get_membership_details(membership_type) if membership_type else None
+    if membership_details:
+        membership_label = membership_details["label"]
+        amount = membership_details["amount"]
+        membership_type = membership_type or ""
+    else:
+        membership_type = "adhoc"
+        membership_label = MEMBERSHIP_TYPES["adhoc"]["label"]
+
+    request.session["payment_prefill"] = {
+        "name": f"{user.first_name} {user.last_name}".strip() or user.username,
+        "email": user.email,
+        "phone": user.mobile_number,
+        "membership_type": membership_type,
+        "membership_label": membership_label,
+        "amount": amount,
+    }
+    messages.info(request, "Retrying payment...")
+    return redirect("registration_payment_redirect")
 
 
 @login_required(login_url="/login/")
@@ -1959,6 +2996,8 @@ def get_user_details(request, userId):
                 "blood_group": user.blood_group,
                 "educational_status": user.educational_status,
                 "category": user.category,
+                "category_display": user.get_category_display(),
+                "membership_id": user.display_membership_id,
                 "university_name": user.university_name,
                 "country_university": user.country_university,
                 "year_of_joining": user.year_of_joining,
@@ -2026,10 +3065,23 @@ def fetch_image_from_minio(bucket_name, object_name):
         return None
 
 
-@login_required(login_url="/login/")
+_SERVE_USER_FILE_FIELDS = frozenset(
+    {
+        "photo",
+        "state_nmc",
+        "passport",
+        "medical_qualification",
+        "payment_transaction_proof",
+    }
+)
+
+
 def serve_user_file(request, user_id, file_field):
     """
     Serve a user's file (image or PDF) from MinIO storage or local filesystem.
+
+    Auth: portal session user (same as home page) or Django authenticated user;
+    only that user may fetch their files unless the viewer is an admin.
 
     This view retrieves and serves files associated with a user by:
     - Fetching the user object and requested file field
@@ -2059,6 +3111,14 @@ def serve_user_file(request, user_id, file_field):
     logger.debug(
         f"Processing file serve request for user ID {user_id}, field {file_field}"
     )
+
+    viewer = _portal_session_user(request)
+    if not viewer:
+        return HttpResponse(status=401, content="Unauthorized")
+    if file_field not in _SERVE_USER_FILE_FIELDS:
+        return HttpResponse(status=400, content="Invalid file field")
+    if viewer.pk != user_id and getattr(viewer, "role", None) != "admin":
+        return HttpResponse(status=403, content="Forbidden")
 
     user = get_object_or_404(User, id=user_id)
     file_path = getattr(user, file_field, None)
@@ -2334,11 +3394,28 @@ def request_category_change(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            new_category = data.get("new_category")
-            
+            new_category = (data.get("new_category") or "").strip()
+            allowed_cat = _user_category_values()
+            if new_category not in allowed_cat:
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message": "Invalid membership category selected.",
+                    },
+                    status=400,
+                )
+
             uname = request.session.get("username")
             user = User.objects.get(username=uname)
-            
+            if new_category == user.category:
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message": "Please choose a category different from your current one.",
+                    },
+                    status=400,
+                )
+
             # Check if there's already a pending request
             existing_request = CategoryChangeRequest.objects.filter(
                 user=user,
@@ -2425,7 +3502,13 @@ def get_category_change_requests(request):
             })
         
         logger.info(f"Retrieved {len(data)} pending category change requests")
-        return JsonResponse({'success': True, 'requests': data})
+        return JsonResponse(
+            {
+                "success": True,
+                "requests": data,
+                "category_label_map": dict(_user_category_choice_tuples()),
+            }
+        )
         
     except Exception as e:
         logger.exception(f"Error fetching category change requests: {str(e)}")
@@ -2473,26 +3556,38 @@ def approve_reject_category_change(request, request_id):
             
             category_request = CategoryChangeRequest.objects.get(id=request_id)
             user = category_request.user
-            
+
+            if decision == "approved" and category_request.requested_category not in _user_category_values():
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message": "Requested category is not a valid membership category.",
+                    },
+                    status=400,
+                )
+
             category_request.request_status = decision
             category_request.admin_decision_date = timezone.now()
             category_request.admin_remarks = admin_remarks
             category_request.save()
             
             if decision == 'approved':
+                req_cat = category_request.requested_category
                 # Update user's category
                 old_category = user.category
-                user.category = category_request.requested_category
+                user.category = req_cat
                 user.save()
-                
+
+                old_lbl = _category_display_name(old_category)
+                new_lbl = _category_display_name(user.category)
                 logger.info(f"Category change approved for user {user.username}: {old_category} -> {user.category}")
-                
+
                 # Send approval email
                 send_email_with_attachments(
                     subject="Category Change Request Approved",
                     custom_message=f"""Your category change request has been approved!
                     <br><br>
-                    Your category has been successfully updated from <strong>{old_category}</strong> to <strong>{user.category}</strong>.
+                    Your category has been successfully updated from <strong>{old_lbl}</strong> to <strong>{new_lbl}</strong>.
                     <br><br>
                     {f'<strong>Admin Remarks:</strong> <em>{admin_remarks}</em><br><br>' if admin_remarks else ''}
                     Thank you for keeping your profile up to date.
@@ -2508,13 +3603,15 @@ def approve_reject_category_change(request, request_id):
                 
             elif decision == 'rejected':
                 logger.info(f"Category change rejected for user {user.username}")
-                
+                cur_lbl = _category_display_name(category_request.current_category)
+                req_lbl = _category_display_name(category_request.requested_category)
+
                 # Send rejection email
                 send_email_with_attachments(
                     subject="Category Change Request Update",
                     custom_message=f"""Your category change request has been reviewed.
                     <br><br>
-                    Unfortunately, your request to change category from <strong>{category_request.current_category}</strong> to <strong>{category_request.requested_category}</strong> has not been approved.
+                    Unfortunately, your request to change category from <strong>{cur_lbl}</strong> to <strong>{req_lbl}</strong> has not been approved.
                     <br><br>
                     <strong>Admin Remarks:</strong> <em>{admin_remarks if admin_remarks else 'No remarks provided'}</em>
                     <br><br>
@@ -2573,13 +3670,23 @@ def get_category_members(request):
     
     try:
         category = request.GET.get('category', '')
-        
+        allowed_cat = _user_category_values()
+
         if not category:
             return JsonResponse({
                 'success': False,
                 'message': 'Category parameter is required'
             }, status=400)
-        
+
+        if category != 'All' and category not in allowed_cat:
+            return JsonResponse(
+                {
+                    'success': False,
+                    'message': 'Invalid category. Use "All" or a value from the category list.',
+                },
+                status=400,
+            )
+
         # Handle "All" categories
         if category == 'All':
             users = User.objects.all()
@@ -2627,20 +3734,30 @@ def export_category_members(request):
         from openpyxl.styles import Font, PatternFill, Alignment
         
         category = request.GET.get('category', '')
-        
+        allowed_cat = _user_category_values()
+
         if not category:
             return JsonResponse({
                 'success': False,
                 'message': 'Category parameter is required'
             }, status=400)
-        
+
+        if category != 'All' and category not in allowed_cat:
+            return JsonResponse(
+                {
+                    'success': False,
+                    'message': 'Invalid category. Use "All" or a value from the category list.',
+                },
+                status=400,
+            )
+
         # Handle "All" categories
         if category == 'All':
             users = User.objects.all().order_by('category', 'first_name', 'last_name')
             sheet_title = "All Members"
         else:
             users = User.objects.filter(category=category).order_by('first_name', 'last_name')
-            sheet_title = f"{category} Members"
+            sheet_title = f"{_category_display_name(category)[:20]} Members"
         
         # Create workbook
         wb = openpyxl.Workbook()
@@ -2649,10 +3766,11 @@ def export_category_members(request):
         
         # Add headers
         headers = [
-            'Username', 'First Name', 'Last Name', 'Email', 'Gender', 
+            'Username', 'First Name', 'Last Name', 'Email', 'Gender',
             'Mobile Number', 'WhatsApp Number', 'District', 'Blood Group',
             'Educational Status', 'Category', 'University Name', 'Country',
-            'Year of Joining', 'Year of Completion', 'Status'
+            'Year of Joining', 'Year of Completion', 'Status',
+            'ADAMS membership no.',
         ]
         
         # Style header row
@@ -2677,13 +3795,18 @@ def export_category_members(request):
             ws.cell(row=row_num, column=8, value=user.district)
             ws.cell(row=row_num, column=9, value=user.blood_group)
             ws.cell(row=row_num, column=10, value=user.educational_status)
-            ws.cell(row=row_num, column=11, value=user.category)
+            ws.cell(row=row_num, column=11, value=user.get_category_display())
             ws.cell(row=row_num, column=12, value=user.university_name)
             ws.cell(row=row_num, column=13, value=user.country_university)
             ws.cell(row=row_num, column=14, value=user.year_of_joining)
             ws.cell(row=row_num, column=15, value=user.year_of_completion)
             ws.cell(row=row_num, column=16, value=user.status)
-        
+            ws.cell(
+                row=row_num,
+                column=17,
+                value=user.display_membership_id,
+            )
+
         # Auto-adjust column widths
         from openpyxl.cell.cell import MergedCell
         for column in ws.columns:
@@ -2830,7 +3953,7 @@ def download_registrations(request):
         ws.title = "Registrations"
         
         # Add title row
-        ws.merge_cells('A1:P1')
+        ws.merge_cells('A1:Q1')
         title_cell = ws['A1']
         title_cell.value = f"Registrations Report - {period_label}"
         title_cell.font = Font(bold=True, size=14, color='FFFFFF')
@@ -2840,10 +3963,11 @@ def download_registrations(request):
         
         # Add headers
         headers = [
-            'Registration Date', 'Username', 'First Name', 'Last Name', 'Email', 
+            'Registration Date', 'Username', 'First Name', 'Last Name', 'Email',
             'Gender', 'Mobile Number', 'WhatsApp Number', 'District', 'Blood Group',
             'Educational Status', 'Category', 'University Name', 'Country',
-            'Year of Joining', 'Status'
+            'Year of Joining', 'Status',
+            'ADAMS membership no.',
         ]
         
         # Style header row
@@ -2869,12 +3993,17 @@ def download_registrations(request):
             ws.cell(row=row_num, column=9, value=user.district)
             ws.cell(row=row_num, column=10, value=user.blood_group)
             ws.cell(row=row_num, column=11, value=user.educational_status)
-            ws.cell(row=row_num, column=12, value=user.category)
+            ws.cell(row=row_num, column=12, value=user.get_category_display())
             ws.cell(row=row_num, column=13, value=user.university_name)
             ws.cell(row=row_num, column=14, value=user.country_university)
             ws.cell(row=row_num, column=15, value=user.year_of_joining)
             ws.cell(row=row_num, column=16, value=user.status)
-        
+            ws.cell(
+                row=row_num,
+                column=17,
+                value=user.display_membership_id,
+            )
+
         # Auto-adjust column widths
         from openpyxl.cell.cell import MergedCell
         for column in ws.columns:
@@ -2964,7 +4093,12 @@ def send_bulk_email(request):
             if not all([category, subject, message]):
                 yield f"data: {json.dumps({'error': 'Missing required fields'})}\n\n"
                 return
-            
+
+            allowed_cat = _user_category_values()
+            if category != "All" and category not in allowed_cat:
+                yield f"data: {json.dumps({'error': 'Invalid category selected.'})}\n\n"
+                return
+
             # Handle "All" categories
             if category == 'All':
                 users = User.objects.filter(status='approved')
@@ -3718,23 +4852,9 @@ def get_active_rulebook(request):
         
         if rulebook:
             try:
-                # Generate local file URL
-                pdf_path = str(rulebook.pdf_file)
-                
-                # If path doesn't start with "media/", add it
-                if not pdf_path.startswith("media/"):
-                    pdf_path = f"media/{pdf_path}"
-                
-                # Generate URL using request host
-                host = request.get_host().split(':')[0]  # Get hostname without port
-                scheme = 'https' if request.is_secure() else 'http'
-                port = request.get_port()
-                
-                if port and port not in [80, 443]:
-                    pdf_url = f"{scheme}://{host}:{port}/{pdf_path}"
-                else:
-                    pdf_url = f"{scheme}://{host}/{pdf_path}"
-                
+                # Always use Django proxy so PDF.js works for both local files and MinIO objects.
+                pdf_url = request.build_absolute_uri(reverse("serve_rulebook_pdf"))
+
                 return JsonResponse({
                     'success': True,
                     'rulebook': {
@@ -3758,44 +4878,54 @@ def get_active_rulebook(request):
 @require_POST
 def upload_rulebook(request):
     """Upload a new rulebook PDF."""
+    import uuid
+
     try:
         from .models import Rulebook
-        from .utils import minio_client
-        import uuid
-        
-        title = request.POST.get('title', 'ADAMS Rulebook')
-        description = request.POST.get('description', '')
-        is_active = request.POST.get('is_active', 'false').lower() == 'true'
-        pdf_file = request.FILES.get('pdf_file')
-        
+
+        title = request.POST.get("title", "ADAMS Rulebook").strip() or "ADAMS Rulebook"
+        description = (request.POST.get("description") or "").strip()
+        raw_active = (request.POST.get("is_active") or "").strip().lower()
+        is_active = raw_active in ("true", "1", "on", "yes")
+        pdf_file = request.FILES.get("pdf_file")
+
         if not pdf_file:
-            return JsonResponse({'success': False, 'message': 'No PDF file provided'}, status=400)
-        
-        if not pdf_file.name.endswith('.pdf'):
-            return JsonResponse({'success': False, 'message': 'File must be a PDF'}, status=400)
-        
-        # Upload to local storage
-        file_name = f"rulebooks/{uuid.uuid4()}_{pdf_file.name}"
-        media_path = os.path.join(settings.MEDIA_ROOT, file_name)
-        
-        # Ensure directory exists
-        os.makedirs(os.path.dirname(media_path), exist_ok=True)
-        
-        try:
-            # Reset file pointer
+            return JsonResponse({"success": False, "message": "No PDF file provided"}, status=400)
+
+        if not (pdf_file.name or "").lower().endswith(".pdf"):
+            return JsonResponse({"success": False, "message": "File must be a PDF"}, status=400)
+
+        safe_pdf_name = os.path.basename(pdf_file.name or "rulebook.pdf").replace("..", "_")
+        object_key = f"rulebooks/{uuid.uuid4()}_{safe_pdf_name}"
+
+        if getattr(settings, "MINIO_ENABLED", False):
             pdf_file.seek(0)
-            
-            # Save file to local storage
-            with open(media_path, 'wb+') as destination:
-                for chunk in pdf_file.chunks():
-                    destination.write(chunk)
-            
-            # Store relative path for database
-            db_file_name = f"media/{file_name}"
-            logger.info(f"Uploaded rulebook PDF to local storage: {file_name}")
-        except Exception as e:
-            logger.error(f"Error uploading to local storage: {str(e)}")
-            return JsonResponse({'success': False, 'message': 'Error uploading file'}, status=500)
+            if not upload_file_to_minio(pdf_file, object_key, "application/pdf"):
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message": "Could not upload to MinIO. Check MINIO_* settings and server logs.",
+                    },
+                    status=500,
+                )
+            db_file_name = f"minio:{object_key}"
+            logger.info("Uploaded rulebook PDF to MinIO: %s", object_key)
+        else:
+            media_path = os.path.join(settings.MEDIA_ROOT, object_key)
+            os.makedirs(os.path.dirname(media_path), exist_ok=True)
+            try:
+                pdf_file.seek(0)
+                with open(media_path, "wb+") as destination:
+                    for chunk in pdf_file.chunks():
+                        destination.write(chunk)
+                db_file_name = f"media/{object_key}"
+                logger.info("Uploaded rulebook PDF to local storage: %s", object_key)
+            except Exception as e:
+                logger.error("Error uploading rulebook to local storage: %s", e)
+                return JsonResponse(
+                    {"success": False, "message": "Error uploading file"},
+                    status=500,
+                )
         
         # If setting as active, deactivate all other rulebooks
         if is_active:
@@ -3861,24 +4991,26 @@ def delete_rulebook(request, rulebook_id):
         from .models import Rulebook
         
         rulebook = Rulebook.objects.get(id=rulebook_id)
-        
-        # Delete from local storage
+
         try:
-            pdf_path = str(rulebook.pdf_file)
-            # If path doesn't start with "media/", add it
-            if not pdf_path.startswith("media/"):
-                pdf_path = f"media/{pdf_path}"
-            
-            full_path = os.path.join(settings.BASE_DIR, pdf_path)
-            full_path = os.path.normpath(full_path)
-            
-            # Security check
-            media_root = os.path.normpath(settings.MEDIA_ROOT)
-            if full_path.startswith(media_root) and os.path.exists(full_path):
-                os.remove(full_path)
-                logger.info(f"Deleted rulebook PDF from local storage: {rulebook.pdf_file}")
+            stored = str(rulebook.pdf_file or "")
+            if stored.startswith("minio:"):
+                object_name = stored[len("minio:") :].lstrip("/")
+                if object_name:
+                    delete_file_from_minio(object_name)
+                    logger.info("Deleted rulebook PDF from MinIO: %s", object_name)
+            else:
+                pdf_path = stored
+                if not pdf_path.startswith("media/"):
+                    pdf_path = f"media/{pdf_path}"
+                full_path = os.path.join(settings.BASE_DIR, pdf_path)
+                full_path = os.path.normpath(full_path)
+                media_root = os.path.normpath(settings.MEDIA_ROOT)
+                if full_path.startswith(media_root) and os.path.exists(full_path):
+                    os.remove(full_path)
+                    logger.info("Deleted rulebook PDF from local storage: %s", rulebook.pdf_file)
         except Exception as e:
-            logger.warning(f"Error deleting from local storage: {str(e)}")
+            logger.warning("Error deleting rulebook file: %s", e)
         
         # Delete from database
         rulebook.delete()
@@ -3899,37 +5031,36 @@ def serve_rulebook_pdf(request):
     try:
         from .models import Rulebook
         from django.http import HttpResponse
-        import io
-        
+
         rulebook = Rulebook.objects.filter(is_active=True).first()
         
         if not rulebook:
             return HttpResponse('No active rulebook found', status=404)
         
         try:
-            # Get PDF from local storage
-            pdf_path = str(rulebook.pdf_file)
-            # If path doesn't start with "media/", add it
-            if not pdf_path.startswith("media/"):
-                pdf_path = f"media/{pdf_path}"
-            
-            full_path = os.path.join(settings.BASE_DIR, pdf_path)
-            full_path = os.path.normpath(full_path)
-            
-            # Security check
-            media_root = os.path.normpath(settings.MEDIA_ROOT)
-            if not full_path.startswith(media_root):
-                return HttpResponse('Access denied', status=403)
-            
-            if not os.path.exists(full_path):
-                return HttpResponse('PDF file not found', status=404)
-            
-            # Read PDF file
-            with open(full_path, 'rb') as f:
-                pdf_data = f.read()
-            
-            # Return PDF
-            http_response = HttpResponse(pdf_data, content_type='application/pdf')
+            stored = str(rulebook.pdf_file or "")
+            if stored.startswith("minio:"):
+                object_name = stored[len("minio:") :].lstrip("/")
+                if not object_name:
+                    return HttpResponse("PDF reference invalid", status=404)
+                pdf_data = fetch_file_from_minio(object_name)
+                if not pdf_data:
+                    return HttpResponse("PDF file not found", status=404)
+            else:
+                pdf_path = stored
+                if not pdf_path.startswith("media/"):
+                    pdf_path = f"media/{pdf_path}"
+                full_path = os.path.join(settings.BASE_DIR, pdf_path)
+                full_path = os.path.normpath(full_path)
+                media_root = os.path.normpath(settings.MEDIA_ROOT)
+                if not full_path.startswith(media_root):
+                    return HttpResponse("Access denied", status=403)
+                if not os.path.exists(full_path):
+                    return HttpResponse("PDF file not found", status=404)
+                with open(full_path, "rb") as f:
+                    pdf_data = f.read()
+
+            http_response = HttpResponse(pdf_data, content_type="application/pdf")
             http_response['Content-Disposition'] = f'inline; filename="{rulebook.title}.pdf"'
             http_response['Access-Control-Allow-Origin'] = '*'
             
@@ -4261,7 +5392,7 @@ def migrate_existing_fields_to_questions(request):
             ('date_time_of_payment', 'Date and time of Payment (Transaction)', 'date', True, 23, None, None),
             ('payment_transaction_proof', 'Payment Transaction Proof/screenshot', 'file', True, 24, 'Upload screenshot or slip containing transaction number', None),
             ('willing_to_be_donor', 'Willing to be a blood donor?', 'checkbox', False, 25, None, 'Yes'),
-            ('mid', 'Are you in any district group of AKFMA? If yes mention your MID', 'text', False, 26, 'MID can be collected by contacting assigned district admins', None),
+            ('mid', 'ADAMS membership number', 'text', False, 26, 'Bulk XLSX: value in `mid` column is stored after import. Web signup: left blank, auto ADAMS-{pk} on save.', None),
             ('agreement', 'Agreement for Joining Association of Doctors And Medical Students (ADAMS)', 'checkbox', True, 27, None, 'I agree'),
             ('application', 'I agree to the terms and conditions of the association and I hereby submit my application for membership in ADAMS', 'checkbox', True, 28, None, 'I agree'),
         ]

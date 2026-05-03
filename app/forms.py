@@ -85,7 +85,6 @@ class UserRegistrationForm(UserCreationForm):
     state_nmc = forms.FileField(required=False)
     passport = forms.FileField(required=True)
     medical_qualification = forms.FileField(required=True)
-    payment_transaction_proof = forms.FileField(required=True)
     class Meta:
         model = User
         fields = [
@@ -94,15 +93,25 @@ class UserRegistrationForm(UserCreationForm):
             'address_permanent', 'district', 'father_spouse_details', 'blood_group',
             'password1', 'password2', 'educational_status', 'category', 'university_name', 
             'country_university', 'year_of_joining', 'year_of_completion', 'photo', 'state_nmc', 
-            'passport', 'medical_qualification', 'date_time_of_payment', 'payment_transaction_proof', 
+            'passport', 'medical_qualification',
             'willing_to_be_donor', 'agreement', 'mid', 'application'
         ]
 
     
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, membership_type=None, **kwargs):
+        self.membership_type = (membership_type or "").strip().lower()
         super().__init__(*args, **kwargs)
 
         self.fields['district'].choices = User.district_choices
+
+        blank = ("", "-- Select Category --")
+        mt = self.membership_type
+        if mt == "adhoc":
+            self.fields["category"].choices = [blank] + list(User.CATEGORY_CHOICE_ADHOC)
+        elif mt == "lifetime":
+            self.fields["category"].choices = [blank] + list(User.CATEGORY_CHOICE_LIFETIME)
+        else:
+            self.fields["category"].choices = [blank] + list(User.MEMBERSHIP_CATEGORY_CHOICES)
 
         print(f"District choices: {self.fields['district'].choices}")
 
@@ -134,7 +143,25 @@ class UserRegistrationForm(UserCreationForm):
         # Return the predefined district value
         print("Predefined district selected:", district)
         return district
-    
+
+    def clean_category(self):
+        category = self.cleaned_data.get("category")
+        if not category:
+            raise forms.ValidationError("Please select a category.")
+        allowed = {c[0] for c in self.fields["category"].choices if c[0]}
+        if category not in allowed:
+            raise forms.ValidationError("Select a valid category for your membership type.")
+        mt = self.membership_type
+        if mt == "adhoc":
+            valid = {c[0] for c in User.CATEGORY_CHOICE_ADHOC}
+        elif mt == "lifetime":
+            valid = {c[0] for c in User.CATEGORY_CHOICE_LIFETIME}
+        else:
+            return category
+        if category not in valid:
+            raise forms.ValidationError("This category is not valid for the selected membership type.")
+        return category
+
     def clean_state_nmc(self):
         state_nmc = self.cleaned_data.get('state_nmc')
         

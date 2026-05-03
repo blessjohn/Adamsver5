@@ -65,15 +65,31 @@ class User(AbstractUser):
         ('Post Graduation Completed, Working', 'Post Graduation Completed, Working')
     )
     educational_status = models.CharField(max_length=50, choices=educational_status, default='Student (@Abroad University)')
-    # Category You Belong To For Membership
-    category = (
+    # Category You Belong To For Membership (registration shows subsets by membership tier; legacy values retained)
+    CATEGORY_CHOICE_LEGACY = (
         ('Student', 'Student'),
         ('Graduate/Trying FMGE', 'Graduate/Trying FMGE'),
         ('FMGE passed', 'FMGE passed'),
         ('Working Doctor', 'Working Doctor (With SMC/NMC Registration)'),
-        ('PG Doctor', 'Working PG Doctor (With SMC/NMC Registration)')
+        ('PG Doctor', 'Working PG Doctor (With SMC/NMC Registration)'),
     )
-    category = models.CharField(max_length=50, choices=category, default='Student')
+    CATEGORY_CHOICE_ADHOC = (
+        ('adhoc_fmg', 'Foreign Medical Students & FMG Candidates (Current/Passed)'),
+        ('adhoc_intern', 'Interns (Domestic and International)'),
+        ('adhoc_clerkship', 'Clerkship Candidates'),
+    )
+    CATEGORY_CHOICE_LIFETIME = (
+        ('lifetime_working_doctor', 'Working doctor (with SMC, MCI, or NMC affiliation)'),
+        ('lifetime_working_pg', 'Working PG doctor (with SMC, MCI, or NMC affiliation)'),
+    )
+    MEMBERSHIP_CATEGORY_CHOICES = (
+        CATEGORY_CHOICE_LEGACY + CATEGORY_CHOICE_ADHOC + CATEGORY_CHOICE_LIFETIME
+    )
+    category = models.CharField(
+        max_length=80,
+        choices=MEMBERSHIP_CATEGORY_CHOICES,
+        default='Student',
+    )
     # University Name Short forms not accepted
     university_name = models.CharField(max_length=100)
     # Country University is situated
@@ -118,7 +134,8 @@ class User(AbstractUser):
     # Agreement for Joining Association of Doctors And Medical Students (ADAMS) *
     agreement = models.BooleanField(default=False)
 
-    # Are you in any district group of AKFMA.If yes mention your MID. MID can be collected by contacting assigned district admins informed in the AKFMA District Groups.
+    # ADAMS membership number shown on card / exports. Bulk XLSX `mid` column is saved as-is when provided;
+    # otherwise set automatically to ADAMS-{pk:06d} on save.
     mid = models.CharField(max_length=100, blank=True, null=True)
 
     # I agree to the terms and conditions of the association and I hereby submit my application for membership in ADAMS
@@ -131,6 +148,31 @@ class User(AbstractUser):
     )
     status = models.CharField(max_length=10, choices=status, default='pending')
     admin_remarks = models.TextField(blank=True, null=True)
+
+    @property
+    def membership_id(self):
+        """Default ADAMS number from primary key (ADAMS-{pk:06d}). Used when `mid` is empty."""
+        if self.pk is None:
+            return ""
+        return f"ADAMS-{self.pk:06d}"
+
+    @property
+    def display_membership_id(self):
+        """Number shown on ID card and admin: `mid` from bulk sheet when set, else ADAMS-{pk:06d}."""
+        stored = (self.mid or "").strip()
+        if stored:
+            return stored
+        return self.membership_id
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if not self.pk:
+            return
+        if (self.mid or "").strip():
+            return
+        canonical = self.membership_id
+        User.objects.filter(pk=self.pk).update(mid=canonical)
+        self.mid = canonical
 
     groups = models.ManyToManyField(
         'auth.Group',
@@ -381,3 +423,38 @@ class SystemSettings(models.Model):
                 setting.updated_by = user
             setting.save()
         return setting
+
+
+class PaymentRegistration(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("paid", "Paid"),
+        ("failed", "Failed"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="payment_registrations",
+    )
+    name = models.CharField(max_length=150)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    amount = models.PositiveIntegerField(default=50000, help_text="Amount in paise")
+    currency = models.CharField(max_length=10, default="INR")
+    receipt = models.CharField(max_length=100, unique=True)
+    razorpay_order_id = models.CharField(max_length=100, unique=True, blank=True, null=True)
+    razorpay_payment_id = models.CharField(max_length=100, blank=True, null=True)
+    razorpay_signature = models.CharField(max_length=255, blank=True, null=True)
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default="pending")
+    notes = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.name} ({self.email}) - {self.payment_status}"
