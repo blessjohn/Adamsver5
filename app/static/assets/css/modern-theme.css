@@ -815,10 +815,75 @@ img {
     );
 }
 
-.luxury-hero-section > .AdminLoginPortal,
 .luxury-hero-section > .container {
     position: relative;
     z-index: 1;
+}
+
+/* Desktop (lg+): flex row — login + What's New centered as a pair, equal height, balanced spacing.
+   <992px: untouched (mobile cards stay in Bootstrap column stack). */
+@media (min-width: 992px) {
+    .newBannerHome.luxury-hero-section {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: center;
+        column-gap: clamp(1.5rem, 3.5vw, 3rem);
+        padding-left: clamp(1rem, 2.5vw, 2.75rem);
+        padding-right: clamp(1rem, 2.5vw, 2.75rem);
+    }
+
+    .newBannerHome.luxury-hero-section > .AdminLoginPortal {
+        position: relative;
+        left: auto;
+        top: auto;
+        height: auto;
+        align-self: stretch;
+        z-index: 2;
+        flex: 0 0 400px;
+        width: 400px;
+        max-width: 400px;
+        min-height: 0;
+        margin-left: clamp(0.5rem, 1.25vw, 1.5rem);
+    }
+
+    .newBannerHome.luxury-hero-section > .container {
+        flex: 0 1 420px;
+        width: auto;
+        max-width: 420px;
+        min-width: 0;
+        padding-left: 0;
+        padding-right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+    }
+
+    .newBannerHome.luxury-hero-section > .container .row {
+        flex: 1 1 auto;
+        align-items: stretch;
+        justify-content: center;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .newBannerHome.luxury-hero-section > .container .row > .col-lg-4:first-child {
+        display: none !important;
+    }
+
+    .newBannerHome.luxury-hero-section > .container .row > .col-lg-4:last-child {
+        flex: 1 1 auto;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .newBannerHome.luxury-hero-section > .container .row > .col-lg-4:last-child #hero.luxury-news-panel {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
 }
 
 .luxury-hero-card.AdminLoginPortal {
